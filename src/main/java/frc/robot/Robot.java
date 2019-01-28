@@ -11,6 +11,9 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+import frc.robot.Drivetrain;
+import frc.robot.Controller;
+
 /**
  * The VM is configured to automatically run this class, and to call the
  * functions corresponding to each mode, as described in the TimedRobot
@@ -20,9 +23,16 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class Robot extends TimedRobot {
 
+  Drivetrain drivetrain;
+  Controller pilotController;
+  Controller copilotController;
 
   Robot() {
     
+    drivetrain  = new Drivetrain(0, 1, 2, 3);
+    pilotController = new Controller(0);
+    copilotController = new Controller(1);
+
   }
   /**
    * This function is run when the robot is first started up and should be
@@ -43,7 +53,6 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
-
   }
 
   /**
@@ -71,11 +80,27 @@ public class Robot extends TimedRobot {
   }
 
   /**
+   * This function is called once before the operator control period starts
+   */
+  @Override
+  public void teleopInit() {
+    
+  }
+
+  /**
    * This function is called periodically during operator control.
    */
   @Override
   public void teleopPeriodic() {
 
+  }
+
+  /**
+   * This function is called once before starting test mdoe
+   */
+  @Override
+  public void testInit() {
+    
   }
 
   /**
