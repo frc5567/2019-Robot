@@ -17,8 +17,11 @@ public class Drivetrain {
     // Declares variables for drivetrain speed and rotate setter
     // Constant is how large each step is in the setters
     private final double MAX_DELTA_SPEED = 0.1;
-    double currentSpeed;
-    double currentRotate;
+
+    // Declares variables for current speed and rotate rate
+    // Variables used for feedback in speed setter and rotate setter
+    double m_currentSpeed;
+    double m_currentRotate;
 
     // Declarations for the motor controllers
     private WPI_VictorSPX m_frontLeftMotor;
@@ -56,8 +59,10 @@ public class Drivetrain {
         // Initializes the drivetrain with the motor controller groups
         m_drivetrain = new DifferentialDrive(m_leftMotors, m_rightMotors);
 
-        currentSpeed = 0;
-        currentRotate = 0;
+        // Initializes feedback variables for speed setter and rotate setter
+        // Setters use variables as feedback in order to "ramp" the output gradually
+        m_currentSpeed = 0;
+        m_currentRotate = 0;
     }
 
 
@@ -83,37 +88,37 @@ public class Drivetrain {
 
         // If desired speed is higher than current speed by a margin larger than kMaxDeltaSpeed,
         // Increase current speed by kMaxDelaSpeed's amount
-        if (desiredSpeed > (currentSpeed + MAX_DELTA_SPEED)) {
-            currentSpeed += MAX_DELTA_SPEED;
+        if (desiredSpeed > (m_currentSpeed + MAX_DELTA_SPEED)) {
+            m_currentSpeed += MAX_DELTA_SPEED;
         }
         // If desired speed is less than current speed by a margin larger than kMaxDeltaSpeed
         // Decrease current speed by kMaxDeltaSpeed's amount
-        else if (desiredSpeed < (currentSpeed - MAX_DELTA_SPEED)) {
-            currentSpeed -= MAX_DELTA_SPEED;
+        else if (desiredSpeed < (m_currentSpeed - MAX_DELTA_SPEED)) {
+            m_currentSpeed -= MAX_DELTA_SPEED;
         }
         // If desired speed is within kMaxDeltaSpeed's margin to current speed,
         // Set current speed to match desired speed
         else {
-            currentSpeed = desiredSpeed;
+            m_currentSpeed = desiredSpeed;
         }
 
         // If desired rotate is higher than current rotate by a margin larger than kMaxDeltaSpeed,
         // Increase current rotate by kMaxDelaSpeed's amount
-        if (desiredRotate > (currentRotate + MAX_DELTA_SPEED)) {
-            currentRotate += MAX_DELTA_SPEED;
+        if (desiredRotate > (m_currentRotate + MAX_DELTA_SPEED)) {
+            m_currentRotate += MAX_DELTA_SPEED;
         }
         // If desired rotate is less than current rotate by a margin larger than kMaxDeltaSpeed
         // Decrease current rotate by kMaxDeltaSpeed's amount
-        else if (desiredRotate < (currentRotate - MAX_DELTA_SPEED)) {
-            currentRotate -= MAX_DELTA_SPEED;
+        else if (desiredRotate < (m_currentRotate - MAX_DELTA_SPEED)) {
+            m_currentRotate -= MAX_DELTA_SPEED;
         }
         // If desired rotate is within kMaxDeltaSpeed's margin to current rotate,
         // Set current rotate to match desired speed
         else {
-            currentRotate = desiredRotate;
+            m_currentRotate = desiredRotate;
         }
 
         // Pass current speed, current rotate, and the quick turn boolean into the Differential Drive's curatureDrive method
-        m_drivetrain.curvatureDrive(currentSpeed, currentRotate, quickTurn);
+        m_drivetrain.curvatureDrive(m_currentSpeed, m_currentRotate, quickTurn);
     }
 }
