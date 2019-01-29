@@ -105,8 +105,9 @@ void loop() {
 //  Serial.print("exit");
   calcInPerPix(cameraHeight, cameraAngle, pixy.line.vectors->m_x0, pixy.line.vectors->m_y0);
   degToTarget = atan((xDist*xInPerPix)/distRobotToTarget) * (180/pi);
-  String serialOut = String(degToTarget, 3);
-  Serial.print(serialOut);
+  char[16] cDegToTarget;
+ 
+  sprintf(cDegToTarget, "%.2f", degToTarget);
   
 //  Serial.print("X: ");
 //  Serial.print(pixy.line.vectors->m_x0);
