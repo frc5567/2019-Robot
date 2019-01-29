@@ -7,22 +7,24 @@ package frc.robot;
 // Imports needed for motor controllers, speedc controller groups, and the drivetrain
 import edu.wpi.first.wpilibj.drive.DifferentialDrive; 
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
-import edu.wpi.first.wpilibj.VictorSP;
+// These imports are extending SpeedController, allowing us to use SpeedControllerGroup
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
 
 public class Drivetrain {
 
     // Declares variables for drivetrain speed and rotate setter
     // Constant is how large each step is in the setters
-    private final double kMaxDeltaSpeed = 0.1;
-    private double currentSpeed;
-    private double currentRotate;
+    private final double MAX_DELTA_SPEED = 0.1;
+    double currentSpeed;
+    double currentRotate;
 
     // Declarations for the motor controllers
-    private VictorSP m_frontLeftMotor;
-    private VictorSP m_frontRightMotor;
-    private VictorSP m_backLeftMotor;
-    private VictorSP m_backRightMotor;
+    private WPI_VictorSPX m_frontLeftMotor;
+    private WPI_TalonSRX m_frontRightMotor;
+    private WPI_VictorSPX m_backLeftMotor;
+    private WPI_TalonSRX m_backRightMotor;
 
     // Declarations for the speed controller groups
     private SpeedControllerGroup m_leftMotors;
@@ -42,10 +44,10 @@ public class Drivetrain {
     Drivetrain(int frontLeftChannel, int frontRightChannel, int backLeftChannel, int backRightChannel) {
         
         // Initializes the motorControllers using the ports passed in
-        m_frontLeftMotor = new VictorSP(frontLeftChannel);
-        m_frontRightMotor = new VictorSP(frontRightChannel);
-        m_backLeftMotor = new VictorSP(backLeftChannel);
-        m_backRightMotor = new VictorSP(backRightChannel);
+        m_frontLeftMotor = new WPI_VictorSPX(frontLeftChannel);
+        m_frontRightMotor = new WPI_TalonSRX(frontRightChannel);
+        m_backLeftMotor = new WPI_VictorSPX(backLeftChannel);
+        m_backRightMotor = new WPI_TalonSRX(backRightChannel);
         
         // Initializes the motor controller groups (left side motors and right side motors)
         m_leftMotors = new SpeedControllerGroup(m_frontLeftMotor, m_backLeftMotor);
@@ -53,6 +55,9 @@ public class Drivetrain {
         
         // Initializes the drivetrain with the motor controller groups
         m_drivetrain = new DifferentialDrive(m_leftMotors, m_rightMotors);
+
+        currentSpeed = 0;
+        currentRotate = 0;
     }
 
 
@@ -78,13 +83,13 @@ public class Drivetrain {
 
         // If desired speed is higher than current speed by a margin larger than kMaxDeltaSpeed,
         // Increase current speed by kMaxDelaSpeed's amount
-        if (desiredSpeed > (currentSpeed + kMaxDeltaSpeed)) {
-            currentSpeed += kMaxDeltaSpeed;
+        if (desiredSpeed > (currentSpeed + MAX_DELTA_SPEED)) {
+            currentSpeed += MAX_DELTA_SPEED;
         }
         // If desired speed is less than current speed by a margin larger than kMaxDeltaSpeed
         // Decrease current speed by kMaxDeltaSpeed's amount
-        else if (desiredSpeed < (currentSpeed - kMaxDeltaSpeed)) {
-            currentSpeed -= kMaxDeltaSpeed;
+        else if (desiredSpeed < (currentSpeed - MAX_DELTA_SPEED)) {
+            currentSpeed -= MAX_DELTA_SPEED;
         }
         // If desired speed is within kMaxDeltaSpeed's margin to current speed,
         // Set current speed to match desired speed
@@ -94,13 +99,13 @@ public class Drivetrain {
 
         // If desired rotate is higher than current rotate by a margin larger than kMaxDeltaSpeed,
         // Increase current rotate by kMaxDelaSpeed's amount
-        if (desiredRotate > (currentRotate + kMaxDeltaSpeed)) {
-            currentRotate += kMaxDeltaSpeed;
+        if (desiredRotate > (currentRotate + MAX_DELTA_SPEED)) {
+            currentRotate += MAX_DELTA_SPEED;
         }
         // If desired rotate is less than current rotate by a margin larger than kMaxDeltaSpeed
         // Decrease current rotate by kMaxDeltaSpeed's amount
-        else if (desiredRotate < (currentRotate - kMaxDeltaSpeed)) {
-            currentRotate -= kMaxDeltaSpeed;
+        else if (desiredRotate < (currentRotate - MAX_DELTA_SPEED)) {
+            currentRotate -= MAX_DELTA_SPEED;
         }
         // If desired rotate is within kMaxDeltaSpeed's margin to current rotate,
         // Set current rotate to match desired speed
