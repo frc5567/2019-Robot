@@ -39,7 +39,7 @@ public class Drivetrain {
      * @param backLeftChannel The channel of the back left motor controller
      * @param backRightChannel The channel of the back right motor controller
      */
-    public Drivetrain(int frontLeftChannel, int frontRightChannel, int backLeftChannel, int backRightChannel) {
+    Drivetrain(int frontLeftChannel, int frontRightChannel, int backLeftChannel, int backRightChannel) {
         
         // Initializes the motorControllers using the ports passed in
         m_frontLeftMotor = new VictorSP(frontLeftChannel);

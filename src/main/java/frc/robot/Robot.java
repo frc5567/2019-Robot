@@ -92,7 +92,8 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
-
+    // Test drivetrain included, uses Left stick Y for speed, Right stick X for turning, and A button is held for quickturn
+    drivetrain.curvatureDrive(pilotController.getLeftStickY(), pilotController.getRighStickX(), pilotController.getAButton());
   }
 
   /**
