@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.VictorSP;
 
+
 //we imported the methods for the differential drive
 
 
@@ -27,18 +28,4 @@ public class DriveTrain {
     DifferentialDrive m_drive = new DifferentialDrive(m_left, m_right);
     
 
-  
-
-    //Declaring drivetrain Speed controllers
- 
-    //Declaring speed controller group
-
-
-    //Assign variable values
- 
-    //Set left & right joystick values to motor power left & motor power right variables
- 
-
-    //Set drive train power to motor variables
-*/
 }

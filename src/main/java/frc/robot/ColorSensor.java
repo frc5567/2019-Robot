@@ -13,7 +13,7 @@ public class ColorSensor {
     ByteBuffer buffer = java.nio.ByteBuffer.allocate(capacity);
     I2C sensor;
     public ColorSensor(int address){
-        sensor = new I2C(I2C.Port.kOnboard, address );
+        sensor = new I2C(I2C.Port.kOnboard, address);
         sensor.write(0x00, 192); //b11000000 ... Power on, color sensor on. (page 20 of sensor datasheet)
     }
     public int red(){
