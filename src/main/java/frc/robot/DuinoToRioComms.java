@@ -11,7 +11,8 @@ public class DuinoToRioComms {
     }
 
     public double pixyRead() {
-        return Double.parseDouble(duinoPort.readString());
+        String sPixyOut = new String(duinoPort.read(8));
+        return Double.parseDouble(sPixyOut);
     }
 
 }
