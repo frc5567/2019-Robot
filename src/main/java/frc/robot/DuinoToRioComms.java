@@ -8,11 +8,17 @@ public class DuinoToRioComms {
 
     public DuinoToRioComms() {
         duinoPort = new SerialPort(9600, SerialPort.Port.kUSB);
+        System.out.println("Exit Constructor");
     }
 
-    public double pixyRead() {
-        String sPixyOut = new String(duinoPort.read(8));
-        return Double.parseDouble(sPixyOut);
+    public String pixyRead() {
+        System.out.println("Enter pixyRead");
+        String sPixyOut = duinoPort.readString();
+        System.out.println("Conclude Read");
+        System.out.println(sPixyOut);
+        System.out.println("Exit Read");
+        return sPixyOut;
+      //  return Double.parseDouble(sPixyOut);
     }
 
 }
