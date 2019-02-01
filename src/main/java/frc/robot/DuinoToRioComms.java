@@ -1,6 +1,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.SerialPort;
+import java.nio.ByteBuffer;
 
 public class DuinoToRioComms {
 
@@ -11,14 +12,28 @@ public class DuinoToRioComms {
         System.out.println("Exit Constructor");
     }
 
-    public String pixyRead() {
+    public void pixyRead(int command) {
         System.out.println("Enter pixyRead");
-        String sPixyOut = duinoPort.readString();
+        sendCommand(command);
+        readData(command);
         System.out.println("Conclude Read");
-        System.out.println(sPixyOut);
         System.out.println("Exit Read");
-        return sPixyOut;
-      //  return Double.parseDouble(sPixyOut);
     }
 
+    private void sendCommand(int command) {
+        byte[] commandByte = ByteBuffer.allocate(4).putInt(command).array();
+        duinoPort.write(commandByte, 4);
+    }
+
+    private double readData(int command) {
+        String sPixyOut = duinoPort.readString();
+        if (command == 0) {
+            System.out.println("degToTarget" + sPixyOut);
+        } else if (command == 1) {
+            System.out.println("distToTarget" + sPixyOut);
+        } else {
+            System.out.println("Invalid Command");
+        }
+        return Double.parseDouble(sPixyOut);
+    }
 }

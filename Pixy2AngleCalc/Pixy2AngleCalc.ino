@@ -51,6 +51,9 @@ double xInPerPix;
 //  Degrees from the base of the robot to the target point
 double degToTarget;
 
+//  Command int recieved from the rio, where 0 is degToTarget, 1 is inToTarget, 2 is 
+int incCommand = 0;
+
 //  Convert degrees to radians
 double degToRad (double degInput) {
   double radOutput = degInput * (pi/180);
@@ -68,7 +71,6 @@ void calcInPerPix (double height, double angle, double tailX, double tailY) {
   xInPerPix = xWidth/78;
 }
 
-
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
@@ -80,10 +82,22 @@ void setup() {
   pixy.changeProg("line");
 }
 
+void receiveCommand () {
+  incCommand = Serial.read();
+}
+
+void sendData (int command) {
+  if (command == 0){
+    Serial.print(degToTarget);
+  }
+  else if (command == 1) {
+    //  5.5 is a temp value, this needs to be updated in the future editions
+    Serial.print(5.5);
+  }
+}
+
 void loop() {
   // put your main code here, to run repeatedly:
-  int i;
-  char buf[128];
   pixy.line.getMainFeatures();
 //  lowPixy.ccc.getBlocks();
   //  Serial.print("enter");
@@ -105,15 +119,11 @@ void loop() {
 //  Serial.print("exit");
   calcInPerPix(cameraHeight, cameraAngle, pixy.line.vectors->m_x0, pixy.line.vectors->m_y0);
   degToTarget = atan((xDist*xInPerPix)/distRobotToTarget) * (180/pi);
-  //char *cDegToTarget = new char[16];
-  //sprintf(cDegToTarget, "%.2f", degToTarget);
-  //Serial.print(cDegToTarget);
+
+  if (Serial.available() > 0) {
+    receiveCommand();
+    sendData(incCommand);
+  }
   Serial.print(degToTarget);
   Serial.print('\n');
-//  Serial.print("X: ");
-//  Serial.print(pixy.line.vectors->m_x0);
-//  Serial.print("Y: ");
-//  Serial.print(pixy.line.vectors->m_y0);
-//  Serial.print("Theta: ");
-//  Serial.println(degToTarget);
 }
