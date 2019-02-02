@@ -52,7 +52,7 @@ double xInPerPix;
 double degToTarget;
 
 //  Command int recieved from the rio, where 0 is degToTarget, 1 is inToTarget, 2 is 
-int incCommand = 0;
+int incCommand = -1;
 
 //  Convert degrees to radians
 double degToRad (double degInput) {
@@ -83,16 +83,19 @@ void setup() {
 }
 
 void receiveCommand () {
-  incCommand = Serial.read();
+  incCommand = (int)Serial.read();
+  Serial.flush();
 }
 
 void sendData (int command) {
   if (command == 0){
     Serial.print(degToTarget);
+    incCommand = -1;
   }
   else if (command == 1) {
     //  5.5 is a temp value, this needs to be updated in the future editions
     Serial.print(5.5);
+    incCommand = -1;
   }
 }
 
