@@ -44,6 +44,8 @@ public class Robot extends TimedRobot {
 
     // Instantiate our duino to rio communication port
     duinoToRio = new DuinoToRioComms();
+
+    //  Instantiatie a test controller for testing
     testController = new XboxController(0);
 
   }
