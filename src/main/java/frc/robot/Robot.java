@@ -13,6 +13,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.XboxController;
 
+import frc.robot.Drivetrain;
+import frc.robot.Controller;
+
 /**
  * The VM is configured to automatically run this class, and to call the
  * functions corresponding to each mode, as described in the TimedRobot
@@ -21,33 +24,28 @@ import edu.wpi.first.wpilibj.XboxController;
  * project.
  */
 public class Robot extends TimedRobot {
-  private static final String kDefaultAuto = "Default";
-  private static final String kCustomAuto = "My Auto";
-  private String m_autoSelected;
-  private final SendableChooser<String> m_chooser = new SendableChooser<>();
-
-  // A test controller for simplicity. Will be removed when pulling into master
-  XboxController testController;
 
   // Declare our duino communication port
   DuinoToRioComms duinoToRio;
 
+  Drivetrain drivetrain;
+  Controller pilotController;
+  Controller copilotController;
+
+  Robot() { 
+    drivetrain  = new Drivetrain(0, 1, 2, 3);
+    pilotController = new Controller(0);
+    copilotController = new Controller(1);
+
+    // Instantiate our duino to rio communication port
+    duinoToRio = new DuinoToRioComms();
+  }
   /**
    * This function is run when the robot is first started up and should be used
    * for any initialization code.
    */
   @Override
   public void robotInit() {
-    m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
-    m_chooser.addOption("My Auto", kCustomAuto);
-    SmartDashboard.putData("Auto choices", m_chooser);
-
-    // Instantiate our duino to rio communication port
-    duinoToRio = new DuinoToRioComms();
-
-    //  Instantiatie a test controller for testing
-    testController = new XboxController(0);
-
   }
 
   /**
@@ -77,9 +75,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
-    m_autoSelected = m_chooser.getSelected();
-    // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
-    System.out.println("Auto selected: " + m_autoSelected);
+    
   }
 
   /**
@@ -87,15 +83,15 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousPeriodic() {
-    switch (m_autoSelected) {
-    case kCustomAuto:
-      // Put custom auto code here
-      break;
-    case kDefaultAuto:
-    default:
-      // Put default auto code here
-      break;
-    }
+    
+  }
+
+  /**
+   * This function is called once before the operator control period starts
+   */
+  @Override
+  public void teleopInit() {
+    
   }
 
   /**
@@ -103,12 +99,22 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
-    if (testController.getAButtonReleased()) {
+    if (pilotController.getAButtonReleased()) {
       duinoToRio.pixyRead(2);
     }
-    else if (testController.getBButtonReleased()) {
+    else if (pilotController.getBButtonReleased()) {
       duinoToRio.pixyRead(1);
     }
+    // Test drivetrain included, uses Left stick Y for speed, Right stick X for turning, and A button is held for quickturn
+    drivetrain.curvatureDrive(pilotController.getLeftStickY(), pilotController.getRighStickX(), pilotController.getAButton());
+  }
+
+  /**
+   * This function is called once before starting test mdoe
+   */
+  @Override
+  public void testInit() {
+    
   }
 
   /**
@@ -116,5 +122,6 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void testPeriodic() {
+    
   }
 }
