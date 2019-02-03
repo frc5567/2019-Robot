@@ -5,14 +5,14 @@
 package frc.robot;
 
 import frc.robot.RobotMap;
-
+import sun.management.Sensor;
 // Imports needed for motor controllers, speedc controller groups, and the drivetrain
 import edu.wpi.first.wpilibj.drive.DifferentialDrive; 
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 // These imports are extending SpeedController, allowing us to use SpeedControllerGroup
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
-
+import com.ctre.phoenix.motorcontrol.SensorCollection;
 
 public class Drivetrain {
 
@@ -35,6 +35,9 @@ public class Drivetrain {
     private WPI_TalonSRX m_backLeftMotor;
     private WPI_TalonSRX m_backRightMotor;
 
+    private SensorCollection m_leftDriveEncoder;
+    private SensorCollection m_rightDriveEncoder;
+
     // Declarations for the speed controller groups
     private SpeedControllerGroup m_leftMotors;
     private SpeedControllerGroup m_rightMotors;
@@ -53,6 +56,12 @@ public class Drivetrain {
         m_frontRightMotor = RobotMap.m_frontRightDriveMotor;
         m_backLeftMotor = RobotMap.m_backLeftDriveMotor;
         m_backRightMotor = RobotMap.m_backRightDriveMotor;
+
+        m_leftDriveEncoder = RobotMap.m_leftDriveEncoder;
+        m_rightDriveEncoder = RobotMap.m_rightDriveEncoder;
+
+        m_leftDriveEncoder.setQuadraturePosition(0, 0);
+        m_rightDriveEncoder.setQuadraturePosition(0, 0);
         
         // Initializes the motor controller groups (left side motors and right side motors)
         m_leftMotors = new SpeedControllerGroup(m_frontLeftMotor, m_backLeftMotor);
@@ -128,5 +137,37 @@ public class Drivetrain {
 
         // Pass current speed, current rotate, and the quick turn boolean into the Differential Drive's curatureDrive method
         m_drivetrain.curvatureDrive(m_currentSpeed, m_currentRotate, m_quickTurnEnabled);
+    }
+
+    /**
+     * Returns the encoder position of the drivetrain left side encoder
+     * @return The position of the left side encoder
+     */
+    public int getLeftDriveEncoderPosition() {
+        return m_leftDriveEncoder.getQuadraturePosition();
+    }
+
+    /**
+     * Returns the encoder position of the drivetrain right side encoder
+     * @return The position of the right side encoder
+     */
+    public int getRightDriveEncoderPosition() {
+        return m_rightDriveEncoder.getQuadraturePosition();
+    }
+
+    /**
+     * Returns the encoder velocity of the drivetrain left side encoder
+     * @return The velocity of the left side encoder
+     */
+    public int getLeftDriveEncoderVelocity() {
+        return m_leftDriveEncoder.getQuadratureVelocity();
+    }
+
+    /**
+     * Returns the encoder velocity of the drivetrain right side encoder
+     * @return The velocity of the right side encoder
+     */
+    public int getRightDriveEncoderVelocity() {
+        return m_rightDriveEncoder.getQuadratureVelocity();
     }
 }

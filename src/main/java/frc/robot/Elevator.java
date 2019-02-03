@@ -7,9 +7,9 @@ package frc.robot;
 import frc.robot.RobotMap;
 
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.SpeedController;
-import edu.wpi.first.wpilibj.MotorSafety;
+
+import com.ctre.phoenix.motorcontrol.SensorCollection;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 public class Elevator {
 
@@ -45,10 +45,10 @@ public class Elevator {
     DigitalInput m_limitBottom;
 
     // Declaring the encoder for the elevator height.
-    Encoder encoder;
+    SensorCollection m_elevatorEncoder;
 
     // Declaring the speed controller for the elevator.
-    SpeedController raiseElevatorMotor;
+    WPI_TalonSRX raiseElevatorMotor;
 
     // This constructor is initializing in creating a new instance of an elevator with limit port switch definitions.
    
@@ -59,27 +59,25 @@ public class Elevator {
         m_limitBottom = RobotMap.m_elevatorLimitBottom;
         
         // Instantiating encoder for the elevator height
-        encoder = RobotMap.m_elevatorEncoder;
+        m_elevatorEncoder = RobotMap.m_elevatorEncoder;
 
-        //  Sets the distance for each encoder pulse
-        encoder.setDistancePerPulse(distancePerPulse);
-        
-        //  Sets elevator height variable equal to the encoder distance
-     //   double m_elevatorHeight = encoder.getDistance();
-
+        // Zeroes the encoder
+        m_elevatorEncoder.setQuadraturePosition(0, 0);
     }
-    
-    // defines elevator height 
- public void getHeight(double m_elevatorHeight){
 
-    m_elevatorHeight = encoder.getDistance();
-    double START_HEIGHT = 4;
-   double m_totalElevatorHeight = m_elevatorHeight + START_HEIGHT;
-   System.out.println (m_totalElevatorHeight);
+    /**
+     * Returns the current position of the elevator reported by the encoder
+     * @return The position of the elevator encoder
+     */
+    public int getElevatorEncoderPosition() {
+        return m_elevatorEncoder.getQuadraturePosition();
+    }
 
- }    
-
-
-
-
+    /**
+     * Returns the current velocity of the elevator reported by the elevator encoder
+     * @return The velocity of the elevator encoder
+     */
+    public int getElevatorEncoderVelocity() {
+        return m_elevatorEncoder.getQuadratureVelocity();
+    }
 }
