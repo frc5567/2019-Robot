@@ -1,0 +1,39 @@
+// this enum difines the buttons and what they do when active
+
+public class GamePad extends GenericHID 
+
+
+ public GamePad(final int port) {
+    super(port);
+  }
+
+  private enum Button {
+  
+  
+// change the numbers to the correct port number
+    LOW_HATCH_CARGO(1),
+    MEDIUM_HATCH_CARGO(2),
+    HIGH_HATCH_CARGO(3),
+    PICKUP_HATCH_CARGO(4),
+    HATCH_TO_CARGO(5),
+    MANUAL_TO_AUTO(6),
+    OPEN_HATCH(7),
+    CLOSE_HATCH(8),
+    LIFT_HATCH_ARM(9),
+    DROP_HATCH_ARM(10);
+    
+   }
+   
+   
+   public boolean getGPButtonReleased(Button button) {
+      return getRawButtonReleased(button.value);
+  }
+  
+  public boolean getGPButtonPressed(Button button){
+      return 
+  
+     Button(int value) {
+      this.value = value;
+      
+     }
+    }
