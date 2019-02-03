@@ -13,32 +13,53 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 public class Elevator {
 
-   public enum Height{
-      cargoL1 (27.5),        // Height from carpet to port in inches
-      cargoL2 (28.0),        // Height from port L1 to L2 in inches
-      cargoL3 (28.0),        // Height from port L2 to L3 in inches
-      hatchL1 (19.0),        // Height from carpet to hatch in inches
-      hatchL2 (28.0),        // Height from hatch L1 to L2 in inches
-      hatchL3 (28.0);        // Height from hatch L2 to L3 in inches
-      
-      Height(double deltaInches){
-
-      }
-
-   }
-
-   public enum PercentMaxRobotSpeed{
-      cargoL1 (0.80),         // Percent of max speed we use when elevator is at cargo L1
-      cargoL2 (0.60),         // Percent of max speed we use when elevator is at cargo L2
-      cargoL3 (0.40),         // Percent of max speed we use when elevator is at cargo L3
-      hatchL1 (0.90),         // Percent of max speed we use when elevator is at hatch L1
-      hatchL2 (0.65),         // Percent of max speed we use when elevator is at hatch L2
-      hatchL3 (0.45);         // Percent of max speed we use when elevator is at hatch L3
-
-      PercentMaxRobotSpeed(double percent){
-         
-      }
-   }
+    public enum State{
+        LEVEL_ZERO   (0.0 , 1.0 , 1.0),
+        CARGO_L1 (16.75 , 0.80 , 0.50),
+        CARGO_L2 (44.75 , 0.60 , 0.30),
+        CARGO_L3 (72.75 , 0.40 , 0.20),
+        HATCH_L1 (8.25 , 0.90 , 0.50),
+        HATCH_L2 (36.25 , 0.65 , 0.30),
+        HATCH_L3 (64.25 , 0.45 , 0.20);
+  
+        private double deltaHeightInches;
+        private double maxSpeedPercent;
+        private double maxAngleRate;
+  
+        /**
+         * 
+         * 
+         * @param deltaInches Change in height from position zero in inches.
+         * @param maxSpeedModifier Percent of our max speed we use when the elevator is in this state.
+         * @param maxAngleRate How fast our angle motor can move when the elevator is in this state.
+         */
+        State(double deltaInches , double maxSpeedModifier , double maxAngleRate){
+           this.deltaHeightInches = deltaInches;
+           this.maxSpeedPercent = maxSpeedModifier;
+           this.maxAngleRate = maxAngleRate;
+        }
+  
+        /**
+         * @return The change in height from initial to current state.
+         */
+        public double getDeltaHeight(){
+           return this.deltaHeightInches;
+        }
+  
+        /**
+         * @return The max speed modifier based on the elevator's current state.
+         */
+        public double maxSpeedModifier(){
+           return this.maxSpeedPercent;
+        }
+  
+        /**
+         * @return The max speed we turn our angle arm at the elevator's current state.
+         */
+        public double maxAngleRate(){
+           return this.maxAngleRate;
+        }
+     }
 
     // Defining the limit switches at the top and bottom of the elevator.
     DigitalInput m_limitTop;
@@ -50,11 +71,14 @@ public class Elevator {
     // Declaring the speed controller for the elevator.
     WPI_TalonSRX raiseElevatorMotor;
 
-    // This constructor is initializing in creating a new instance of an elevator with limit port switch definitions.
+    // Declaring the elevator state enum.
+   State currentState;
+
+   // This constructor is initializing in creating a new instance of an elevator with limit port switch definitions.
    
     Elevator(double distancePerPulse){
 
-        // Creating a new instance of DigitalInput with the assigned port number.
+      // Creating a new instance of DigitalInput with the assigned port number.
         m_limitTop = RobotMap.m_elevatorLimitTop;
         m_limitBottom = RobotMap.m_elevatorLimitBottom;
         

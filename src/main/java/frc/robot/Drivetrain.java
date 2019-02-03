@@ -5,7 +5,7 @@
 package frc.robot;
 
 import frc.robot.RobotMap;
-import sun.management.Sensor;
+
 // Imports needed for motor controllers, speedc controller groups, and the drivetrain
 import edu.wpi.first.wpilibj.drive.DifferentialDrive; 
 import edu.wpi.first.wpilibj.SpeedControllerGroup;

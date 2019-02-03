@@ -28,13 +28,19 @@ public class Robot extends TimedRobot {
   Controller m_pilotController;
 
   Robot() {
+
+    // Declare our duino communication port
+  DuinoToRioComms duinoToRio;
     
     m_drivetrain  = RobotMap.m_drivetrain;
     m_pilotController = RobotMap.m_pilotController;
+
+    // Instantiate our duino to rio communication port
+    duinoToRio = new DuinoToRioComms();
   }
   /**
-   * This function is run when the robot is first started up and should be
-   * used for any initialization code.
+   * This function is run when the robot is first started up and should be used
+   * for any initialization code.
    */
   @Override
   public void robotInit() {
@@ -42,12 +48,13 @@ public class Robot extends TimedRobot {
   }
 
   /**
-   * This function is called every robot packet, no matter the mode. Use
-   * this for items like diagnostics that you want ran during disabled,
-   * autonomous, teleoperated and test.
+   * This function is called every robot packet, no matter the mode. Use this for
+   * items like diagnostics that you want ran during disabled, autonomous,
+   * teleoperated and test.
    *
-   * <p>This runs after the mode specific periodic functions, but before
-   * LiveWindow and SmartDashboard integrated updating.
+   * <p>
+   * This runs after the mode specific periodic functions, but before LiveWindow
+   * and SmartDashboard integrated updating.
    */
   @Override
   public void robotPeriodic() {
@@ -55,14 +62,15 @@ public class Robot extends TimedRobot {
 
   /**
    * This autonomous (along with the chooser code above) shows how to select
-   * between different autonomous modes using the dashboard. The sendable
-   * chooser code works with the Java SmartDashboard. If you prefer the
-   * LabVIEW Dashboard, remove all of the chooser code and uncomment the
-   * getString line to get the auto name from the text box below the Gyro
+   * between different autonomous modes using the dashboard. The sendable chooser
+   * code works with the Java SmartDashboard. If you prefer the LabVIEW Dashboard,
+   * remove all of the chooser code and uncomment the getString line to get the
+   * auto name from the text box below the Gyro
    *
-   * <p>You can add additional auto modes by adding additional comparisons to
-   * the switch structure below with additional strings. If using the
-   * SendableChooser make sure to add them to the chooser code above as well.
+   * <p>
+   * You can add additional auto modes by adding additional comparisons to the
+   * switch structure below with additional strings. If using the SendableChooser
+   * make sure to add them to the chooser code above as well.
    */
   @Override
   public void autonomousInit() {
@@ -90,6 +98,12 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
+    // if (pilotController.getAButtonReleased()) {
+    //   duinoToRio.pixyRead(2);
+    // }
+    // else if (pilotController.getBButtonReleased()) {
+    //   duinoToRio.pixyRead(1);
+    // }
     // Test drivetrain included, uses Left stick Y for speed, Right stick X for turning, and A button is held for quickturn
     m_drivetrain.curvatureDrive(m_pilotController.getLeftStickY(), m_pilotController.getRighStickX());
   }
