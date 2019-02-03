@@ -99,12 +99,12 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
-    if (pilotController.getAButtonReleased()) {
-      duinoToRio.pixyRead(2);
-    }
-    else if (pilotController.getBButtonReleased()) {
-      duinoToRio.pixyRead(1);
-    }
+    // if (pilotController.getAButtonReleased()) {
+    //   duinoToRio.pixyRead(2);
+    // }
+    // else if (pilotController.getBButtonReleased()) {
+    //   duinoToRio.pixyRead(1);
+    // }
     // Test drivetrain included, uses Left stick Y for speed, Right stick X for turning, and A button is held for quickturn
     drivetrain.curvatureDrive(pilotController.getLeftStickY(), pilotController.getRighStickX(), pilotController.getAButton());
   }
