@@ -104,7 +104,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     if (testController.getAButtonReleased()) {
-      duinoToRio.pixyRead(0);
+      duinoToRio.pixyRead(2);
     }
     else if (testController.getBButtonReleased()) {
       duinoToRio.pixyRead(1);

@@ -54,6 +54,12 @@ double degToTarget;
 //  Command int recieved from the rio, where 0 is degToTarget, 1 is inToTarget, 2 is 
 int incCommand = -1;
 
+//  Comment
+byte buf[4];
+
+//  Temp Lock flag to prevent repeated command reading
+bool tempLock = true;
+
 //  Convert degrees to radians
 double degToRad (double degInput) {
   double radOutput = degInput * (pi/180);
@@ -83,25 +89,35 @@ void setup() {
 }
 
 void receiveCommand () {
-  incCommand = (int)Serial.read();
-  Serial.flush();
+  if(tempLock){
+    incCommand = (int)Serial.readBytes(buf, 4);
+    Serial.flush();
+    tempLock = false;
+  }
 }
 
 void sendData (int command) {
-  if (command == 0){
-    Serial.print(degToTarget);
-    incCommand = -1;
+  if (command == 2){
+    Serial.print(/**degToTarget*/incCommand);
   }
   else if (command == 1) {
     //  5.5 is a temp value, this needs to be updated in the future editions
-    Serial.print(5.5);
-    incCommand = -1;
+    Serial.print(/**5.5*/incCommand);
   }
+  incCommand = -2;
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
   pixy.line.getMainFeatures();
+  calcInPerPix(cameraHeight, cameraAngle, pixy.line.vectors->m_x0, pixy.line.vectors->m_y0);
+  degToTarget = atan((xDist*xInPerPix)/distRobotToTarget) * (180/pi);
+
+  if ((Serial.available() > 0) && (incCommand != -2)) {
+    receiveCommand();
+    sendData(incCommand);
+  }
+
 //  lowPixy.ccc.getBlocks();
   //  Serial.print("enter");
   // If there are detect blocks, print them!
@@ -115,18 +131,10 @@ void loop() {
 //      lowPixy.ccc.blocks[i].print();
 //    }
 //  }
+//
 //  else {
 //    Serial.println("No Blocks");
 //  }
   
 //  Serial.print("exit");
-  calcInPerPix(cameraHeight, cameraAngle, pixy.line.vectors->m_x0, pixy.line.vectors->m_y0);
-  degToTarget = atan((xDist*xInPerPix)/distRobotToTarget) * (180/pi);
-
-  if (Serial.available() > 0) {
-    receiveCommand();
-    sendData(incCommand);
-  }
-  Serial.print(degToTarget);
-  Serial.print('\n');
 }

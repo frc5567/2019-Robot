@@ -56,7 +56,7 @@ public class DuinoToRioComms {
         String m_sPixyOut = m_duinoPort.readString();
 
         //  Checks command and prints based off of that print
-        if (command == 0) {
+        if (command == 2) {
             System.out.println("degToTarget" + m_sPixyOut);
         } else if (command == 1) {
             System.out.println("distToTarget" + m_sPixyOut);
