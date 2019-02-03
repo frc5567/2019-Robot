@@ -12,13 +12,13 @@ import edu.wpi.first.wpilibj.MotorSafety;
 public class Elevator {
 
    public enum State{
-      LEVEL_ZERO  (0.0 , 1.0 , 1.0),
-      CARGO_L1 (27.5 , 0.80 , 0.50),
-      CARGO_L2 (28.0 , 0.60 , 0.30),
-      CARGO_L3 (28.0 , 0.40 , 0.20),
-      HATCH_L1 (19.0 , 0.90 , 0.50),
-      HATCH_L2 (28.0 , 0.65 , 0.30),
-      HATCH_L3 (28.0 , 0.45 , 0.20);
+      LEVEL_ZERO   (0.0 , 1.0 , 1.0),
+      CARGO_L1 (16.75 , 0.80 , 0.50),
+      CARGO_L2 (44.75 , 0.60 , 0.30),
+      CARGO_L3 (72.75 , 0.40 , 0.20),
+      HATCH_L1 (8.25 , 0.90 , 0.50),
+      HATCH_L2 (36.25 , 0.65 , 0.30),
+      HATCH_L3 (64.25 , 0.45 , 0.20);
 
       private double deltaHeightInches;
       private double maxSpeedPercent;
