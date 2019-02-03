@@ -51,7 +51,7 @@ double xInPerPix;
 //  Degrees from the base of the robot to the target point
 double degToTarget;
 
-//  Command int recieved from the rio, where 0 is degToTarget, 1 is inToTarget, 2 is 
+//  Command int recieved from the rio, where 2 is degToTarget, 1 is inToTarget,
 int incCommand = -1;
 
 //  Comment
@@ -119,8 +119,8 @@ void loop() {
   }
 
 //  lowPixy.ccc.getBlocks();
-  //  Serial.print("enter");
-  // If there are detect blocks, print them!
+//  Serial.print("enter");
+//  If there are detect blocks, print them!
 //  if (lowPixy.ccc.numBlocks){
 //    Serial.print("Detected ");
 //    Serial.println(lowPixy.ccc.numBlocks);
@@ -135,6 +135,6 @@ void loop() {
 //  else {
 //    Serial.println("No Blocks");
 //  }
-  
+//  
 //  Serial.print("exit");
 }
