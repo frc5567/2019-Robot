@@ -11,73 +11,94 @@ import edu.wpi.first.wpilibj.MotorSafety;
 
 public class Elevator {
 
-   public enum Height{
-      cargoL1 (27.5),        // Height from carpet to port in inches
-      cargoL2 (28.0),        // Height from port L1 to L2 in inches
-      cargoL3 (28.0),        // Height from port L2 to L3 in inches
-      hatchL1 (19.0),        // Height from carpet to hatch in inches
-      hatchL2 (28.0),        // Height from hatch L1 to L2 in inches
-      hatchL3 (28.0);        // Height from hatch L2 to L3 in inches
-      
-      Height(double deltaInches){
+   public enum State{
+      LEVEL_ZERO  (0.0 , 1.0 , 1.0),
+      CARGO_L1 (27.5 , 0.80 , 0.50),
+      CARGO_L2 (28.0 , 0.60 , 0.30),
+      CARGO_L3 (28.0 , 0.40 , 0.20),
+      HATCH_L1 (19.0 , 0.90 , 0.50),
+      HATCH_L2 (28.0 , 0.65 , 0.30),
+      HATCH_L3 (28.0 , 0.45 , 0.20);
 
+      private double deltaHeightInches;
+      private double maxSpeedPercent;
+      private double maxAngleRate;
+
+      /**
+       * 
+       * 
+       * @param deltaInches Change in height from position zero in inches.
+       * @param maxSpeedModifier Percent of our max speed we use when the elevator is in this state.
+       * @param maxAngleRate How fast our angle motor can move when the elevator is in this state.
+       */
+      State(double deltaInches , double maxSpeedModifier , double maxAngleRate){
+         this.deltaHeightInches = deltaInches;
+         this.maxSpeedPercent = maxSpeedModifier;
+         this.maxAngleRate = maxAngleRate;
       }
 
-   }
+      /**
+       * @return The change in height from initial to current state.
+       */
+      public double getDeltaHeight(){
+         return this.deltaHeightInches;
+      }
 
-   public enum PercentMaxRobotSpeed{
-      cargoL1 (0.80),         // Percent of max speed we use when elevator is at cargo L1
-      cargoL2 (0.60),         // Percent of max speed we use when elevator is at cargo L2
-      cargoL3 (0.40),         // Percent of max speed we use when elevator is at cargo L3
-      hatchL1 (0.90),         // Percent of max speed we use when elevator is at hatch L1
-      hatchL2 (0.65),         // Percent of max speed we use when elevator is at hatch L2
-      hatchL3 (0.45);         // Percent of max speed we use when elevator is at hatch L3
+      /**
+       * @return The max speed modifier based on the elevator's current state.
+       */
+      public double maxSpeedModifier(){
+         return this.maxSpeedPercent;
+      }
 
-      PercentMaxRobotSpeed(double percent){
-         
+      /**
+       * @return The max speed we turn our angle arm at the elevator's current state.
+       */
+      public double maxAngleRate(){
+         return this.maxAngleRate;
       }
    }
 
-    // Defining the limit switches at the top and bottom of the elevator.
-    DigitalInput m_limitTop;
-    DigitalInput m_limitBottom;
+   // Defining the limit switches at the top and bottom of the elevator.
+   DigitalInput m_limitTop;
+   DigitalInput m_limitBottom;
 
-    // Declaring the encoder for the elevator height.
-    Encoder encoder;
+   // Declaring the encoder for the elevator height.
+   Encoder encoder;
 
-    // Declaring the speed controller for the elevator.
-    SpeedController raiseElevatorMotor;
+   // Declaring the speed controller for the elevator.
+   SpeedController raiseElevatorMotor;
 
-    // This constructor is initializing in creating a new instance of an elevator with limit port switch definitions.
+   // Declaring the elevator state enum.
+   State currentState;
+
+   // This constructor is initializing in creating a new instance of an elevator with limit port switch definitions.
    
-    Elevator(int topLimitPort, int bottomLimitPort, double distancePerPulse){
+   Elevator(int topLimitPort, int bottomLimitPort, double distancePerPulse){
 
-        // Creating a new instance of DigitalInput with the assigned port number.
-        m_limitTop = new DigitalInput(topLimitPort);
-        m_limitBottom = new DigitalInput(bottomLimitPort);
+      // Creating a new instance of DigitalInput with the assigned port number.
+      m_limitTop = new DigitalInput(topLimitPort);
+      m_limitBottom = new DigitalInput(bottomLimitPort);
         
-        // Instantiating encoder for the elevator height
-        encoder = new Encoder(2, 1, false, Encoder.EncodingType.k1X);
+      // Instantiating encoder for the elevator height
+      encoder = new Encoder(2, 1, false, Encoder.EncodingType.k1X);
 
-        //  Sets the distance for each encoder pulse
-        encoder.setDistancePerPulse(distancePerPulse);
-        
-        //  Sets elevator height variable equal to the encoder distance
-     //   double m_elevatorHeight = encoder.getDistance();
+      //  Sets the distance for each encoder pulse
+      encoder.setDistancePerPulse(distancePerPulse);
+  
+      //  Sets elevator height variable equal to the encoder distance
+      //   double m_elevatorHeight = encoder.getDistance();
 
-    }
+   }
     
-    // defines elevator height 
- public void getHeight(double m_elevatorHeight){
+   // defines elevator height 
+   public void getHeight(double m_elevatorHeight){
 
-    m_elevatorHeight = encoder.getDistance();
-    double START_HEIGHT = 4;
+   m_elevatorHeight = encoder.getDistance();
+   double START_HEIGHT = 4;
    double m_totalElevatorHeight = m_elevatorHeight + START_HEIGHT;
    System.out.println (m_totalElevatorHeight);
-
- }    
-
-
+   }    
 
 
 }
