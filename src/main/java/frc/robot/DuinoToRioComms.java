@@ -6,8 +6,6 @@ import java.nio.ByteBuffer;
 public class DuinoToRioComms {
     //  Declaration for usb port to interact with the Duino
     private SerialPort m_duinoPort;
-    private Double dataDouble;
-    private Double dataReturned;
 
     /**
      *  Constructor for the commuication class object
@@ -19,25 +17,56 @@ public class DuinoToRioComms {
         //  Telemetry for testing communication: Print to ensure instantiation
         System.out.println("Exit Constructor");
     }
+    
+    /**
+     * Finds the degrees to target based on the high camera
+     * @return  Degrees to target. Will return Double.NaN if it fails to read properly.
+     */
+    public double getDegToTarget() {
+        Double m_degToTarget = Double.NaN;
+
+        //  
+        m_degToTarget = pixyRead(2);
+
+        return m_degToTarget;
+    }
+
+    /**
+     * Finds the distance to target (in) based on the high camera
+     * @return  Distance to target (in). Will return Double.NaN if it fails to read properly.
+     */
+    public double getDistToTarget() {
+        Double m_distToTarget = Double.NaN;
+
+        //  
+        m_distToTarget = pixyRead(1);
+
+        return m_distToTarget;
+    }
 
     /**
      * Method containing both communication methods
      * @param command The value of the command requested, where 0 requests degreesToTarget, 1 requests dist to target
      */
-    public void pixyRead(int command) {
+    private double pixyRead(int command) {
+        
+        Double m_dataReturned = Double.NaN;
+
         //  Telemetry for testing communication: Print on enter to check for run
         System.out.println("Enter pixyRead");
 
         //  Call the data methods with a command inputed in the Robot class
         sendCommand(command);
-        dataReturned = readData(command);
+        m_dataReturned = readData(command);
 
-        if(dataReturned.isNaN()){
+        if(m_dataReturned.isNaN()){
             System.out.println("Nothing Returned");
         }
 
         //  Telemetry for testing communication: Print for ensuring the method exits
         System.out.println("Exit Read");
+
+        return m_dataReturned;
     }
 
     /**
@@ -58,31 +87,21 @@ public class DuinoToRioComms {
      * @return A double parsed from the string passed by the Duino
      */
     private double readData(int command) {
+        Double m_dataDouble = Double.NaN;
+
         //  Allocates recieved data to a string
         String m_sPixyOut = m_duinoPort.readString();
 
-        //  Checks command and prints based off of that print
-        if (command == 2) {
-            System.out.println("degToTarget" + m_sPixyOut);
-            //  Parses and returns the double sent by the arduino
-            dataDouble =  Double.parseDouble(m_sPixyOut);
-        } 
-        else if (command == 1) {
-            System.out.println("distToTarget" + m_sPixyOut);
-            //  Parses and returns the double sent by the arduino
-            dataDouble = Double.parseDouble(m_sPixyOut);
+        if ( !(command == 2 || command == 1) ){
+            System.out.println("Invalid Command");
+            m_dataDouble = Double.NaN;
         }
         else {
-            System.out.println("Invalid Command");
-            dataDouble = Double.NaN;
+            //  Parses and returns the double sent by the arduino
+            m_dataDouble =  Double.parseDouble(m_sPixyOut);
         }
 
-        //  Checks if returned double is a number
-        if (dataDouble.isNaN()) {
-            return Double.NaN;
-        }
-        else {
-            return dataDouble;
-        }
+        return m_dataDouble;
+        
     }
 }

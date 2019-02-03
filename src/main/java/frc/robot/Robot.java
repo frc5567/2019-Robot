@@ -32,6 +32,11 @@ public class Robot extends TimedRobot {
   Controller pilotController;
   Controller copilotController;
 
+  //  Test doubles for storing return from read classes
+  Double degToTarget = Double.NaN;
+  Double distToTarget = Double.NaN;
+
+
   Robot() { 
     drivetrain  = new Drivetrain(0, 1, 2, 3);
     pilotController = new Controller(0);
@@ -99,12 +104,6 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
-    // if (pilotController.getAButtonReleased()) {
-    //   duinoToRio.pixyRead(2);
-    // }
-    // else if (pilotController.getBButtonReleased()) {
-    //   duinoToRio.pixyRead(1);
-    // }
     // Test drivetrain included, uses Left stick Y for speed, Right stick X for turning, and A button is held for quickturn
     drivetrain.curvatureDrive(pilotController.getLeftStickY(), pilotController.getRighStickX(), pilotController.getAButton());
   }
@@ -122,6 +121,17 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void testPeriodic() {
+    //  Code for testing comms with arduino
+    if (pilotController.getAButtonReleased()) {
+      //  Assigns return value. Checking NaN should occur here
+      degToTarget = duinoToRio.getDegToTarget();
+      System.out.println("degToTarget: " + degToTarget);
+    }
+    else if (pilotController.getBButtonReleased()) {
+      //  Assigns return value. Checking NaN should occur here
+      distToTarget = duinoToRio.getDistToTarget();
+      System.out.println("distToTarget: " + distToTarget);
+    }
     
   }
 }
