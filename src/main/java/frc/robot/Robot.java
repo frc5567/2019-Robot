@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 // import edu.wpi.first.wpilibj.Timer;
 import frc.robot.Drivetrain;
 import frc.robot.Controller;
+import frc.robot.RobotMap;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -20,23 +21,19 @@ import frc.robot.Controller;
  * project.
  */
 public class Robot extends TimedRobot {
-
-  // Declare our duino communication port
-  DuinoToRioComms duinoToRio;
-
-  Drivetrain drivetrain;
-  Controller pilotController;
-  Controller copilotController;
-
   //  Test doubles for storing return from read classes
   Double degToTarget = Double.NaN;
   Double distToTarget = Double.NaN;
 
+  // Declare our duino communication port
+  DuinoToRioComms duinoToRio;
 
-  Robot() { 
-    drivetrain  = new Drivetrain(0, 1, 2, 3);
-    pilotController = new Controller(0);
-    copilotController = new Controller(1);
+  Drivetrain m_drivetrain;
+  Controller m_pilotController;
+
+  Robot() {
+    m_drivetrain  = new Drivetrain();
+    m_pilotController = new Controller(RobotMap.PILOT_CONTROLLER_PORT);
 
     // Instantiate our duino to rio communication port
     duinoToRio = new DuinoToRioComms();
@@ -101,7 +98,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     // Test drivetrain included, uses Left stick Y for speed, Right stick X for turning, and A button is held for quickturn
-    drivetrain.curvatureDrive(pilotController.getLeftStickY(), pilotController.getRighStickX(), pilotController.getAButton());
+    m_drivetrain.curvatureDrive(m_pilotController.getLeftStickY(), m_pilotController.getRighStickX());
   }
 
   /**
@@ -118,7 +115,7 @@ public class Robot extends TimedRobot {
   @Override
   public void testPeriodic() {
     //  Code for testing comms with arduino
-    if (pilotController.getAButtonReleased()) {
+    if (m_pilotController.getAButtonReleased()) {
       //  Assigns return value. Checking NaN should occur here
       degToTarget = duinoToRio.getDegToTarget();
       if (distToTarget.isNaN()){
@@ -129,7 +126,7 @@ public class Robot extends TimedRobot {
       }
 
     }
-    else if (pilotController.getBButtonReleased()) {
+    else if (m_pilotController.getBButtonReleased()) {
       //  Assigns return value. Checking NaN should occur here
       distToTarget = duinoToRio.getDistToTarget();
       if (distToTarget.isNaN()){
