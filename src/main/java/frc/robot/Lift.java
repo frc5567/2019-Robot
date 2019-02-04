@@ -6,6 +6,7 @@ package frc.robot;
 //Importing the Victor and Talon speed controller groups
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
+
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 
 public class Lift{

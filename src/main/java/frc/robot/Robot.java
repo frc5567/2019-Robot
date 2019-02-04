@@ -19,7 +19,7 @@ public class Robot extends TimedRobot {
   Elevator m_elevator;
 
   XboxController m_pilotDrive;
-  DifferentialDrive m_mydrive;
+  DifferentialDrive m_myDrive;
 
   //Defines left and right joystick values on pilot controller   
   double m_pilotLeftYStickValue; 
