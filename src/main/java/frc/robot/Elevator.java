@@ -70,6 +70,7 @@ public class Elevator {
     WPI_TalonSRX m_elevatorMotor;
 
     // Declaring the elevator state enum.
+
    State currentState;
 
    // This constructor is initializing in creating a new instance of an elevator with limit port switch definitions.
@@ -105,4 +106,5 @@ public class Elevator {
     public int getElevatorEncoderVelocity() {
         return m_elevatorEncoder.getQuadratureVelocity();
     }
+
 }

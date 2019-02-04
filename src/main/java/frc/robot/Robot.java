@@ -8,8 +8,10 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+// import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.XboxController;
 
 import frc.robot.Drivetrain;
 import frc.robot.Controller;
@@ -24,13 +26,14 @@ import frc.robot.RobotMap;
  */
 public class Robot extends TimedRobot {
 
+
   Drivetrain m_drivetrain;
   Controller m_pilotController;
 
   Robot() {
 
     // Declare our duino communication port
-  DuinoToRioComms duinoToRio;
+    DuinoToRioComms duinoToRio;
     
     m_drivetrain  = new Drivetrain();
     m_pilotController = new Controller(RobotMap.PILOT_CONTROLLER_PORT);
@@ -44,7 +47,6 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-
   }
 
   /**
