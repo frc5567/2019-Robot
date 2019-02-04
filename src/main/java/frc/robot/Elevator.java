@@ -1,16 +1,14 @@
-/**
- * This class defines the mechanism that moves up and down for hatch covers and cargo.
- */
-
 package frc.robot;
-
-import frc.robot.RobotMap;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 
 import com.ctre.phoenix.motorcontrol.SensorCollection;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import edu.wpi.first.wpilibj.DigitalInput;
 
+/**
+ * This class defines the mechanism that moves up and down for hatch covers and cargo.
+ */
 public class Elevator {
 
     public enum State{
@@ -69,7 +67,7 @@ public class Elevator {
     SensorCollection m_elevatorEncoder;
 
     // Declaring the speed controller for the elevator.
-    WPI_TalonSRX raiseElevatorMotor;
+    WPI_TalonSRX m_elevatorMotor;
 
     // Declaring the elevator state enum.
    State currentState;
@@ -78,12 +76,15 @@ public class Elevator {
    
     Elevator(double distancePerPulse){
 
+      // Instantiates Motor controller for elevator
+      m_elevatorMotor = new WPI_TalonSRX(RobotMap.ELEVATOR_MOTOR_PORT);
+
       // Creating a new instance of DigitalInput with the assigned port number.
-        m_limitTop = RobotMap.m_elevatorLimitTop;
-        m_limitBottom = RobotMap.m_elevatorLimitBottom;
+        m_limitTop = new DigitalInput(RobotMap.ELEVATOR_LIMIT_TOP_PORT);
+        m_limitBottom = new DigitalInput(RobotMap.ELEVATOR_LIMIT_BOTTOM_PORT);
         
         // Instantiating encoder for the elevator height
-        m_elevatorEncoder = RobotMap.m_elevatorEncoder;
+        m_elevatorEncoder = new SensorCollection(m_elevatorMotor);
 
         // Zeroes the encoder
         m_elevatorEncoder.setQuadraturePosition(0, 0);

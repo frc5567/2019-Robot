@@ -32,8 +32,8 @@ public class Robot extends TimedRobot {
     // Declare our duino communication port
   DuinoToRioComms duinoToRio;
     
-    m_drivetrain  = RobotMap.m_drivetrain;
-    m_pilotController = RobotMap.m_pilotController;
+    m_drivetrain  = new Drivetrain();
+    m_pilotController = new Controller(RobotMap.PILOT_CONTROLLER_PORT);
 
     // Instantiate our duino to rio communication port
     duinoToRio = new DuinoToRioComms();

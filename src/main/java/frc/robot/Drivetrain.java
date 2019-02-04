@@ -1,12 +1,6 @@
-/**
- * This class defines the mechanism that allows the robot to move backwards and forwards using motors and wheels. 
- */
-
 package frc.robot;
 
-import frc.robot.RobotMap;
-
-// Imports needed for motor controllers, speedc controller groups, and the drivetrain
+// Imports needed for motor controllers, speed controller groups, and the drivetrain
 import edu.wpi.first.wpilibj.drive.DifferentialDrive; 
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 // These imports are extending SpeedController, allowing us to use SpeedControllerGroup
@@ -14,6 +8,9 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.ctre.phoenix.motorcontrol.SensorCollection;
 
+/**
+ * This class defines the mechanism that allows the robot to move backwards and forwards using motors and wheels. 
+ */
 public class Drivetrain {
 
     // Declares variables for drivetrain speed and rotate setter
@@ -52,13 +49,13 @@ public class Drivetrain {
     Drivetrain() {
         
         // Initializes the motorControllers using the ports passed in
-        m_frontLeftMotor = RobotMap.m_frontLeftDriveMotor;
-        m_frontRightMotor = RobotMap.m_frontRightDriveMotor;
-        m_backLeftMotor = RobotMap.m_backLeftDriveMotor;
-        m_backRightMotor = RobotMap.m_backRightDriveMotor;
+        m_frontLeftMotor = new WPI_VictorSPX(RobotMap.FRONT_LEFT_DRIVE_MOTOR_PORT);
+        m_frontRightMotor = new WPI_VictorSPX(RobotMap.FRONT_RIGHT_DRIVE_MOTOR_PORT);
+        m_backLeftMotor = new WPI_TalonSRX(RobotMap.BACK_LEFT_DRIVE_MOTOR_PORT);
+        m_backRightMotor = new WPI_TalonSRX(RobotMap.BACK_RIGHT_DROVE_MOTOR_PORT);
 
-        m_leftDriveEncoder = RobotMap.m_leftDriveEncoder;
-        m_rightDriveEncoder = RobotMap.m_rightDriveEncoder;
+        m_leftDriveEncoder = new SensorCollection(m_backLeftMotor);
+        m_rightDriveEncoder = new SensorCollection(m_backRightMotor);
 
         m_leftDriveEncoder.setQuadraturePosition(0, 0);
         m_rightDriveEncoder.setQuadraturePosition(0, 0);
