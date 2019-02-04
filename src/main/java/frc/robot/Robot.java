@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.XboxController;
 
 import frc.robot.Drivetrain;
 import frc.robot.Controller;
+import frc.robot.RobotMap;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -25,17 +26,17 @@ import frc.robot.Controller;
  */
 public class Robot extends TimedRobot {
 
-  // Declare our duino communication port
-  DuinoToRioComms duinoToRio;
 
-  Drivetrain drivetrain;
-  Controller pilotController;
-  Controller copilotController;
+  Drivetrain m_drivetrain;
+  Controller m_pilotController;
 
-  Robot() { 
-    drivetrain  = new Drivetrain(0, 1, 2, 3);
-    pilotController = new Controller(0);
-    copilotController = new Controller(1);
+  Robot() {
+
+    // Declare our duino communication port
+    DuinoToRioComms duinoToRio;
+    
+    m_drivetrain  = new Drivetrain();
+    m_pilotController = new Controller(RobotMap.PILOT_CONTROLLER_PORT);
 
     // Instantiate our duino to rio communication port
     duinoToRio = new DuinoToRioComms();
@@ -106,7 +107,7 @@ public class Robot extends TimedRobot {
     //   duinoToRio.pixyRead(1);
     // }
     // Test drivetrain included, uses Left stick Y for speed, Right stick X for turning, and A button is held for quickturn
-    drivetrain.curvatureDrive(pilotController.getLeftStickY(), pilotController.getRighStickX(), pilotController.getAButton());
+    m_drivetrain.curvatureDrive(m_pilotController.getLeftStickY(), m_pilotController.getRighStickX());
   }
 
   /**
