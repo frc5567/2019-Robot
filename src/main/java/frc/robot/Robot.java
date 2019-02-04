@@ -125,12 +125,24 @@ public class Robot extends TimedRobot {
     if (pilotController.getAButtonReleased()) {
       //  Assigns return value. Checking NaN should occur here
       degToTarget = duinoToRio.getDegToTarget();
-      System.out.println("degToTarget: " + degToTarget);
+      if (distToTarget.isNaN()){
+        System.out.println("No number returned");
+      }
+      else {
+        System.out.println("degToTarget: " + degToTarget);
+      }
+
     }
     else if (pilotController.getBButtonReleased()) {
       //  Assigns return value. Checking NaN should occur here
       distToTarget = duinoToRio.getDistToTarget();
-      System.out.println("distToTarget: " + distToTarget);
+      if (distToTarget.isNaN()){
+        System.out.println("No number returned");
+      }
+      else {
+        System.out.println("distToTarget: " + distToTarget);
+      }
+
     }
     
   }
