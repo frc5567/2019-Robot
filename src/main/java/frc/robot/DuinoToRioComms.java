@@ -6,8 +6,6 @@ import java.nio.ByteBuffer;
 public class DuinoToRioComms {
     //  Declaration for usb port to interact with the Duino
     private SerialPort m_duinoPort;
-    private Double dataDouble;
-    private Double dataReturned;
 
     /**
      *  Constructor for the commuication class object
@@ -19,12 +17,43 @@ public class DuinoToRioComms {
         //  Telemetry for testing communication: Print to ensure instantiation
         System.out.println("Exit Constructor");
     }
+    
+    /**
+     * Finds the degrees to target based on the high camera
+     * @return  Degrees to target. Will return Double.NaN if it fails to read properly.
+     */
+    public double getDegToTarget() {
+        //  Declares and instantiates a value for storing the return from pixyRead
+        Double degToTarget = Double.NaN;
+
+        //  Calls pixyRead with the command 2 to get deg to target and assign it to return variable
+        degToTarget = pixyRead(2);
+
+        return degToTarget;
+    }
+
+    /**
+     * Finds the distance to target (in) based on the high camera
+     * @return  Distance to target (in). Will return Double.NaN if it fails to read properly.
+     */
+    public double getDistToTarget() {
+        //  Declares and instantiates a value for storing the return from pixyRead
+        Double distToTarget = Double.NaN;
+
+        //  Calls pixyRead with the command 2 to get dist to target and assign it to return variable
+        distToTarget = pixyRead(1);
+
+        return distToTarget;
+    }
 
     /**
      * Method containing both communication methods
      * @param command The value of the command requested, where 0 requests degreesToTarget, 1 requests dist to target
      */
-    public void pixyRead(int command) {
+    private double pixyRead(int command) {
+        //  Declares and instantiates a variable for storing return from readData        
+        Double dataReturned = Double.NaN;
+
         //  Telemetry for testing communication: Print on enter to check for run
         System.out.println("Enter pixyRead");
 
@@ -32,12 +61,15 @@ public class DuinoToRioComms {
         sendCommand(command);
         dataReturned = readData(command);
 
+        //  Telemetry for checking if the returned data was valid
         if(dataReturned.isNaN()){
             System.out.println("Nothing Returned");
         }
 
         //  Telemetry for testing communication: Print for ensuring the method exits
         System.out.println("Exit Read");
+
+        return dataReturned;
     }
 
     /**
@@ -46,10 +78,10 @@ public class DuinoToRioComms {
      */
     private void sendCommand(int command) {
         //  Convert the command into a byte array for transmission
-        byte[] m_commandByte = ByteBuffer.allocate(4).putInt(command).array();
+        byte[] commandByte = ByteBuffer.allocate(4).putInt(command).array();
 
         //  Write the command down the wire
-        m_duinoPort.write(m_commandByte, 4);
+        m_duinoPort.write(commandByte, 4);
     }
 
     /**
@@ -58,31 +90,33 @@ public class DuinoToRioComms {
      * @return A double parsed from the string passed by the Duino
      */
     private double readData(int command) {
+        //  Declares and instantiates a variable for storing return from arduino        
+        Double dataDouble = Double.NaN;
+
         //  Allocates recieved data to a string
-        String m_sPixyOut = m_duinoPort.readString();
+        String sPixyOut = m_duinoPort.readString();
 
-        //  Checks command and prints based off of that print
-        if (command == 2) {
-            System.out.println("degToTarget" + m_sPixyOut);
-            //  Parses and returns the double sent by the arduino
-            dataDouble =  Double.parseDouble(m_sPixyOut);
-        } 
-        else if (command == 1) {
-            System.out.println("distToTarget" + m_sPixyOut);
-            //  Parses and returns the double sent by the arduino
-            dataDouble = Double.parseDouble(m_sPixyOut);
-        }
-        else {
+        //  Checks to see if the passed in command is valid
+        if ( !(command == 2 || command == 1) ){
             System.out.println("Invalid Command");
-            dataDouble = Double.NaN;
-        }
-
-        //  Checks if returned double is a number
-        if (dataDouble.isNaN()) {
-            return Double.NaN;
         }
         else {
-            return dataDouble;
+            //  Parses the double sent by the arduino
+            try {
+                dataDouble =  Double.parseDouble(sPixyOut);
+            }
+            catch (NumberFormatException e) {
+                System.out.println ("No parsable number returned");
+            }
+            catch (NullPointerException e) {
+                System.out.println ("Null Pointer Exception: Nothing passed in");
+            }
+            catch (Exception e) {
+                System.out.println ("Unknown Exception");
+            }
         }
+
+        return dataDouble;
+        
     }
 }
