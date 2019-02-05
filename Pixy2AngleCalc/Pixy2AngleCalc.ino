@@ -4,7 +4,9 @@
 
 
 /**
- * 
+ * Communication code from the pixys to the arduino and from the duino to the rio
+ * The highPixy is the pixy placed high on the robot, which will be used for pathing to the white line
+ * The lowPixy is the pixy placed low on the robot used for shorter range tracking of the reflective tape
  */
  
 //  Declares the Pixy
@@ -83,6 +85,7 @@ void setup() {
   //Serial.print("Starting");
 
   //  Initializes the Pixy
+  //  Hexadecimal values passed in correspond to address set on the pixy 
   highPixy.init(0x54);
 //  lowPixy.init(0x53);
   highPixy.changeProg("line");

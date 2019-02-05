@@ -26,7 +26,7 @@ public class Robot extends TimedRobot {
   Double distToTarget = Double.NaN;
 
   // Declare our duino communication port
-  DuinoToRioComms duinoToRio;
+  private DuinoToRioComms m_duinoToRio;
 
   Drivetrain m_drivetrain;
   Controller m_pilotController;
@@ -36,7 +36,7 @@ public class Robot extends TimedRobot {
     m_pilotController = new Controller(RobotMap.PILOT_CONTROLLER_PORT);
 
     // Instantiate our duino to rio communication port
-    duinoToRio = new DuinoToRioComms();
+    m_duinoToRio = new DuinoToRioComms();
   }
   /**
    * This function is run when the robot is first started up and should be used
@@ -98,7 +98,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     // Test drivetrain included, uses Left stick Y for speed, Right stick X for turning, and A button is held for quickturn
-    m_drivetrain.curvatureDrive(m_pilotController.getLeftStickY(), m_pilotController.getRighStickX());
+    m_drivetrain.curvatureDrive(m_pilotController.getLeftStickY(), m_pilotController.getRightStickX());
   }
 
   /**
@@ -117,7 +117,7 @@ public class Robot extends TimedRobot {
     //  Code for testing comms with arduino
     if (m_pilotController.getAButtonReleased()) {
       //  Assigns return value. Checking NaN should occur here
-      degToTarget = duinoToRio.getDegToTarget();
+      degToTarget = m_duinoToRio.getDegToTarget();
       if (distToTarget.isNaN()){
         System.out.println("No number returned");
       }
@@ -128,7 +128,7 @@ public class Robot extends TimedRobot {
     }
     else if (m_pilotController.getBButtonReleased()) {
       //  Assigns return value. Checking NaN should occur here
-      distToTarget = duinoToRio.getDistToTarget();
+      distToTarget = m_duinoToRio.getDistToTarget();
       if (distToTarget.isNaN()){
         System.out.println("No number returned");
       }

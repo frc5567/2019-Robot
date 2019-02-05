@@ -23,7 +23,7 @@ public class DuinoToRioComms {
      * @return  Degrees to target. Will return Double.NaN if it fails to read properly.
      */
     public double getDegToTarget() {
-        //  Declares and instantiates a member value for storing the return from pixyRead
+        //  Declares and instantiates a value for storing the return from pixyRead
         Double m_degToTarget = Double.NaN;
 
         //  Calls pixyRead with the command 2 to get deg to target and assign it to return variable
@@ -37,7 +37,7 @@ public class DuinoToRioComms {
      * @return  Distance to target (in). Will return Double.NaN if it fails to read properly.
      */
     public double getDistToTarget() {
-        //  Declares and instantiates a member value for storing the return from pixyRead
+        //  Declares and instantiates a value for storing the return from pixyRead
         Double m_distToTarget = Double.NaN;
 
         //  Calls pixyRead with the command 2 to get dist to target and assign it to return variable
@@ -51,7 +51,7 @@ public class DuinoToRioComms {
      * @param command The value of the command requested, where 0 requests degreesToTarget, 1 requests dist to target
      */
     private double pixyRead(int command) {
-        //  Declares and instantiates a member variable for storing return from readData        
+        //  Declares and instantiates a variable for storing return from readData        
         Double m_dataReturned = Double.NaN;
 
         //  Telemetry for testing communication: Print on enter to check for run
@@ -90,7 +90,7 @@ public class DuinoToRioComms {
      * @return A double parsed from the string passed by the Duino
      */
     private double readData(int command) {
-        //  Declares and instantiates a member variable for storing return from arduino        
+        //  Declares and instantiates a variable for storing return from arduino        
         Double m_dataDouble = Double.NaN;
 
         //  Allocates recieved data to a string
