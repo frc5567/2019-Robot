@@ -101,8 +101,16 @@ public class DuinoToRioComms {
             System.out.println("Invalid Command");
         }
         else {
-            //  Parses and returns the double sent by the arduino
-            m_dataDouble =  Double.parseDouble(m_sPixyOut);
+            //  Parses the double sent by the arduino
+            try {
+                m_dataDouble =  Double.parseDouble(m_sPixyOut);
+            }
+            catch (NumberFormatException e) {
+                System.out.println ("No parsable number returned");
+            }
+            catch (Exception e) {
+                System.out.println ("Unknown Exception");
+            }
         }
 
         return m_dataDouble;
