@@ -27,6 +27,7 @@ public class Robot extends TimedRobot {
 
   // Declare our duino communication port
   private DuinoToRioComms m_duinoToRio;
+  private DuinoCommStorage m_pkt;
 
   Drivetrain m_drivetrain;
   Controller m_pilotController;
@@ -123,6 +124,7 @@ public class Robot extends TimedRobot {
       }
       else {
         System.out.println("degToTarget: " + degToTarget);
+        m_pkt.degTargetHigh = degToTarget;
       }
 
     }
@@ -134,6 +136,7 @@ public class Robot extends TimedRobot {
       }
       else {
         System.out.println("distToTarget: " + distToTarget);
+        m_pkt.distTargetHigh = distToTarget;
       }
 
     }
