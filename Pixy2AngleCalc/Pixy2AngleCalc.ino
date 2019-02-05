@@ -9,7 +9,7 @@
  * The lowPixy is the pixy placed low on the robot used for shorter range tracking of the reflective tape
  */
  
-//  Declares the Pixy
+//  Declares the Pixys
 Pixy2SPI_SS highPixy;
 // Pixy2I2C lowPixy;
 
@@ -53,14 +53,8 @@ double xInPerPix;
 //  Degrees from the base of the robot to the target point
 double degToTarget;
 
-//  Command int recieved from the rio, where 2 is degToTarget, 1 is inToTarget,
-int incCommand = -1;
-
-//  Comment
-byte buf[4];
-
-//  Temp Lock flag to prevent repeated command reading
-bool tempLock = true;
+//  Command char recieved from the rio, where 2 is degToTarget, 1 is distToTarget,
+char incCommand = '0';
 
 //  Convert degrees to radians
 double degToRad (double degInput) {
@@ -92,24 +86,17 @@ void setup() {
 }
 
 void receiveCommand () {
-  if(tempLock){
-    incCommand = (int)Serial.readBytes(buf, 4);
-    tempLock = false;
-  }
+   incCommand = (char)Serial.read();
 }
 
-void sendData (int command) {
-  if (command == 2){
-    Serial.print(/**degToTarget*/incCommand);
+void sendData (char command) {
+  if (command == '2'){
+    Serial.println(degToTarget);
   }
-  else if (command == 1) {
+  else if (command == '1') {
     //  5.5 is a temp value, this needs to be updated in the future editions
-    Serial.print(/**5.5*/incCommand);
+    Serial.println("5.5");
   }
-  else {
-    Serial.print(-1);
-  }
-  incCommand = -2;
 }
 
 void loop() {
@@ -118,7 +105,7 @@ void loop() {
   calcInPerPix(cameraHeight, cameraAngle, highPixy.line.vectors->m_x0, highPixy.line.vectors->m_y0);
   degToTarget = atan((xDist*xInPerPix)/distRobotToTarget) * (180/pi);
 
-  if ((Serial.available() > 0) && (incCommand != -2)) {
+  if (Serial.available() > 0) {
     receiveCommand();
     sendData(incCommand);
   }
