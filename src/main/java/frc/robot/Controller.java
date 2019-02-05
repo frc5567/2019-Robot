@@ -63,7 +63,7 @@ public class Controller extends XboxController {
      * Gets the value of the right stick X axis
      * @return The X value of the right axis
      */
-    public double getRighStickX() {
+    public double getRightStickX() {
         double rightStickXValue;
         // Checks if the stick value is within deadband
         if ((m_myController.getX(Hand.kRight) < STICK_DEADBAND) && (m_myController.getX(Hand.kRight) > -STICK_DEADBAND)) {
@@ -82,7 +82,7 @@ public class Controller extends XboxController {
      * Gets the value of the right stick Y axis
      * @return The Y value of the right axis
      */
-    public double getRighStickY() {
+    public double getRightStickY() {
         double rightStickYValue;
         // Checks if the stick value is within deadband
         if ((m_myController.getY(Hand.kRight) < STICK_DEADBAND) && (m_myController.getY(Hand.kRight) > -STICK_DEADBAND)) {
