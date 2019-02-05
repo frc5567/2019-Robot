@@ -4,11 +4,13 @@
 
 
 /**
- * 
+ * Communication code from the pixys to the arduino and from the duino to the rio
+ * The highPixy is the pixy placed high on the robot, which will be used for pathing to the white line
+ * The lowPixy is the pixy placed low on the robot used for shorter range tracking of the reflective tape
  */
  
 //  Declares the Pixy
-Pixy2SPI_SS pixy;
+Pixy2SPI_SS highPixy;
 // Pixy2I2C lowPixy;
 
 //  Value of pi for calculations
@@ -83,15 +85,15 @@ void setup() {
   //Serial.print("Starting");
 
   //  Initializes the Pixy
-  pixy.init(0x54);
+  //  Hexadecimal values passed in correspond to address set on the pixy 
+  highPixy.init(0x54);
 //  lowPixy.init(0x53);
-  pixy.changeProg("line");
+  highPixy.changeProg("line");
 }
 
 void receiveCommand () {
   if(tempLock){
     incCommand = (int)Serial.readBytes(buf, 4);
-    Serial.flush();
     tempLock = false;
   }
 }
@@ -104,13 +106,16 @@ void sendData (int command) {
     //  5.5 is a temp value, this needs to be updated in the future editions
     Serial.print(/**5.5*/incCommand);
   }
+  else {
+    Serial.print(-1);
+  }
   incCommand = -2;
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
-  pixy.line.getMainFeatures();
-  calcInPerPix(cameraHeight, cameraAngle, pixy.line.vectors->m_x0, pixy.line.vectors->m_y0);
+  highPixy.line.getMainFeatures();
+  calcInPerPix(cameraHeight, cameraAngle, highPixy.line.vectors->m_x0, highPixy.line.vectors->m_y0);
   degToTarget = atan((xDist*xInPerPix)/distRobotToTarget) * (180/pi);
 
   if ((Serial.available() > 0) && (incCommand != -2)) {
