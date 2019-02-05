@@ -1,7 +1,6 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.SerialPort;
-import java.nio.ByteBuffer;
 
 public class DuinoToRioComms {
     //  Declaration for usb port to interact with the Duino
