@@ -24,12 +24,12 @@ public class DuinoToRioComms {
      */
     public double getDegToTarget() {
         //  Declares and instantiates a value for storing the return from pixyRead
-        Double m_degToTarget = Double.NaN;
+        Double degToTarget = Double.NaN;
 
         //  Calls pixyRead with the command 2 to get deg to target and assign it to return variable
-        m_degToTarget = pixyRead(2);
+        degToTarget = pixyRead(2);
 
-        return m_degToTarget;
+        return degToTarget;
     }
 
     /**
@@ -38,12 +38,12 @@ public class DuinoToRioComms {
      */
     public double getDistToTarget() {
         //  Declares and instantiates a value for storing the return from pixyRead
-        Double m_distToTarget = Double.NaN;
+        Double distToTarget = Double.NaN;
 
         //  Calls pixyRead with the command 2 to get dist to target and assign it to return variable
-        m_distToTarget = pixyRead(1);
+        distToTarget = pixyRead(1);
 
-        return m_distToTarget;
+        return distToTarget;
     }
 
     /**
@@ -52,24 +52,24 @@ public class DuinoToRioComms {
      */
     private double pixyRead(int command) {
         //  Declares and instantiates a variable for storing return from readData        
-        Double m_dataReturned = Double.NaN;
+        Double dataReturned = Double.NaN;
 
         //  Telemetry for testing communication: Print on enter to check for run
         System.out.println("Enter pixyRead");
 
         //  Call the data methods with a command inputed in the Robot class
         sendCommand(command);
-        m_dataReturned = readData(command);
+        dataReturned = readData(command);
 
         //  Telemetry for checking if the returned data was valid
-        if(m_dataReturned.isNaN()){
+        if(dataReturned.isNaN()){
             System.out.println("Nothing Returned");
         }
 
         //  Telemetry for testing communication: Print for ensuring the method exits
         System.out.println("Exit Read");
 
-        return m_dataReturned;
+        return dataReturned;
     }
 
     /**
@@ -78,10 +78,10 @@ public class DuinoToRioComms {
      */
     private void sendCommand(int command) {
         //  Convert the command into a byte array for transmission
-        byte[] m_commandByte = ByteBuffer.allocate(4).putInt(command).array();
+        byte[] commandByte = ByteBuffer.allocate(4).putInt(command).array();
 
         //  Write the command down the wire
-        m_duinoPort.write(m_commandByte, 4);
+        m_duinoPort.write(commandByte, 4);
     }
 
     /**
@@ -91,10 +91,10 @@ public class DuinoToRioComms {
      */
     private double readData(int command) {
         //  Declares and instantiates a variable for storing return from arduino        
-        Double m_dataDouble = Double.NaN;
+        Double dataDouble = Double.NaN;
 
         //  Allocates recieved data to a string
-        String m_sPixyOut = m_duinoPort.readString();
+        String sPixyOut = m_duinoPort.readString();
 
         //  Checks to see if the passed in command is valid
         if ( !(command == 2 || command == 1) ){
@@ -103,7 +103,7 @@ public class DuinoToRioComms {
         else {
             //  Parses the double sent by the arduino
             try {
-                m_dataDouble =  Double.parseDouble(m_sPixyOut);
+                dataDouble =  Double.parseDouble(sPixyOut);
             }
             catch (NumberFormatException e) {
                 System.out.println ("No parsable number returned");
@@ -116,7 +116,7 @@ public class DuinoToRioComms {
             }
         }
 
-        return m_dataDouble;
+        return dataDouble;
         
     }
 }
