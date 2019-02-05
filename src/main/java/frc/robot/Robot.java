@@ -6,6 +6,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 <<<<<<< HEAD
+<<<<<<< HEAD
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.SpeedController;
@@ -13,6 +14,8 @@ import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 
 =======
+=======
+>>>>>>> c3abefed1d62e220e5bb85953dd300f5017b8fe0
 // import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -21,9 +24,13 @@ import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.Drivetrain;
 import frc.robot.Controller;
 import frc.robot.RobotMap;
+<<<<<<< HEAD
+>>>>>>> c3abefed1d62e220e5bb85953dd300f5017b8fe0
+=======
 >>>>>>> c3abefed1d62e220e5bb85953dd300f5017b8fe0
 
 public class Robot extends TimedRobot {
+<<<<<<< HEAD
 <<<<<<< HEAD
   // This declares the elevator, pilot drive, the left and right stick vales, the front left and right motors, the back left and right motors; and the bolean quick rotate
   
@@ -64,6 +71,8 @@ public class Robot extends TimedRobot {
 
  
 =======
+=======
+>>>>>>> c3abefed1d62e220e5bb85953dd300f5017b8fe0
 
 
   Drivetrain m_drivetrain;
@@ -123,6 +132,9 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     
+<<<<<<< HEAD
+>>>>>>> c3abefed1d62e220e5bb85953dd300f5017b8fe0
+=======
 >>>>>>> c3abefed1d62e220e5bb85953dd300f5017b8fe0
   }
 
@@ -131,7 +143,18 @@ public class Robot extends TimedRobot {
   public void autonomousPeriodic() {
     
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+  }
+
+  /**
+   * This function is called once before the operator control period starts
+   */
+  @Override
+  public void teleopInit() {
+    
+>>>>>>> c3abefed1d62e220e5bb85953dd300f5017b8fe0
   }
 
   /**
@@ -157,6 +180,17 @@ public class Robot extends TimedRobot {
     // }
     // Test drivetrain included, uses Left stick Y for speed, Right stick X for turning, and A button is held for quickturn
     m_drivetrain.curvatureDrive(m_pilotController.getLeftStickY(), m_pilotController.getRighStickX());
+<<<<<<< HEAD
+=======
+  }
+
+  /**
+   * This function is called once before starting test mdoe
+   */
+  @Override
+  public void testInit() {
+    
+>>>>>>> c3abefed1d62e220e5bb85953dd300f5017b8fe0
   }
 
   /**
