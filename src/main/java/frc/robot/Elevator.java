@@ -50,21 +50,20 @@ public class Elevator {
 		/**
 		 * @return The max speed modifier based on the elevator's current state.
 		 */
-		public double maxSpeedModifier() {
+		public double getMaxSpeedModifier() {
 			return this.maxSpeedPercent;
 		}
 
 		/**
 		 * @return The max speed we turn our angle arm at the elevator's current state.
 		 */
-		public double maxAngleRate() {
+		public double getMaxAngleRate() {
 			return this.maxAngleRate;
 		}
 	}
 
 	// Defining the limit switches at the top and bottom of the elevator.
 	DigitalInput m_limitTop;
-	DigitalInput m_limitBottom;
 
 	// Declaring the encoder for the elevator height.
 	SensorCollection m_elevatorEncoder;
@@ -85,7 +84,6 @@ public class Elevator {
 
 		// Creating a new instance of DigitalInput with the assigned port number.
 		m_limitTop = new DigitalInput(RobotMap.ELEVATOR_LIMIT_TOP_PORT);
-		m_limitBottom = new DigitalInput(RobotMap.ELEVATOR_LIMIT_BOTTOM_PORT);
 
 		// Instantiating encoder for the elevator height
 		m_elevatorEncoder = new SensorCollection(m_elevatorMotor);

@@ -27,7 +27,6 @@ public class RobotMap {
     // Sensors
     // Elevator limit switches
     public static final int ELEVATOR_LIMIT_TOP_PORT = 0;
-    public static final int ELEVATOR_LIMIT_BOTTOM_PORT = 1;
     // Climber limit switches
     public static final int FRONT_CLIMBER_LIMIT_TOP_PORT = 2;
     public static final int BACK_CLIMBER_LIMIT_TOP_PORT = 3;
