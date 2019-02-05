@@ -12,6 +12,7 @@ public class DuinoToRioComms {
     public DuinoToRioComms() {
         //  Instantiation for the usb port to interact with the Duino
         m_duinoPort = new SerialPort(9600, SerialPort.Port.kUSB);
+        m_duinoPort.setReadBufferSize(1);
 
         //  Telemetry for testing communication: Print to ensure instantiation
         System.out.println("Exit Constructor");
@@ -53,9 +54,6 @@ public class DuinoToRioComms {
         //  Declares and instantiates a variable for storing return from readData        
         Double dataReturned = Double.NaN;
 
-        //  Telemetry for testing communication: Print on enter to check for run
-        System.out.println("Enter pixyRead");
-
         //  Call the data methods with a command inputed in the Robot class
         sendCommand(command);
         dataReturned = readData(command);
@@ -64,9 +62,6 @@ public class DuinoToRioComms {
         if(dataReturned.isNaN()){
             System.out.println("Nothing Returned");
         }
-
-        //  Telemetry for testing communication: Print for ensuring the method exits
-        System.out.println("Exit Read");
 
         return dataReturned;
     }

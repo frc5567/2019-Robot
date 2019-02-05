@@ -1,4 +1,3 @@
-#include <PIDLoop.h>
 #include <Pixy2I2C.h>
 #include <Pixy2SPI_SS.h>
 
@@ -108,6 +107,7 @@ void loop() {
   if (Serial.available() > 0) {
     receiveCommand();
     sendData(incCommand);
+    incCommand = 0;
   }
 
 //  lowPixy.ccc.getBlocks();

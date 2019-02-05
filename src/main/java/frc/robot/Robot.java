@@ -22,8 +22,8 @@ import frc.robot.Climber;
  */
 public class Robot extends TimedRobot {
   //  Test doubles for storing return from read classes
-  Double degToTarget = Double.NaN;
-  Double distToTarget = Double.NaN;
+  private Double m_degToTarget = Double.NaN;
+  private Double m_distToTarget = Double.NaN;
 
 	// Declare drivetrain 
 	Drivetrain m_drivetrain;
@@ -127,25 +127,25 @@ public class Robot extends TimedRobot {
     //  Code for testing comms with arduino
     if (m_pilotController.getAButtonReleased()) {
       //  Assigns return value. Checking NaN should occur here
-      degToTarget = m_duinoToRio.getDegToTarget();
-      if (distToTarget.isNaN()){
+      m_degToTarget = m_duinoToRio.getDegToTarget();
+      if (m_degToTarget.isNaN()){
         System.out.println("No number returned");
       }
       else {
-        System.out.println("degToTarget: " + degToTarget);
-        m_pkt.degTargetHigh = degToTarget;
+        System.out.println("degToTarget: " + m_degToTarget);
+        //m_pkt.degTargetHigh = degToTarget;
       }
 
     }
     else if (m_pilotController.getBButtonReleased()) {
       //  Assigns return value. Checking NaN should occur here
-      distToTarget = m_duinoToRio.getDistToTarget();
-      if (distToTarget.isNaN()){
+      m_distToTarget = m_duinoToRio.getDistToTarget();
+      if (m_distToTarget.isNaN()){
         System.out.println("No number returned");
       }
       else {
-        System.out.println("distToTarget: " + distToTarget);
-        m_pkt.distTargetHigh = distToTarget;
+        System.out.println("distToTarget: " + m_distToTarget);
+        //m_pkt.distTargetHigh = distToTarget;
       }
 
     }
