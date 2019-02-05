@@ -1,7 +1,3 @@
-/**
- * This class defines the mechanism that allows the robot to move backwards and forwards using motors and wheels. 
- */
-
 package frc.robot;
 
 // Imports needed for motor controllers, speed controller groups, and the drivetrain
@@ -10,24 +6,34 @@ import edu.wpi.first.wpilibj.SpeedControllerGroup;
 // These imports are extending SpeedController, allowing us to use SpeedControllerGroup
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
+import com.ctre.phoenix.motorcontrol.SensorCollection;
 
-
+/**
+ * This class defines the mechanism that allows the robot to move backwards and forwards using motors and wheels. 
+ */
 public class Drivetrain {
 
     // Declares variables for drivetrain speed and rotate setter
     // Constant is how large each step is in the setters
     private final double MAX_DELTA_SPEED = 0.1;
+    private final double MAX_QUICK_TURN_SPEED = 0.1;
 
     // Declares variables for current speed and rotate rate
     // Variables used for feedback in speed setter and rotate setter
     double m_currentSpeed;
     double m_currentRotate;
 
+    // Declares variables to enable quick turn when speed is low enough
+    boolean m_quickTurnEnabled;
+
     // Declarations for the motor controllers
     private WPI_VictorSPX m_frontLeftMotor;
-    private WPI_TalonSRX m_frontRightMotor;
-    private WPI_VictorSPX m_backLeftMotor;
+    private WPI_VictorSPX m_frontRightMotor;
+    private WPI_TalonSRX m_backLeftMotor;
     private WPI_TalonSRX m_backRightMotor;
+
+    private SensorCollection m_leftDriveEncoder;
+    private SensorCollection m_rightDriveEncoder;
 
     // Declarations for the speed controller groups
     private SpeedControllerGroup m_leftMotors;
@@ -39,18 +45,20 @@ public class Drivetrain {
 
     /**
      * Constructor for the motor controller declarations and the drivetrain object
-     * @param frontLeftChannel The channel of the front left motor controller
-     * @param frontRightChannel The channel of the front right motor controller
-     * @param backLeftChannel The channel of the back left motor controller
-     * @param backRightChannel The channel of the back right motor controller
      */
-    Drivetrain(int frontLeftChannel, int frontRightChannel, int backLeftChannel, int backRightChannel) {
+    Drivetrain() {
         
         // Initializes the motorControllers using the ports passed in
-        m_frontLeftMotor = new WPI_VictorSPX(frontLeftChannel);
-        m_frontRightMotor = new WPI_TalonSRX(frontRightChannel);
-        m_backLeftMotor = new WPI_VictorSPX(backLeftChannel);
-        m_backRightMotor = new WPI_TalonSRX(backRightChannel);
+        m_frontLeftMotor = new WPI_VictorSPX(RobotMap.FRONT_LEFT_DRIVE_MOTOR_PORT);
+        m_frontRightMotor = new WPI_VictorSPX(RobotMap.FRONT_RIGHT_DRIVE_MOTOR_PORT);
+        m_backLeftMotor = new WPI_TalonSRX(RobotMap.BACK_LEFT_DRIVE_MOTOR_PORT);
+        m_backRightMotor = new WPI_TalonSRX(RobotMap.BACK_RIGHT_DROVE_MOTOR_PORT);
+
+        m_leftDriveEncoder = new SensorCollection(m_backLeftMotor);
+        m_rightDriveEncoder = new SensorCollection(m_backRightMotor);
+
+        m_leftDriveEncoder.setQuadraturePosition(0, 0);
+        m_rightDriveEncoder.setQuadraturePosition(0, 0);
         
         // Initializes the motor controller groups (left side motors and right side motors)
         m_leftMotors = new SpeedControllerGroup(m_frontLeftMotor, m_backLeftMotor);
@@ -82,9 +90,8 @@ public class Drivetrain {
      * from putting robot in brownout condition
      * @param desiredSpeed The desired robot speed along x-axis [-1.0..1.0] forward is positive
      * @param desiredRotate The desired robot turning speed along z-axis [-1.0..1.0] clockwise is positive
-     * @param quickTurn If true, overrides constant-curvature turning for turn-in-place maneuvering
      */
-    public void curvatureDrive(double desiredSpeed, double desiredRotate, boolean quickTurn) {
+    public void curvatureDrive(double desiredSpeed, double desiredRotate) {
 
         // If desired speed is higher than current speed by a margin larger than kMaxDeltaSpeed,
         // Increase current speed by kMaxDelaSpeed's amount
@@ -118,7 +125,46 @@ public class Drivetrain {
             m_currentRotate = desiredRotate;
         }
 
+        if ((m_currentSpeed < MAX_QUICK_TURN_SPEED) && (m_currentSpeed > MAX_QUICK_TURN_SPEED)) {
+            m_quickTurnEnabled = true;
+        }
+        else {
+            m_quickTurnEnabled = false;
+        }
+
         // Pass current speed, current rotate, and the quick turn boolean into the Differential Drive's curatureDrive method
-        m_drivetrain.curvatureDrive(m_currentSpeed, m_currentRotate, quickTurn);
+        m_drivetrain.curvatureDrive(m_currentSpeed, m_currentRotate, m_quickTurnEnabled);
+    }
+
+    /**
+     * Returns the encoder position of the drivetrain left side encoder
+     * @return The position of the left side encoder
+     */
+    public int getLeftDriveEncoderPosition() {
+        return m_leftDriveEncoder.getQuadraturePosition();
+    }
+
+    /**
+     * Returns the encoder position of the drivetrain right side encoder
+     * @return The position of the right side encoder
+     */
+    public int getRightDriveEncoderPosition() {
+        return m_rightDriveEncoder.getQuadraturePosition();
+    }
+
+    /**
+     * Returns the encoder velocity of the drivetrain left side encoder
+     * @return The velocity of the left side encoder
+     */
+    public int getLeftDriveEncoderVelocity() {
+        return m_leftDriveEncoder.getQuadratureVelocity();
+    }
+
+    /**
+     * Returns the encoder velocity of the drivetrain right side encoder
+     * @return The velocity of the right side encoder
+     */
+    public int getRightDriveEncoderVelocity() {
+        return m_rightDriveEncoder.getQuadratureVelocity();
     }
 }

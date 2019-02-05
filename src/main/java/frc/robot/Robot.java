@@ -5,14 +5,26 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+<<<<<<< HEAD
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 
+=======
+// import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.XboxController;
+
+import frc.robot.Drivetrain;
+import frc.robot.Controller;
+import frc.robot.RobotMap;
+>>>>>>> c3abefed1d62e220e5bb85953dd300f5017b8fe0
 
 public class Robot extends TimedRobot {
+<<<<<<< HEAD
   // This declares the elevator, pilot drive, the left and right stick vales, the front left and right motors, the back left and right motors; and the bolean quick rotate
   
   //User defined mechanisms
@@ -51,25 +63,109 @@ public class Robot extends TimedRobot {
   }
 
  
+=======
+
+
+  Drivetrain m_drivetrain;
+  Controller m_pilotController;
+
+  Robot() {
+
+    // Declare our duino communication port
+    DuinoToRioComms duinoToRio;
+    
+    m_drivetrain  = new Drivetrain();
+    m_pilotController = new Controller(RobotMap.PILOT_CONTROLLER_PORT);
+
+    // Instantiate our duino to rio communication port
+    duinoToRio = new DuinoToRioComms();
+  }
+  /**
+   * This function is run when the robot is first started up and should be used
+   * for any initialization code.
+   */
+  @Override
+  public void robotInit() {
+  }
+
+  /**
+   * This function is called every robot packet, no matter the mode. Use this for
+   * items like diagnostics that you want ran during disabled, autonomous,
+   * teleoperated and test.
+   *
+   * <p>
+   * This runs after the mode specific periodic functions, but before LiveWindow
+   * and SmartDashboard integrated updating.
+   */
+>>>>>>> c3abefed1d62e220e5bb85953dd300f5017b8fe0
   @Override
   public void robotPeriodic() {
   }
 
+<<<<<<< HEAD
  
   @Override
   public void autonomousInit() {
    
+=======
+  /**
+   * This autonomous (along with the chooser code above) shows how to select
+   * between different autonomous modes using the dashboard. The sendable chooser
+   * code works with the Java SmartDashboard. If you prefer the LabVIEW Dashboard,
+   * remove all of the chooser code and uncomment the getString line to get the
+   * auto name from the text box below the Gyro
+   *
+   * <p>
+   * You can add additional auto modes by adding additional comparisons to the
+   * switch structure below with additional strings. If using the SendableChooser
+   * make sure to add them to the chooser code above as well.
+   */
+  @Override
+  public void autonomousInit() {
+    
+>>>>>>> c3abefed1d62e220e5bb85953dd300f5017b8fe0
   }
 
 
   @Override
   public void autonomousPeriodic() {
     
+<<<<<<< HEAD
+=======
+  }
+
+  /**
+   * This function is called once before the operator control period starts
+   */
+  @Override
+  public void teleopInit() {
+    
+>>>>>>> c3abefed1d62e220e5bb85953dd300f5017b8fe0
   }
 
   @Override
+<<<<<<< HEAD
   public void teleopInit() {
 
+=======
+  public void teleopPeriodic() {
+    // if (pilotController.getAButtonReleased()) {
+    //   duinoToRio.pixyRead(2);
+    // }
+    // else if (pilotController.getBButtonReleased()) {
+    //   duinoToRio.pixyRead(1);
+    // }
+    // Test drivetrain included, uses Left stick Y for speed, Right stick X for turning, and A button is held for quickturn
+    m_drivetrain.curvatureDrive(m_pilotController.getLeftStickY(), m_pilotController.getRighStickX());
+  }
+
+  /**
+   * This function is called once before starting test mdoe
+   */
+  @Override
+  public void testInit() {
+    
+>>>>>>> c3abefed1d62e220e5bb85953dd300f5017b8fe0
   }
 
   @Override
@@ -121,5 +217,6 @@ public class Robot extends TimedRobot {
  
   @Override
   public void testPeriodic() {
+    
   }
 }

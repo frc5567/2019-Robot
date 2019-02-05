@@ -1,0 +1,6 @@
+<PixyMon_parameters>
+ <data value="C:/Users/josho/OneDrive/Documents/PixyMon" key="Document folder" type="STRING"/>
+ <data value="" key="Pixy start command" type="STRING"/>
+ <data value="0" key="Highlight overexposure" type="INT8"/>
+ <data value="0" key="Debug" type="INT32"/>
+</PixyMon_parameters>
