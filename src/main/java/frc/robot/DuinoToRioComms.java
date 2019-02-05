@@ -108,6 +108,9 @@ public class DuinoToRioComms {
             catch (NumberFormatException e) {
                 System.out.println ("No parsable number returned");
             }
+            catch (NullPointerException e) {
+                System.out.println ("Null Pointer Exception: Nothing passed in");
+            }
             catch (Exception e) {
                 System.out.println ("Unknown Exception");
             }
