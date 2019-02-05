@@ -110,7 +110,7 @@ public class Robot extends TimedRobot {
 		// duinoToRio.pixyRead(1);
 		// }
 		// Test drivetrain included, uses Left stick Y for speed, Right stick X for
-		// turning, and A button is held for quickturn
+		// turning, quick turn is auto-enabled at low speed
 		m_drivetrain.curvatureDrive(m_pilotController.getLeftStickY(), m_pilotController.getRighStickX());
 	}
 
