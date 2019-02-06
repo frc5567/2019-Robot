@@ -29,6 +29,8 @@ public class DuinoToRioComms {
         //  Calls pixyRead with the command 2 to get deg to target and assign it to return variable
         degToTarget = pixyRead('2');
 
+        System.out.println("degToTarget value returned in getDegToTarget(): " + degToTarget);
+
         return degToTarget;
     }
 
@@ -42,6 +44,8 @@ public class DuinoToRioComms {
 
         //  Calls pixyRead with the command 1 to get dist to target and assign it to return variable
         distToTarget = pixyRead('1');
+
+        System.out.println("distToTarget value returned in getDistToTarget(): " + distToTarget);
 
         return distToTarget;
     }
@@ -62,6 +66,8 @@ public class DuinoToRioComms {
         if(dataReturned.isNaN()){
             System.out.println("Nothing Returned");
         }
+
+        System.out.println("dataReturned value in pixyRead: " + dataReturned);
 
         return dataReturned;
     }
@@ -92,6 +98,8 @@ public class DuinoToRioComms {
         //  Allocates recieved data to a string
         String sPixyOut = m_duinoPort.readString();
 
+        System.out.println("String Returned in readData(): " + sPixyOut);
+
         //  Checks to see if the passed in command is valid
         if ( !(command == '2' || command == '1') ){
             System.out.println("Invalid Command");
@@ -111,6 +119,8 @@ public class DuinoToRioComms {
                 System.out.println ("Unknown Exception");
             }
         }
+
+        System.out.println("dataDouble returned in readData: " + dataDouble);
 
         return dataDouble;
         
