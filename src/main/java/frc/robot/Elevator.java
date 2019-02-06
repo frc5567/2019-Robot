@@ -13,17 +13,18 @@ import edu.wpi.first.wpilibj.DigitalInput;
 public class Elevator {
 
 	public enum State {
-		LEVEL_ZERO(0.0, 1.0, 1.0),
-		CARGO_L1(16.75, 0.80, 0.50),
-		CARGO_L2(44.75, 0.60, 0.30),
-		CARGO_L3(72.75, 0.40, 0.20),
-		HATCH_L1(8.25, 0.90, 0.50),
-		HATCH_L2(36.25, 0.65, 0.30),
-		HATCH_L3(64.25, 0.45, 0.20);
+		LEVEL_ZERO(0.0, 1.0, 1.0 , "Initial State"),
+		CARGO_L1(16.75, 0.80, 0.50 , "Cargo level 1"),
+		CARGO_L2(44.75, 0.60, 0.30 , "Cargo Level 2"),
+		CARGO_L3(72.75, 0.40, 0.20 , "Cargo Level 3"),
+		HATCH_L1(8.25, 0.90, 0.50 , "Hatch Level 1"),
+		HATCH_L2(36.25, 0.65, 0.30 , "Hatch Level 2"),
+		HATCH_L3(64.25, 0.45, 0.20 , "Hatch Level 3");
 
 		private double deltaHeightInches;
 		private double maxSpeedPercent;
 		private double maxAngleRate;
+		private String stateName;
 
 		/**
 		 * 
@@ -31,13 +32,15 @@ public class Elevator {
 		 * @param deltaInches      Change in height from position zero in inches.
 		 * @param maxSpeedModifier Percent of our max speed we use when the elevator is
 		 *                         in this state.
+		 * @param stateName A string representation of the state we are in.
 		 * @param maxAngleRate     How fast our angle motor can move when the elevator
 		 *                         is in this state.
 		 */
-		State(double deltaInches, double maxSpeedModifier, double maxAngleRate) {
+		State(double deltaInches, double maxSpeedModifier, double maxAngleRate , String stateName) {
 			this.deltaHeightInches = deltaInches;
 			this.maxSpeedPercent = maxSpeedModifier;
 			this.maxAngleRate = maxAngleRate;
+			this.stateName = stateName;
 		}
 
 		/**
@@ -60,6 +63,13 @@ public class Elevator {
 		public double getMaxAngleRate() {
 			return this.maxAngleRate;
 		}
+
+		/**
+		 * @return The name of the state we are currently in.
+		 */
+		public String getStateName(){
+			return this.stateName;
+		}
 	}
 
 	// Defining the limit switches at the top and bottom of the elevator.
@@ -78,7 +88,7 @@ public class Elevator {
 	// This constructor is initializing in creating a new instance of an elevator
 	// with limit port switch definitions.
 
-	Elevator(double distancePerPulse) {
+	public Elevator(double distancePerPulse) {
 
 		// Instantiates Motor controller for elevator
 		m_elevatorMotor = new WPI_TalonSRX(RobotMap.ELEVATOR_MOTOR_PORT);
@@ -92,6 +102,9 @@ public class Elevator {
 
 		// Zeroes the encoder
 		m_elevatorEncoder.setQuadraturePosition(0, 0);
+
+		// Sets the State enum to it's initial state
+		currentState = currentState.LEVEL_ZERO;
 	}
 
 	/**
