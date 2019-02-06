@@ -88,6 +88,12 @@ void receiveCommand () {
    incCommand = (char)Serial.read();
 }
 
+void serialFlush() {
+  while (Serial.available() > 0) {
+  char t = Serial.read();
+  }
+}
+
 void sendData (char command) {
   if (command == '2'){
     Serial.println(degToTarget);
@@ -106,6 +112,7 @@ void loop() {
 
   if (Serial.available() > 0) {
     receiveCommand();
+    serialFlush();
     sendData(incCommand);
     incCommand = 0;
   }
