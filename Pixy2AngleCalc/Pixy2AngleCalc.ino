@@ -96,11 +96,11 @@ void serialFlush() {
 
 void sendData (char command) {
   if (command == '2'){
-    Serial.println(degToTarget);
+    Serial.print(degToTarget);
   }
   else if (command == '1') {
     //  5.5 is a temp value, this needs to be updated in the future editions
-    Serial.println("5.5");
+    Serial.print(5.5);
   }
 }
 
@@ -114,6 +114,7 @@ void loop() {
     receiveCommand();
     serialFlush();
     sendData(incCommand);
+    Serial.flush();
     incCommand = 0;
   }
 
