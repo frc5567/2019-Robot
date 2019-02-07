@@ -1,6 +1,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.SerialPort;
+import java.nio.ByteBuffer;
 
 public class DuinoToRioComms {
     //  Declaration for usb port to interact with the Duino
@@ -26,7 +27,7 @@ public class DuinoToRioComms {
         Double degToTarget = Double.NaN;
 
         //  Calls pixyRead with the command 2 to get deg to target and assign it to return variable
-        degToTarget = pixyRead('2');
+        degToTarget = pixyRead(2);
 
         return degToTarget;
     }
@@ -39,8 +40,8 @@ public class DuinoToRioComms {
         //  Declares and instantiates a value for storing the return from pixyRead
         Double distToTarget = Double.NaN;
 
-        //  Calls pixyRead with the command 1 to get dist to target and assign it to return variable
-        distToTarget = pixyRead('1');
+        //  Calls pixyRead with the command 2 to get dist to target and assign it to return variable
+        distToTarget = pixyRead(1);
 
         return distToTarget;
     }
@@ -49,7 +50,7 @@ public class DuinoToRioComms {
      * Method containing both communication methods
      * @param command The value of the command requested, where 0 requests degreesToTarget, 1 requests dist to target
      */
-    private double pixyRead(char command) {
+    private double pixyRead(int command) {
         //  Declares and instantiates a variable for storing return from readData        
         Double dataReturned = Double.NaN;
 
@@ -75,14 +76,12 @@ public class DuinoToRioComms {
      * Method for sending command to the arduino
      * @param command Command to send to the arduino, where 2 requests degreesToTarget, 1 requests distToTarget
      */
-    private void sendCommand(char command) {
+    private void sendCommand(int command) {
         //  Convert the command into a byte array for transmission
-        byte commandByte = (byte)command;
-        byte[] commandStorage = new byte[1];
-        commandStorage[0] = commandByte;
+        byte[] commandByte = ByteBuffer.allocate(4).putInt(command).array();
 
         //  Write the command down the wire
-        m_duinoPort.write(commandStorage, 1);
+        m_duinoPort.write(commandByte, 4);
     }
 
     /**
@@ -90,7 +89,7 @@ public class DuinoToRioComms {
      * @param command Command previously sent to the arduino, where 2 requests degreesToTarget, 1 requests distToTarget
      * @return A double parsed from the string passed by the Duino
      */
-    private double readData(char command) {
+    private double readData(int command) {
         //  Declares and instantiates a variable for storing return from arduino        
         Double dataDouble = Double.NaN;
 
@@ -98,7 +97,7 @@ public class DuinoToRioComms {
         String sPixyOut = m_duinoPort.readString();
 
         //  Checks to see if the passed in command is valid
-        if ( !(command == '2' || command == '1') ){
+        if ( !(command == 2 || command == 1) ){
             System.out.println("Invalid Command");
         }
         else {

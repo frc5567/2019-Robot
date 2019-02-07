@@ -31,4 +31,18 @@ public class RobotMap {
     // Climber limit switches
     public static final int FRONT_CLIMBER_LIMIT_TOP_PORT = 2;
     public static final int BACK_CLIMBER_LIMIT_TOP_PORT = 3;
+
+    //HatchMech ports
+    public static final int HATCH_MECH_SERVO_PORT = 0;
+    public static final int HATCH_MECH_LIMIT_TOP_PORT = 1;
+    public static final int HATCH_MECH_LIMIT_BOTTOM_PORT = 2;
+
+    //HatchMech servo positions
+    public static final double HATCH_MECH_OPEN_SERVO_POSITION = 0.6;
+    public static final double HATCH_MECH_CLOSE_SERVO_POSITION = 0.3;
+
+    //HatchMech motor speeds
+    public static final double HATCH_MECH_ARM_UP_MOTOR_SPEED = 0.5;
+    public static final double HATCH_MECH_ARM_DOWN_MOTOR_SPEED = -0.5;
+    public static final double HATCH_MECH_STOP_MOTOR_SPEED = 0.0;
 }

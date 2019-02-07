@@ -50,44 +50,4 @@ public class GamePad extends GenericHID
   public double getY(Hand hand){
     return Double.NaN;
   }
-  
-  public boolean getLowHatchCargoReleased(){
-    return getGamePadButtonReleased(GamePadControls.LOW_HATCH_CARGO.value);
-    }
-    
-   public boolean getMediumHatchCargoReleased(){
-    return getGamePadButtonReleased(GamePadCont.MEDIUM_HATCH_CARGO.value);
-    }
-    
-   public boolean hetHighHatchCargoReleased(){
-    return getGamePadReleased(GamePadControl.HIGH_HATCH_CARGO.value);
-    }
-    
-   public boolean getPickupHatchCargoReleased(){
-    return getGamePadReleased(GamePadControl.PICKUP_HATCH_CARGO.value);
-    }
-    
-   public boolean getHatchToCargoReleased(){
-    return getGamePadReleased(GamePadControl.HATCH_TO_CARGO.value);
-    }
-    
-   public boolean getManualToAutoReleased(){
-    return getGamePadReleased(GamePadControl.MANUAL_TO_AUTO.value);
-    }
-    
-   public boolean getOpenHatchReleased(){
-    return getGamePadReleased(GamePadControl.OPEN_HATCH.value);
-    }
-    
-   public boolean getCloseHatchReleased(){
-    return getGamePadReleased(GamePadControl.CLOSE_HATCH.value);
-    }
-    
-   public boolean getLiftHatchArmReleased(){
-    return getGamePadReleased(GamePadControl.LIFT_HATCH_ARM.value);
-    }
-    
-   public boolean getDropHatchArmReleased(){
-    return getGamePadReleased(GamePadControl.DROP_HATCH_ARM.value);
-    }
 }
