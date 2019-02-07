@@ -49,8 +49,12 @@ double xWidth;
 //  Inches per pixel in the x direction
 double xInPerPix;
 
+//  
+double xDistIn;
+
 //  Degrees from the base of the robot to the target point
 double degToTarget;
+double distToTarget;
 
 //  Command char recieved from the rio, where 2 is degToTarget, 1 is distToTarget,
 char incCommand = '0';
@@ -70,6 +74,8 @@ void calcInPerPix (double height, double angle, double tailX, double tailY) {
   hypToCamera = sqrt( sq(height) + sq(distRobotToTarget) );
   xWidth = 2 * (hypToCamera * tan(thirtyDegInRad));
   xInPerPix = xWidth/78;
+
+  xDistIn = xDist*xInPerPix;
 }
 
 void setup() {
@@ -100,7 +106,7 @@ void sendData (char command) {
   }
   else if (command == '1') {
     //  5.5 is a temp value, this needs to be updated in the future editions
-    Serial.println("5.5");
+    Serial.println(distToTarget);
   }
 }
 
@@ -109,6 +115,7 @@ void loop() {
   highPixy.line.getMainFeatures();
   calcInPerPix(cameraHeight, cameraAngle, highPixy.line.vectors->m_x0, highPixy.line.vectors->m_y0);
   degToTarget = atan((xDist*xInPerPix)/distRobotToTarget) * (180/pi);
+  distToTarget = sqrt(sq(distRobotToTarget) + sq(xDistIn));
 
   if (Serial.available() > 0) {
     receiveCommand();
