@@ -2,7 +2,6 @@ package frc.robot;
 
 // Imports needed for motor controllers, speed controller groups, and the drivetrain
 import edu.wpi.first.wpilibj.drive.DifferentialDrive; 
-import edu.wpi.first.wpilibj.SpeedControllerGroup;
 // These imports are extending SpeedController, allowing us to use SpeedControllerGroup
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
@@ -32,12 +31,9 @@ public class Drivetrain {
     private WPI_TalonSRX m_backLeftMotor;
     private WPI_TalonSRX m_backRightMotor;
 
+    // Declaration for encoders connected to TalonSRXs
     private SensorCollection m_leftDriveEncoder;
     private SensorCollection m_rightDriveEncoder;
-
-    // Declarations for the speed controller groups
-    private SpeedControllerGroup m_leftMotors;
-    private SpeedControllerGroup m_rightMotors;
 
     // Declaration for the drivetrain
     private DifferentialDrive m_drivetrain;
@@ -54,18 +50,20 @@ public class Drivetrain {
         m_backLeftMotor = new WPI_TalonSRX(RobotMap.BACK_LEFT_DRIVE_MOTOR_PORT);
         m_backRightMotor = new WPI_TalonSRX(RobotMap.BACK_RIGHT_DROVE_MOTOR_PORT);
 
+        // Initializes classes to call encoders connected to TalonSRXs
         m_leftDriveEncoder = new SensorCollection(m_backLeftMotor);
         m_rightDriveEncoder = new SensorCollection(m_backRightMotor);
 
+        // Zeroes the encoder positions on the drivetrain (connected to TalonSRX)
         m_leftDriveEncoder.setQuadraturePosition(0, 0);
         m_rightDriveEncoder.setQuadraturePosition(0, 0);
+
+        // Sets VictorSPXs to follow TalonSRXs output
+        m_frontLeftMotor.follow(m_backLeftMotor);
+        m_frontRightMotor.follow(m_backRightMotor);
         
-        // Initializes the motor controller groups (left side motors and right side motors)
-        m_leftMotors = new SpeedControllerGroup(m_frontLeftMotor, m_backLeftMotor);
-        m_rightMotors = new SpeedControllerGroup(m_frontRightMotor, m_backRightMotor);
-        
-        // Initializes the drivetrain with the motor controller groups
-        m_drivetrain = new DifferentialDrive(m_leftMotors, m_rightMotors);
+        // Initializes the drivetrain with the TalonSRX  as the Motors (VictorSPX follows TalonSRX output)
+        m_drivetrain = new DifferentialDrive(m_backLeftMotor, m_backRightMotor);
 
         // Initializes feedback variables for speed setter and rotate setter
         // Setters use variables as feedback in order to "ramp" the output gradually
