@@ -10,7 +10,24 @@
  
 //  Declares the Pixys
 Pixy2SPI_SS highPixy;
-// Pixy2I2C lowPixy;
+Pixy2I2C lowPixy;
+
+// Creates the variables we need
+int blockAreaOne = 0;
+int blockAreaTwo = 0;
+int leftX;
+int rightX;
+int leftBlock;
+int rightBlock;
+int leftWidth;
+int rightWidth;
+int xLOne;
+int xROne;
+int xLTwo;
+int xRTwo;
+int centerPoint;
+int absoluteCenter = 158;
+int distToCenter;
 
 //  Value of pi for calculations
 double pi = 3.1415926535;
@@ -59,6 +76,9 @@ double distToTarget;
 //  Command char recieved from the rio, where 2 is degToTarget, 1 is distToTarget,
 char incCommand = '0';
 
+//  This is the return for the position according to the lowPixy, where 1 is left, 2 is center, and 3 is right. -1 is no blocks
+int lowPosition = -1;
+
 //  Convert degrees to radians
 double degToRad (double degInput) {
   double radOutput = degInput * (pi/180);
@@ -78,6 +98,28 @@ void calcInPerPix (double height, double angle, double tailX, double tailY) {
   xDistIn = xDist*xInPerPix;
 }
 
+void calcDistToCenterLow() {
+  if(lowPixy.ccc.blocks[0].m_x < lowPixy.ccc.blocks[1].m_x){
+      leftX = lowPixy.ccc.blocks[0].m_x;
+      rightX = lowPixy.ccc.blocks[1].m_x;
+      leftWidth = lowPixy.ccc.blocks[0].m_width;
+      rightWidth = lowPixy.ccc.blocks[1].m_width;
+    }
+    else if (lowPixy.ccc.blocks[0].m_x > lowPixy.ccc.blocks[1].m_x){
+      leftX = lowPixy.ccc.blocks[1].m_x;
+      rightX = lowPixy.ccc.blocks[0].m_x;
+      leftWidth = lowPixy.ccc.blocks[1].m_width;
+      rightWidth = lowPixy.ccc.blocks[0].m_width;
+    }
+    
+    xLOne = leftX - ( leftWidth / 2 );
+    xROne = rightX + ( leftWidth / 2 );
+    xLTwo = leftX - ( rightWidth / 2 );
+    xRTwo = rightX + ( rightWidth / 2 );
+    centerPoint = ( ( xLTwo - xROne) / 2 ) + xROne;
+    distToCenter = absoluteCenter - centerPoint;
+}
+
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
@@ -86,7 +128,7 @@ void setup() {
   //  Initializes the Pixy
   //  Hexadecimal values passed in correspond to address set on the pixy 
   highPixy.init(0x54);
-//  lowPixy.init(0x53);
+  lowPixy.init(0x53);
   highPixy.changeProg("line");
 }
 
@@ -101,12 +143,17 @@ void serialFlush() {
 }
 
 void sendData (char command) {
-  if (command == '2'){
+  if (command == '2') {
     Serial.print(degToTarget);
   }
   else if (command == '1') {
-    //  5.5 is a temp value, this needs to be updated in the future editions
-    Serial.println(distToTarget);
+    Serial.print(distToTarget);
+  }
+  else if (command == '3') {
+    Serial.print(distToCenter);
+  }
+  else if (command == '4') {
+    Serial.print(lowPosition);
   }
 }
 
@@ -117,6 +164,27 @@ void loop() {
   degToTarget = atan((xDist*xInPerPix)/distRobotToTarget) * (180/pi);
   distToTarget = sqrt(sq(distRobotToTarget) + sq(xDistIn));
 
+  int i;
+  lowPixy.ccc.getBlocks(true, 255, 2);
+  if (lowPixy.ccc.numBlocks){
+    
+    calcDistToCenterLow();
+    
+    if( absoluteCenter - centerPoint < 2 ){
+      lowPosition = 1;
+      }
+    else if( absoluteCenter - centerPoint > 2 ){
+      lowPosition = 3;
+    }
+    else{
+      lowPosition = 2;
+    }
+    
+  }
+  else {
+    lowPosition = -1;
+  }
+
   if (Serial.available() > 0) {
     receiveCommand();
     serialFlush();
@@ -124,24 +192,5 @@ void loop() {
     Serial.flush();
     incCommand = 0;
   }
-
-//  lowPixy.ccc.getBlocks();
-//  Serial.print("enter");
-//  If there are detect blocks, print them!
-//  if (lowPixy.ccc.numBlocks){
-//    Serial.print("Detected ");
-//    Serial.println(lowPixy.ccc.numBlocks);
-//    for (i=0; i<lowPixy.ccc.numBlocks; i++) {
-//      Serial.print("  block ");
-//      Serial.print(i);
-//      Serial.print(": ");
-//      lowPixy.ccc.blocks[i].print();
-//    }
-//  }
-//
-//  else {
-//    Serial.println("No Blocks");
-//  }
-//  
-//  Serial.print("exit");
+  
 }

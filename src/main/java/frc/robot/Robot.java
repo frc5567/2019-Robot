@@ -23,7 +23,9 @@ import frc.robot.Climber;
 public class Robot extends TimedRobot {
   //  Test doubles for storing return from read classes
   private Double m_degToTarget = Double.NaN;
-  private Double m_distToTarget = Double.NaN;
+	private Double m_distToTarget = Double.NaN;
+	private Double m_distToCenter = Double.NaN;
+	private Double m_lowPosition = Double.NaN;
 
 	// Declare drivetrain 
 	Drivetrain m_drivetrain;
@@ -146,9 +148,33 @@ public class Robot extends TimedRobot {
       else {
         System.out.println("distToTarget: " + m_distToTarget);
         //m_pkt.distTargetHigh = distToTarget;
-      }
+			}
+			
 
-    }
-    
+		}
+		else if (m_pilotController.getXButtonReleased()) {
+      //  Assigns return value. Checking NaN should occur here
+      m_distToCenter = m_duinoToRio.getDistToCenter();
+      if (m_distToTarget.isNaN()){
+        System.out.println("No number returned");
+      }
+      else {
+        System.out.println("distToCenter: " + m_distToCenter);
+        //m_pkt.distTargetHigh = distToTarget;
+      }
+		
+		}
+		else if (m_pilotController.getYButtonReleased()) {
+      //  Assigns return value. Checking NaN should occur here
+      m_lowPosition = m_duinoToRio.getLowPosition();
+      if (m_lowPosition.isNaN()){
+        System.out.println("No number returned");
+      }
+      else {
+        System.out.println("lowPosition: " + m_lowPosition);
+        //m_pkt.distTargetHigh = distToTarget;
+      }
+		
+		}
   }
 }

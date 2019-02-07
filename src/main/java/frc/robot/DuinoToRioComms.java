@@ -49,6 +49,38 @@ public class DuinoToRioComms {
     }
 
     /**
+     * Finds the distance to target (pix?) based on the low camera
+     * @return  Distance to target (pix?). Will return Double.NaN if it fails to read properly.
+     */
+    public double getDistToCenter() {
+        //  Declares and instantiates a value for storing the return from pixyRead
+        Double distToCenter = Double.NaN;
+
+        //  Calls pixyRead with the command 3 to get dist to center and assign it to return variable
+        distToCenter = pixyRead('3');
+
+        System.out.println("distToCenter value returned in getDistToCenter(): " + distToCenter);
+
+        return distToCenter;
+    }
+
+    /**
+     * Finds the approximate position relative to the target based on the high camera
+     * @return  Position relative to target, where -1 is no target, 1 is left, 2 is center, and 3 is right. Will return Double.NaN if it fails to read properly.
+     */
+    public double getLowPosition() {
+        //  Declares and instantiates a value for storing the return from pixyRead
+        Double lowPosition = Double.NaN;
+
+        //  Calls pixyRead with the command 4 to get lowPosition and assign it to return variable
+        lowPosition = pixyRead('4');
+
+        System.out.println("lowPosition value returned in getLowPosition(): " + lowPosition);
+
+        return lowPosition;
+    }
+
+    /**
      * Method containing both communication methods
      * @param command The value of the command requested, where 0 requests degreesToTarget, 1 requests dist to target
      */
@@ -100,7 +132,7 @@ public class DuinoToRioComms {
         System.out.println("String Returned in readData(): " + sPixyOut);
 
         //  Checks to see if the passed in command is valid
-        if ( !(command == '2' || command == '1') ){
+        if ( !(command == '2' || command == '1') && !(command == '3' || command == '4')){
             System.out.println("Invalid Command");
         }
         else {
