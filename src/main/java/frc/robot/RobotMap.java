@@ -18,6 +18,8 @@ public class RobotMap {
     public static final int BACK_RIGHT_DROVE_MOTOR_PORT = 3;
     // Elevator
     public static final int ELEVATOR_MOTOR_PORT = 4;
+    public static final double DRUM_DIAMETER_INCHES = 0.0;     //UPDATE THIS
+    public static final int TICKS_PER_REVOLUTION = 4096;
 
     // PWM Motor Controllers
     // Climber
