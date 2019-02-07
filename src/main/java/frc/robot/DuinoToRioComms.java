@@ -1,6 +1,8 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.SerialPort;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.SerialPort.WriteBufferMode;
 
 public class DuinoToRioComms {
     //  Declaration for usb port to interact with the Duino
@@ -12,10 +14,6 @@ public class DuinoToRioComms {
     public DuinoToRioComms() {
         //  Instantiation for the usb port to interact with the Duino
         m_duinoPort = new SerialPort(9600, SerialPort.Port.kUSB);
-        m_duinoPort.setReadBufferSize(1);
-
-        //  Telemetry for testing communication: Print to ensure instantiation
-        System.out.println("Exit Constructor");
     }
     
     /**
@@ -77,6 +75,7 @@ public class DuinoToRioComms {
      * @param command Command to send to the arduino, where 2 requests degreesToTarget, 1 requests distToTarget
      */
     private void sendCommand(char command) {
+        System.out.println("Command passed in: " + command);
         //  Convert the command into a byte array for transmission
         byte commandByte = (byte)command;
         byte[] commandStorage = new byte[1];
@@ -96,7 +95,7 @@ public class DuinoToRioComms {
         Double dataDouble = Double.NaN;
 
         //  Allocates recieved data to a string
-        String sPixyOut = m_duinoPort.readString();
+        String sPixyOut = m_duinoPort.readString(6);
 
         System.out.println("String Returned in readData(): " + sPixyOut);
 
@@ -121,7 +120,6 @@ public class DuinoToRioComms {
         }
 
         System.out.println("dataDouble returned in readData: " + dataDouble);
-
         return dataDouble;
         
     }
