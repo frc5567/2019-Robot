@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.SPI;
 import frc.robot.Drivetrain;
 import frc.robot.Controller;
 import frc.robot.Climber;
+import frc.robot.NavX;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -34,11 +35,12 @@ public class Robot extends TimedRobot {
 	Climber m_frontClimber;
 	Climber m_backClimber;
 
+	// Declare NavX
+	NavX ahrs;
+
 	// Declare our duino communication port
 	private DuinoToRioComms m_duinoToRio;
 	private DuinoCommStorage m_pkt;
-
-	AHRS ahrs;
 
 	Robot() {
 
@@ -66,7 +68,7 @@ public class Robot extends TimedRobot {
 			 * 
 			 * Multiple navX-model devices on a single robot are supported. //
 			 ************************************************************************/
-			ahrs = new AHRS(SPI.Port.kMXP);
+			ahrs = new NavX(SPI.Port.kMXP);
 		} catch (RuntimeException ex) {
 			System.out.println("Error instantiating navX MXP");
 		}
@@ -138,6 +140,9 @@ public class Robot extends TimedRobot {
 
 		if (m_pilotController.getAButtonReleased()) {
 			ahrs.zeroYaw();
+		}
+		if (m_pilotController.getBButtonReleased()) {
+			ahrs.flipOffset();
 		}
 	}
 
