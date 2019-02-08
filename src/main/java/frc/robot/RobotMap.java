@@ -6,6 +6,10 @@ package frc.robot;
  */
 public class RobotMap {
 
+    // Math constants
+    // NavX angle offset
+    public static final int ANGLE_OFFSET = 180;
+
     // Controllers
     public static final int PILOT_CONTROLLER_PORT = 0;
     public static final int COPILOT_CONTROLLER_PORT = 1;

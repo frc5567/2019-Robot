@@ -4,7 +4,6 @@ import edu.wpi.first.wpilibj.DigitalInput;
 
 import com.ctre.phoenix.motorcontrol.SensorCollection;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-import edu.wpi.first.wpilibj.DigitalInput;
 
 /* TODO 
 Add method for setting elevator State using encoder position once we get proper
