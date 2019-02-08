@@ -1,8 +1,6 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.SerialPort;
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.SerialPort.WriteBufferMode;
 
 public class DuinoToRioComms {
     //  Declaration for usb port to interact with the Duino
@@ -14,6 +12,7 @@ public class DuinoToRioComms {
     public DuinoToRioComms() {
         //  Instantiation for the usb port to interact with the Duino
         m_duinoPort = new SerialPort(9600, SerialPort.Port.kUSB);
+        m_duinoPort.enableTermination();
     }
     
     /**
@@ -26,8 +25,6 @@ public class DuinoToRioComms {
 
         //  Calls pixyRead with the command 2 to get deg to target and assign it to return variable
         degToTarget = pixyRead('2');
-
-        System.out.println("degToTarget value returned in getDegToTarget(): " + degToTarget);
 
         return degToTarget;
     }
@@ -43,8 +40,6 @@ public class DuinoToRioComms {
         //  Calls pixyRead with the command 1 to get dist to target and assign it to return variable
         distToTarget = pixyRead('1');
 
-        System.out.println("distToTarget value returned in getDistToTarget(): " + distToTarget);
-
         return distToTarget;
     }
 
@@ -56,10 +51,8 @@ public class DuinoToRioComms {
         //  Declares and instantiates a value for storing the return from pixyRead
         Double angleToCenter = Double.NaN;
 
-        //  Calls pixyRead with the command 3 to get dist to center and assign it to return variable
+        //  Calls pixyRead with the command 3 to get angle to center and assign it to return variable
         angleToCenter = pixyRead('3');
-
-        System.out.println("angleToCenter value returned in getAngleToCenter(): " + angleToCenter);
 
         return angleToCenter;
     }
@@ -74,8 +67,6 @@ public class DuinoToRioComms {
 
         //  Calls pixyRead with the command 4 to get lowPosition and assign it to return variable
         lowPosition = pixyRead('4');
-
-        System.out.println("lowPosition value returned in getLowPosition(): " + lowPosition);
 
         return lowPosition;
     }
@@ -97,8 +88,6 @@ public class DuinoToRioComms {
             System.out.println("Nothing Returned");
         }
 
-        System.out.println("dataReturned value in pixyRead: " + dataReturned);
-
         return dataReturned;
     }
 
@@ -107,7 +96,6 @@ public class DuinoToRioComms {
      * @param command Command to send to the arduino, where 2 requests degreesToTarget, 1 requests distToTarget
      */
     private void sendCommand(char command) {
-        System.out.println("Command passed in: " + command);
         //  Convert the command into a byte array for transmission
         byte commandByte = (byte)command;
         byte[] commandStorage = new byte[1];
@@ -129,29 +117,31 @@ public class DuinoToRioComms {
         //  Allocates recieved data to a string
         String sPixyOut = m_duinoPort.readString(6);
 
-        System.out.println("String Returned in readData(): " + sPixyOut);
-
         //  Checks to see if the passed in command is valid
         if ( (command != '2' && command != '1') && (command != '3' && command != '4') ){
             System.out.println("Invalid Command");
         }
         else {
-            //  Parses the double sent by the arduino
+            //  If the parseDouble throws an exception, the robot would crash. This catches
+            //  those exceptions and prints to tell us why
             try {
+                //  Parses the double sent by the arduino
                 dataDouble =  Double.parseDouble(sPixyOut);
             }
             catch (NumberFormatException e) {
+                //  If the value returned is not parsable, we hit this exception
                 System.out.println ("No parsable number returned");
             }
             catch (NullPointerException e) {
+                //  If the value returned is null, we hit this exception
                 System.out.println ("Null Pointer Exception: Nothing passed in");
             }
             catch (Exception e) {
+                //  If we hit this exception, we're in trouble, as it should not be possible for the parse method
                 System.out.println ("Unknown Exception");
             }
         }
 
-        System.out.println("dataDouble returned in readData: " + dataDouble);
         return dataDouble;
         
     }
