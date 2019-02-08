@@ -121,7 +121,6 @@ void calcDistToCenterLow() {
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
-  Serial.print("Starting");
 
   //  Initializes the Pixy
   //  Hexadecimal values passed in correspond to address set on the pixy 
