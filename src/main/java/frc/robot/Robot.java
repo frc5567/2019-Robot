@@ -24,7 +24,7 @@ public class Robot extends TimedRobot {
   //  Test doubles for storing return from read classes
   private Double m_degToTarget = Double.NaN;
 	private Double m_distToTarget = Double.NaN;
-	private Double m_distToCenter = Double.NaN;
+	private Double m_angleToCenter = Double.NaN;
 	private Double m_lowPosition = Double.NaN;
 
 	// Declare drivetrain 
@@ -154,12 +154,12 @@ public class Robot extends TimedRobot {
 		}
 		else if (m_pilotController.getXButtonReleased()) {
       //  Assigns return value. Checking NaN should occur here
-      m_distToCenter = m_duinoToRio.getDistToCenter();
+      m_angleToCenter = m_duinoToRio.getAngleToCenter();
       if (m_distToTarget.isNaN()){
         System.out.println("No number returned");
       }
       else {
-        System.out.println("distToCenter: " + m_distToCenter);
+        System.out.println("angleToCenter: " + m_angleToCenter);
         //m_pkt.distTargetHigh = distToTarget;
       }
 		

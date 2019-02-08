@@ -49,19 +49,19 @@ public class DuinoToRioComms {
     }
 
     /**
-     * Finds the distance to target (pix?) based on the low camera
-     * @return  Distance to target (pix?). Will return Double.NaN if it fails to read properly.
+     * Finds the angle to target based on the low camera
+     * @return  Angle to target. Will return Double.NaN if it fails to read properly.
      */
-    public double getDistToCenter() {
+    public double getAngleToCenter() {
         //  Declares and instantiates a value for storing the return from pixyRead
-        Double distToCenter = Double.NaN;
+        Double angleToCenter = Double.NaN;
 
         //  Calls pixyRead with the command 3 to get dist to center and assign it to return variable
-        distToCenter = pixyRead('3');
+        angleToCenter = pixyRead('3');
 
-        System.out.println("distToCenter value returned in getDistToCenter(): " + distToCenter);
+        System.out.println("angleToCenter value returned in getAngleToCenter(): " + angleToCenter);
 
-        return distToCenter;
+        return angleToCenter;
     }
 
     /**
@@ -132,7 +132,7 @@ public class DuinoToRioComms {
         System.out.println("String Returned in readData(): " + sPixyOut);
 
         //  Checks to see if the passed in command is valid
-        if ( !(command == '2' || command == '1') && !(command == '3' || command == '4')){
+        if ( (command != '2' && command != '1') && (command != '3' && command != '4') ){
             System.out.println("Invalid Command");
         }
         else {

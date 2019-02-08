@@ -13,12 +13,8 @@ Pixy2SPI_SS highPixy;
 Pixy2I2C lowPixy;
 
 // Creates the variables we need
-int blockAreaOne = 0;
-int blockAreaTwo = 0;
 int leftX;
 int rightX;
-int leftBlock;
-int rightBlock;
 int leftWidth;
 int rightWidth;
 int xLOne;
@@ -28,6 +24,7 @@ int xRTwo;
 int centerPoint;
 int absoluteCenter = 158;
 int distToCenter;
+double angleToCenter;
 
 //  Value of pi for calculations
 double pi = 3.1415926535;
@@ -100,30 +97,31 @@ void calcInPerPix (double height, double angle, double tailX, double tailY) {
 
 void calcDistToCenterLow() {
   if(lowPixy.ccc.blocks[0].m_x < lowPixy.ccc.blocks[1].m_x){
-      leftX = lowPixy.ccc.blocks[0].m_x;
-      rightX = lowPixy.ccc.blocks[1].m_x;
-      leftWidth = lowPixy.ccc.blocks[0].m_width;
-      rightWidth = lowPixy.ccc.blocks[1].m_width;
-    }
-    else if (lowPixy.ccc.blocks[0].m_x > lowPixy.ccc.blocks[1].m_x){
-      leftX = lowPixy.ccc.blocks[1].m_x;
-      rightX = lowPixy.ccc.blocks[0].m_x;
-      leftWidth = lowPixy.ccc.blocks[1].m_width;
-      rightWidth = lowPixy.ccc.blocks[0].m_width;
-    }
+    leftX = lowPixy.ccc.blocks[0].m_x;
+    rightX = lowPixy.ccc.blocks[1].m_x;
+    leftWidth = lowPixy.ccc.blocks[0].m_width;
+    rightWidth = lowPixy.ccc.blocks[1].m_width;
+  }
+  else if (lowPixy.ccc.blocks[0].m_x > lowPixy.ccc.blocks[1].m_x){
+    leftX = lowPixy.ccc.blocks[1].m_x;
+    rightX = lowPixy.ccc.blocks[0].m_x;
+    leftWidth = lowPixy.ccc.blocks[1].m_width;
+    rightWidth = lowPixy.ccc.blocks[0].m_width;
+  }
     
-    xLOne = leftX - ( leftWidth / 2 );
-    xROne = rightX + ( leftWidth / 2 );
-    xLTwo = leftX - ( rightWidth / 2 );
-    xRTwo = rightX + ( rightWidth / 2 );
-    centerPoint = ( ( xLTwo - xROne) / 2 ) + xROne;
-    distToCenter = absoluteCenter - centerPoint;
+  xLOne = leftX - ( leftWidth / 2 );
+  xROne = rightX + ( leftWidth / 2 );
+  xLTwo = leftX - ( rightWidth / 2 );
+  xRTwo = rightX + ( rightWidth / 2 );
+  centerPoint = ( ( xLTwo - xROne) / 2 ) + xROne;
+  distToCenter = absoluteCenter - centerPoint;
+  angleToCenter = distToCenter*0.189873;
 }
 
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
-  //Serial.print("Starting");
+  Serial.print("Starting");
 
   //  Initializes the Pixy
   //  Hexadecimal values passed in correspond to address set on the pixy 
@@ -138,22 +136,25 @@ void receiveCommand () {
 
 void serialFlush() {
   while (Serial.available() > 0) {
-  char t = Serial.read();
+    char t = Serial.read();
   }
 }
 
 void sendData (char command) {
   if (command == '2') {
-    Serial.print(degToTarget);
+    Serial.println(degToTarget);
   }
   else if (command == '1') {
-    Serial.print(distToTarget);
+    Serial.println(distToTarget);
   }
   else if (command == '3') {
-    Serial.print(distToCenter);
+    Serial.println(angleToCenter);
   }
   else if (command == '4') {
-    Serial.print(lowPosition);
+    Serial.println(lowPosition);
+  }
+  else {
+    Serial.println("No command");
   }
 }
 
@@ -163,8 +164,7 @@ void loop() {
   calcInPerPix(cameraHeight, cameraAngle, highPixy.line.vectors->m_x0, highPixy.line.vectors->m_y0);
   degToTarget = atan((xDist*xInPerPix)/distRobotToTarget) * (180/pi);
   distToTarget = sqrt(sq(distRobotToTarget) + sq(xDistIn));
-
-  int i;
+ 
   lowPixy.ccc.getBlocks(true, 255, 2);
   if (lowPixy.ccc.numBlocks){
     
@@ -192,5 +192,6 @@ void loop() {
     Serial.flush();
     incCommand = 0;
   }
+  
   
 }
