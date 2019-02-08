@@ -2,38 +2,53 @@
 */
 package frc.robot;
 
+//Imports servo, motor controller, and digital input (true or false) for later use.
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.VictorSP;          //Might change VictorSP for motor later
 import edu.wpi.first.wpilibj.DigitalInput;
 
 public class HatchMech{
 
-    Servo m_servo;
+    //Initializes the servo so it can be used for position of the linear actuator.
+    Servo m_servo;  
 
+    //Initializes the victor, and the limit switches for use moving the hatch mechanism arm.
     VictorSP m_hatchArmMotor;
     DigitalInput m_limitSwitchTop;
     DigitalInput m_limitSwitchBottom;
-
-        
+  
     HatchMech(){
-        //create servo variable for hatch mechanism
-        m_servo = new Servo(1);         //need to add the channel that the servo will be plugged into
+        //Creates servo variable for hatch mechanism.
+        //Need to add the channel that the servo will be plugged into.
+        m_servo = new Servo(RobotMap.HATCH_MECH_SERVO_PORT);
 
-        m_limitSwitchTop = new DigitalInput(0);
-        m_limitSwitchBottom = new DigitalInput(1);
+        //This defines the limit switches as new digital inputs.
+        m_limitSwitchTop = new DigitalInput(RobotMap.HATCH_MECH_LIMIT_TOP_PORT);
+        m_limitSwitchBottom = new DigitalInput(RobotMap.HATCH_MECH_LIMIT_BOTTOM_PORT);
     }
 
+    /**
+     * Creates method for opening servo, and sets relative posisition.
+     */
     public void OpenServo(){
-        m_servo.setPosition(0.6);            //double check on degrees and see if servo is the right type
+        //Double check on degrees and see if servo is the right type.
+        m_servo.setPosition(RobotMap.HATCH_MECH_OPEN_SERVO_POSITION);
     }
 
+    /**
+     * Creates method for closing servo and sets relative position.
+     *  */
     public void CloseServo(){
-        m_servo.setPosition(0.3);
+        m_servo.setPosition(RobotMap.HATCH_MECH_CLOSE_SERVO_POSITION);
     }
-
+ 
+    /**
+     * Creates method for switching between closed and opened servo. To do this a boolean is used to make a toggle button.
+     * @param button
+     */
     public void SwitchServo(boolean button){
         if (button){
-            if (m_servo.getAngle()==0.6){
+            if (m_servo.getAngle()==RobotMap.HATCH_MECH_OPEN_SERVO_POSITION){   
                 CloseServo();
             }
             else{
@@ -42,24 +57,25 @@ public class HatchMech{
         }
     }
 
+    //TODO: Double check direction and speed for both ArmUp and ArmDown
+    /**
+     * This creates a method for raising the arm up.
+     */
     public void ArmUp(){
         while(m_limitSwitchTop.get() == false){
-            m_hatchArmMotor.set(0.5);                   // Double check direction and speed
+            m_hatchArmMotor.set(RobotMap.HATCH_MECH_ARM_UP_MOTOR_SPEED);
         }
-        m_hatchArmMotor.set(0.0);
+        m_hatchArmMotor.set(RobotMap.HATCH_MECH_STOP_MOTOR_SPEED);
                                
     }
-
+   
+    /**
+     * Creates a method that lowers arm. 
+     */
     public void ArmDown(){
         while(m_limitSwitchBottom.get() == false){
-        m_hatchArmMotor.set(-0.5);                       // Double check direction and speed        
+        m_hatchArmMotor.set(RobotMap.HATCH_MECH_ARM_DOWN_MOTOR_SPEED);                            
         }
-        m_hatchArmMotor.set(0.0);
+        m_hatchArmMotor.set(RobotMap.HATCH_MECH_STOP_MOTOR_SPEED);
     }
-
-
 }
-
-
-// If the servo uses 0.0 to 1.0 use - exampleServo.set(.5);
-// use this for 0 to 180 degrees - exampleServo.setAngle(75);
