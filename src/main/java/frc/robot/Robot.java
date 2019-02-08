@@ -7,11 +7,15 @@
 
 package frc.robot;
 
+import com.kauailabs.navx.frc.AHRS;
+
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.SPI;
 
 import frc.robot.Drivetrain;
 import frc.robot.Controller;
 import frc.robot.Climber;
+import frc.robot.NavX;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -27,15 +31,18 @@ public class Robot extends TimedRobot {
 	private Double m_angleToCenter = Double.NaN;
 	private Double m_lowPosition = Double.NaN;
 
-	// Declare drivetrain 
+	// Declare drivetrain
 	Drivetrain m_drivetrain;
 	Controller m_pilotController;
 	Climber m_frontClimber;
-  Climber m_backClimber;
-  
+	Climber m_backClimber;
+
+	// Declare NavX
+	NavX ahrs;
+
 	// Declare our duino communication port
-  private DuinoToRioComms m_duinoToRio;
-  private DuinoCommStorage m_pkt;
+	private DuinoToRioComms m_duinoToRio;
+	private DuinoCommStorage m_pkt;
 
 	Robot() {
 
@@ -45,7 +52,28 @@ public class Robot extends TimedRobot {
 		m_backClimber = new Climber(RobotMap.BACK_CLIMBER_MOTOR_PORT, RobotMap.BACK_CLIMBER_LIMIT_TOP_PORT);
 
 		// Instantiate our duino to rio communication port
-    m_duinoToRio = new DuinoToRioComms();
+		m_duinoToRio = new DuinoToRioComms();
+
+		try {
+			/*
+			 * navX-MXP: - Communication via RoboRIO MXP (SPI, I2C, TTL UART) --
+			 * 
+			 * and USB. - See
+			 * 
+			 * http://navx-mxp.kauailabs.com/guidance/selecting-an-interface.
+			 * 
+			 * navX-Micro: - Communication via I2C (RoboRIO MXP or Onboard) and --
+			 * 
+			 * USB. - See
+			 * 
+			 * http://navx-micro.kauailabs.com/guidance/selecting-an-interface.
+			 * 
+			 * Multiple navX-model devices on a single robot are supported. //
+			 ************************************************************************/
+			ahrs = new NavX(SPI.Port.kMXP);
+		} catch (RuntimeException ex) {
+			System.out.println("Error instantiating navX MXP");
+		}
 	}
 
 	/**
@@ -111,6 +139,13 @@ public class Robot extends TimedRobot {
 		// Test drivetrain included, uses Left stick Y for speed, Right stick X for
 		// turning, quick turn is auto-enabled at low speed
 		m_drivetrain.curvatureDrive(m_pilotController.getLeftStickY(), m_pilotController.getRightStickX());
+
+		if (m_pilotController.getAButtonReleased()) {
+			ahrs.zeroYaw();
+		}
+		if (m_pilotController.getBButtonReleased()) {
+			ahrs.flipOffset();
+		}
 	}
 
 	/**

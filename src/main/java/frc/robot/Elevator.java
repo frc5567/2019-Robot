@@ -4,15 +4,27 @@ import edu.wpi.first.wpilibj.DigitalInput;
 
 import com.ctre.phoenix.motorcontrol.SensorCollection;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-import edu.wpi.first.wpilibj.DigitalInput;
+
+/* TODO 
+Add method for setting elevator State using encoder position once we get proper
+values from the encoders. 
+*/
 
 /**
  * This class defines the mechanism that moves up and down for hatch covers and
  * cargo.
  */
 public class Elevator {
-
+	
+	/**
+	 * Enum used to contain values related to the position of the elevator.
+	 */
 	public enum State {
+		/*
+		From left to right: Change in height from position zero, modification to our max speed when
+		in that state, the max speed we angle the placer when in that state, and the name of the
+		state in String form.
+		*/
 		LEVEL_ZERO(0.0, 1.0, 1.0 , "Initial State"),
 		CARGO_L1(16.75, 0.80, 0.50 , "Cargo level 1"),
 		CARGO_L2(44.75, 0.60, 0.30 , "Cargo Level 2"),
@@ -124,4 +136,17 @@ public class Elevator {
 	public int getElevatorEncoderVelocity() {
 		return m_elevatorEncoder.getQuadratureVelocity();
 	}
+	
+	/**
+	 * Calculates and returns the height of the elevator in inches.
+	 * 
+	 * @return The elevator's current height
+	 */
+	public double calculateElevatorPosition(){
+		double position = 0.0;
+		double drumCircumference = (RobotMap.DRUM_DIAMETER_INCHES * Math.PI);
+		double numRevolutions = (m_elevatorEncoder.getQuadraturePosition() / RobotMap.TICKS_PER_REVOLUTION);
+		position = drumCircumference * numRevolutions;
+		return position;
+	} 
 }
