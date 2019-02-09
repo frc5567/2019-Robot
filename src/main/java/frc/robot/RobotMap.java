@@ -23,6 +23,7 @@ public class RobotMap {
     // Elevator
     public static final int ELEVATOR_MOTOR_PORT = 4;
     public static final double DRUM_DIAMETER_INCHES = 0.0;     //UPDATE THIS VALUE
+    public static final double DRUM_CIRCUMFERENCE = DRUM_DIAMETER_INCHES * 3.14159265359;
     public static final int TICKS_PER_REVOLUTION = 4096;
 
     // PWM Motor Controllers
