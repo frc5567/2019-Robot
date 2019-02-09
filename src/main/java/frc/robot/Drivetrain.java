@@ -96,21 +96,6 @@ public class Drivetrain implements PIDOutput{
 
         // Instantiates the NavX
         try {
-			/*
-			 * navX-MXP: - Communication via RoboRIO MXP (SPI, I2C, TTL UART) --
-			 * 
-			 * and USB. - See
-			 * 
-			 * http://navx-mxp.kauailabs.com/guidance/selecting-an-interface.
-			 * 
-			 * navX-Micro: - Communication via I2C (RoboRIO MXP or Onboard) and --
-			 * 
-			 * USB. - See
-			 * 
-			 * http://navx-micro.kauailabs.com/guidance/selecting-an-interface.
-			 * 
-			 * Multiple navX-model devices on a single robot are supported. //
-			 ************************************************************************/
 			m_ahrs = new NavX(SPI.Port.kMXP);
 		} catch (RuntimeException ex) {
 			System.out.println("Error instantiating navX MXP");
