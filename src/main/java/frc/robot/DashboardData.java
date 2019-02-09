@@ -1,5 +1,14 @@
 package frc.robot;
 
+/**
+ * The DashboardData class is used to move the data we need to display on our dashboard from our
+ * Robot.java to our CustomDashboard.java. We use this class so that we don't have a huge
+ * constructor in the CustomDashboard file and can instead use DashboardData as a parameter for
+ * CustomDashboard.
+ * 
+ * @author Patrick Philbin, Issac Liimatta
+ */
+
 public class DashboardData{
 
     double m_rawElevatorHeight;
