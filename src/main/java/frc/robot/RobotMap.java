@@ -33,10 +33,10 @@ public class RobotMap {
     public static final int BACK_CLIMBER_MOTOR_PORT = 1;
 
     // Sensors
-    // Elevator limit switches
+    // Elevator limit switches DIO port numbers
     public static final int ELEVATOR_LIMIT_TOP_PORT = 0;
     public static final int ELEVATOR_LIMIT_BOTTOM_PORT = 1;
-    // Climber limit switches
+    // Climber limit switches DIO port numbers
     public static final int FRONT_CLIMBER_LIMIT_TOP_PORT = 2;
     public static final int BACK_CLIMBER_LIMIT_TOP_PORT = 3;
 

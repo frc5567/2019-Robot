@@ -116,7 +116,7 @@ public class Elevator {
 		m_elevatorEncoder.setQuadraturePosition(0, 0);
 
 		// Sets the State enum to it's initial state
-		currentState = currentState.LEVEL_ZERO;
+		currentState = State.LEVEL_ZERO;
 	}
 
 	/**
