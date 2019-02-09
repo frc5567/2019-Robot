@@ -20,24 +20,18 @@ public class Climber {
     }
 
     /**
-     * Raises climber when button is pressed
+     * Raises climber while button is pressed and the limit switch is not reached.
      * 
      * @param buttonInput Input from the controller button of our choice.
      */
     public void raiseClimber(boolean buttonInput) {
-        if(buttonInput){
-            double input;
-            if (m_topLimitSwitch.get()){
-                input = 0;
-            } 
-            else {
-                input = RobotMap.CLIMBER_SPEED_UP;
-            }
-            m_climberMotor.set(input);
+        if(buttonInput && !m_topLimitSwitch.get()) {
+            m_climberMotor.set(RobotMap.CLIMBER_SPEED_UP);
         }
         else{
-            return;
+            m_climberMotor.set(0.0);
         }
+        return;
     }
 
     /**
@@ -50,7 +44,8 @@ public class Climber {
             m_climberMotor.set(RobotMap.CLIMBER_SPEED_DOWN);
         }
         else{
-            return;
+            m_climberMotor.set(0.0);
         }
+        return;
     }
 }
