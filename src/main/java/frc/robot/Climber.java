@@ -10,7 +10,8 @@ public class Climber {
 
     /**
      * Constructor for the climber mechanism motor controllers and sensors.
-     * @param motorPort Port of the motor controller
+     * 
+     * @param motorPort          Port of the motor controller
      * @param topLimitSwitchPort The port of the top limit switch on the climber
      */
     public Climber(int motorPort, int topLimitSwitchPort) {
@@ -19,14 +20,32 @@ public class Climber {
     }
 
     /**
-     * Moves the climber based on the input recieved from controller
-     * @param controllerInput Input from the controller to move climber (positive is up, negative is down)
+     * Raises climber while button is pressed and the limit switch is not reached.
+     * 
+     * @param buttonInput Input from the controller button of our choice.
      */
-    public void moveClimber(double controllerInput) {
-        double input = controllerInput;
-        if ((input > 0) && m_topLimitSwitch.get()) {
-            input = 0;
+    public void raiseClimber(boolean buttonInput) {
+        if(buttonInput && !m_topLimitSwitch.get()) {
+            m_climberMotor.set(RobotMap.CLIMBER_SPEED_UP);
         }
-        m_climberMotor.set(input);
+        else{
+            m_climberMotor.set(0.0);
+        }
+        return;
+    }
+
+    /**
+     * Lowers climber when button is pressed
+     * 
+     * @param buttonInput Input from the controller based on the button of our choice.
+     */
+    public void lowerClimber(boolean buttonInput){
+        if(buttonInput){
+            m_climberMotor.set(RobotMap.CLIMBER_SPEED_DOWN);
+        }
+        else{
+            m_climberMotor.set(0.0);
+        }
+        return;
     }
 }

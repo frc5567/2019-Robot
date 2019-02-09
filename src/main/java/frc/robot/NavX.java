@@ -11,35 +11,32 @@ public class NavX extends AHRS {
 	// Boolean to keep track of status of offset application
 	private boolean m_offsetApplied;
 
-	/**
-	 * Constructor for NavX with SPI port parameter
-	 * 
-	 * @param spi_port_id SPI port NavX is connected to
-	 */
-	public NavX(SPI.Port spi_port_id) {
-		super(spi_port_id);
-		m_offsetApplied = false;
-	}
+    /**
+     * Constructor for NavX with SPI port parameter
+     * @param spi_port_id SPI port NavX is connected to
+     */
+    public NavX(SPI.Port spi_port_id) {
+        super(spi_port_id);
+        m_offsetApplied = false;
+    }
 
-	/**
-	 * Constructor for NavX with I2C port parameter
-	 * 
-	 * @param i2c_port_id I2C port NavX is connected to
-	 */
-	public NavX(I2C.Port i2c_port_id) {
-		super(i2c_port_id);
-		m_offsetApplied = false;
-	}
+    /**
+     * Constructor for NavX with I2C port parameter
+     * @param i2c_port_id I2C port NavX is connected to
+     */
+    public NavX(I2C.Port i2c_port_id) {
+        super(i2c_port_id);
+        m_offsetApplied = false;
+    }
 
-	/**
-	 * Constructor for NavX with Serial port parameter
-	 * 
-	 * @param serial_port_id Serial port NavX is connected to
-	 */
-	public NavX(SerialPort.Port serial_port_id) {
-		super(serial_port_id);
-		m_offsetApplied = false;
-	}
+    /**
+     * Constructor for NavX with Serial port parameter
+     * @param serial_port_id Serial port NavX is connected to
+     */
+    public NavX(SerialPort.Port serial_port_id) {
+        super(serial_port_id);
+        m_offsetApplied = false;
+    }
 
 	/**
 	 * Returns the current Yaw reading from the NavX, with offset applied if enabled

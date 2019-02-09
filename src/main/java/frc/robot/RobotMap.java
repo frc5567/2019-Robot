@@ -23,7 +23,7 @@ public class RobotMap {
     public static final int BACK_RIGHT_DROVE_MOTOR_PORT = 3;
     // Elevator
     public static final int ELEVATOR_MOTOR_PORT = 4;
-    public static final double DRUM_DIAMETER_INCHES = 0.0;     //UPDATE THIS
+    public static final double DRUM_DIAMETER_INCHES = 0.0;     //UPDATE THIS VALUE
     public static final int TICKS_PER_REVOLUTION = 4096;
 
 	// PWM Motor Controllers
@@ -52,4 +52,8 @@ public class RobotMap {
     public static final double HATCH_MECH_ARM_UP_MOTOR_SPEED = 0.5;
     public static final double HATCH_MECH_ARM_DOWN_MOTOR_SPEED = -0.5;
     public static final double HATCH_MECH_STOP_MOTOR_SPEED = 0.0;
+
+    //Climber motor speeds
+    public static final double CLIMBER_SPEED_UP = 0.3;      //UPDATE THIS VALUE
+    public static final double CLIMBER_SPEED_DOWN = -0.3;       //UPDATE THIS VALUE
 }
