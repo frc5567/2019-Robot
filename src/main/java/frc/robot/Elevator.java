@@ -142,7 +142,7 @@ public class Elevator {
 	 * 
 	 * @return The elevator's current height
 	 */
-	public double calculateElevatorPosition(){
+	public double calcPosition(){
 		double position = 0.0;
 		double drumCircumference = (RobotMap.DRUM_DIAMETER_INCHES * Math.PI);
 		double numRevolutions = (m_elevatorEncoder.getQuadraturePosition() / RobotMap.TICKS_PER_REVOLUTION);
