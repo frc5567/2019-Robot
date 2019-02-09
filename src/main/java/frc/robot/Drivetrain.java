@@ -1,5 +1,6 @@
 package frc.robot;
 
+import edu.wpi.first.wpilibj.PIDOutput;
 // Imports needed for motor controllers, speed controller groups, and the drivetrain
 import edu.wpi.first.wpilibj.drive.DifferentialDrive; 
 // These imports are extending SpeedController, allowing us to use SpeedControllerGroup
@@ -7,11 +8,34 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.ctre.phoenix.motorcontrol.SensorCollection;
 
+// Import needed to initialize NavX and rotation controller
+import edu.wpi.first.wpilibj.PIDController;
+import edu.wpi.first.wpilibj.SPI;
+
 /**
  * This class defines the mechanism that allows the robot to move backwards and forwards using motors and wheels. 
  */
-public class Drivetrain {
+public class Drivetrain implements PIDOutput{
+    // Declares NavX for rotation control
+    private NavX m_ahrs;
 
+    // Declares turn control PID
+    private PIDController m_rotController;
+
+    // Declares PID controller constants
+    // These constants are filler and untested. These absolutely must be replaced
+    private final double P_ROT = 0.00;
+    private final double I_ROT = 0.00;
+    private final double D_ROT = 0.00;
+    private final double F_ROT = 0.00;
+    private final double TOLERANCE_ROT = 2;
+
+    // Declare a threshold for ending the method if the PID controller is no longer moving the robot
+    private final double FINISHED_THRESHOLD = 0.01;
+
+    // Delcares a flag for checking if this is the first time entering this method in a given run
+    boolean m_firstCall = true;
+    
     // Declares variables for drivetrain speed and rotate setter
     // Constant is how large each step is in the setters
     private final double MAX_DELTA_SPEED = 0.1;
@@ -42,7 +66,7 @@ public class Drivetrain {
     /**
      * Constructor for the motor controller declarations and the drivetrain object
      */
-    Drivetrain() {
+    public Drivetrain() {
         
         // Initializes the motorControllers using the ports passed in
         m_frontLeftMotor = new WPI_VictorSPX(RobotMap.FRONT_LEFT_DRIVE_MOTOR_PORT);
@@ -69,6 +93,22 @@ public class Drivetrain {
         // Setters use variables as feedback in order to "ramp" the output gradually
         m_currentSpeed = 0;
         m_currentRotate = 0;
+
+        // Instantiates the NavX
+        try {
+			m_ahrs = new NavX(SPI.Port.kMXP);
+		} catch (RuntimeException ex) {
+			System.out.println("Error instantiating navX MXP");
+        }
+        
+        // Initializes rotate PID controller with the PIDF constants, the ahrs, the PID output, and the loop time (s)
+        m_rotController = new PIDController(P_ROT, I_ROT, D_ROT, F_ROT, m_ahrs, this, 0.02);
+        m_rotController.setInputRange(-180.00f, 180.00f);
+        // These values are temporary and need to be changed based on testing
+        m_rotController.setOutputRange(-0.7, 0.7);
+        m_rotController.setAbsoluteTolerance(TOLERANCE_ROT);
+        m_rotController.setContinuous();
+        m_rotController.disable();
     }
 
 
@@ -135,6 +175,45 @@ public class Drivetrain {
     }
 
     /**
+     * Rotates to a set angle without moving forward utilizing the PID and AHRS
+     * @param targetAngle The angle you want the robot to rotate to
+     * @return Returns true if the PID returns a value low enough that the robot doesn't move (thus finished)
+     */
+    public boolean rotateToAngle(double targetAngle) {
+        // Flag for checking if the method is finished
+        boolean isFinished = false;
+        
+        // Resets the PID only on first entry
+        if(m_firstCall){
+            // Resets the error
+            m_rotController.reset();
+
+            // Enables the PID
+            m_rotController.enable();
+            
+            // Sets the target to our target angle
+            m_rotController.setSetpoint(targetAngle);
+
+            // Prevents us from repeating the reset until we run the method again seperately
+            m_firstCall = false;
+        }
+
+        // Sets our rotate speed to the return of the PID
+        double returnedRotate = m_rotController.get();
+
+        // Runs the drivetrain with 0 speed and the rotate speed set by the PID
+        curvatureDrive(0, returnedRotate);
+
+        // Checks to see if the the PID is finished or close enough
+        if ( (returnedRotate < FINISHED_THRESHOLD) && (returnedRotate > -FINISHED_THRESHOLD) ) {
+            isFinished = true;
+            m_firstCall = true;
+        }
+
+        return isFinished;
+    }
+
+    /**
      * Returns the encoder position of the drivetrain left side encoder
      * @return The position of the left side encoder
      */
@@ -164,5 +243,12 @@ public class Drivetrain {
      */
     public int getRightDriveEncoderVelocity() {
         return m_rightDriveEncoder.getQuadratureVelocity();
+    }
+
+    /**
+     * 
+     */
+    public void pidWrite(double output){
+
     }
 }
