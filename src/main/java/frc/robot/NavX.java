@@ -15,7 +15,7 @@ public class NavX extends AHRS {
      * Constructor for NavX with SPI port parameter
      * @param spi_port_id SPI port NavX is connected to
      */
-    NavX(SPI.Port spi_port_id) {
+    public NavX(SPI.Port spi_port_id) {
         super(spi_port_id);
         m_offsetApplied = false;
     }
@@ -24,7 +24,7 @@ public class NavX extends AHRS {
      * Constructor for NavX with I2C port parameter
      * @param i2c_port_id I2C port NavX is connected to
      */
-    NavX(I2C.Port i2c_port_id) {
+    public NavX(I2C.Port i2c_port_id) {
         super(i2c_port_id);
         m_offsetApplied = false;
     }
@@ -33,7 +33,7 @@ public class NavX extends AHRS {
      * Constructor for NavX with Serial port parameter
      * @param serial_port_id Serial port NavX is connected to
      */
-    NavX(SerialPort.Port serial_port_id) {
+    public NavX(SerialPort.Port serial_port_id) {
         super(serial_port_id);
         m_offsetApplied = false;
     }
