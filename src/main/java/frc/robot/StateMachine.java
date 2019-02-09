@@ -101,18 +101,6 @@ public class StateMachine {
              * prevent unneccessary use of ultrasonics in TELEOP
              */
 
-            // Test drivetrain included, uses Left stick Y for speed, Right stick X for
-            // turning, quick turn is auto-enabled at low speed
-            m_drivetrain.curvatureDrive(m_pilotController.getLeftStickY(), m_pilotController.getRightStickX());
-
-            if (m_pilotController.getAButtonReleased()) {
-                m_ahrs.zeroYaw();
-            }
-            if (m_pilotController.getBButtonReleased()) {
-                m_ahrs.flipOffset();
-            }
-
-            System.out.println(m_ahrs.getOffsetYaw() + "\t\t" + m_ahrs.getOffsetStatus());
             break;
         case AUTO:
             /**

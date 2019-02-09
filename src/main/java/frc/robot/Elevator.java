@@ -100,7 +100,7 @@ public class Elevator {
 	// This constructor is initializing in creating a new instance of an elevator
 	// with limit port switch definitions.
 
-	public Elevator(double distancePerPulse) {
+	public Elevator() {
 
 		// Instantiates Motor controller for elevator
 		m_elevatorMotor = new WPI_TalonSRX(RobotMap.ELEVATOR_MOTOR_PORT);
