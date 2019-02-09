@@ -1,10 +1,5 @@
 package frc.robot;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-
-
-
 public class DashboardData{
 
     double m_rawElevatorHeight;
@@ -19,12 +14,13 @@ public class DashboardData{
     boolean m_autonActive;
     boolean m_readingTarget;
     boolean m_ballIntakeRunning;
+    String m_elevatorState;
 
 
     /**
      * Constructor used as a data bridge between the sensors and the CustomDashboard class.
      * 
-     * @param elevatorEncoder The value read by the encoder on our elevator.
+     * @param elevatorEncoder The value read by calcPosition() of our elevator object.
      * @param encoderRateRight Value read by .getRate() of our right encoder.
      * @param encoderRateLeft Value read by .getRate() of our left encoder.
      * @param driverAssistOn Boolean that tests whether or not Driver Assist is being used.
@@ -35,11 +31,13 @@ public class DashboardData{
      * @param autonActivated True if auton is engaged, if disengaged it will read false.
      * @param autonReadingTarget True if the Pixy detects a line below the robot.
      * @param ballIntakeRunning True if our ball intake system is currently running.
+     * @param elevatorState Value read from getState() method of our elevator object.
      */
     
     public DashboardData(double elevatorEncoder , double encoderRateRight , double encoderRateLeft ,
     boolean driverAssistOn , double proximitySensorInches , boolean grabberOpen , double grabberAngle ,
-    double climberPosition , boolean autonActivated , boolean autonReadingTarget , boolean ballIntakeRunning ){
+    double climberPosition , boolean autonActivated , boolean autonReadingTarget , boolean ballIntakeRunning , 
+    String elevatorState){
         m_rawElevatorHeight = elevatorEncoder;
         
         m_velocityRight = encoderRateRight;
@@ -70,6 +68,8 @@ public class DashboardData{
         m_readingTarget = autonReadingTarget;
 
         m_ballIntakeRunning = ballIntakeRunning;
+
+        m_elevatorState = elevatorState;
 
         
     }
