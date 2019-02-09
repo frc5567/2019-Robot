@@ -12,9 +12,7 @@ public class DuinoToRioComms {
     public DuinoToRioComms() {
         //  Instantiation for the usb port to interact with the Duino
         m_duinoPort = new SerialPort(9600, SerialPort.Port.kUSB);
-
-        //  Telemetry for testing communication: Print to ensure instantiation
-        System.out.println("Exit Constructor");
+        m_duinoPort.enableTermination();
     }
     
     /**
@@ -46,15 +44,40 @@ public class DuinoToRioComms {
     }
 
     /**
+     * Finds the angle to target based on the low camera
+     * @return  Angle to target. Will return Double.NaN if it fails to read properly.
+     */
+    public double getAngleToCenter() {
+        //  Declares and instantiates a value for storing the return from pixyRead
+        Double angleToCenter = Double.NaN;
+
+        //  Calls pixyRead with the command 3 to get angle to center and assign it to return variable
+        angleToCenter = pixyRead('3');
+
+        return angleToCenter;
+    }
+
+    /**
+     * Finds the approximate position relative to the target based on the high camera
+     * @return  Position relative to target, where -1 is no target, 1 is left, 2 is center, and 3 is right. Will return Double.NaN if it fails to read properly.
+     */
+    public double getLowPosition() {
+        //  Declares and instantiates a value for storing the return from pixyRead
+        Double lowPosition = Double.NaN;
+
+        //  Calls pixyRead with the command 4 to get lowPosition and assign it to return variable
+        lowPosition = pixyRead('4');
+
+        return lowPosition;
+    }
+
+    /**
      * Method containing both communication methods
      * @param command The value of the command requested, where 0 requests degreesToTarget, 1 requests dist to target
      */
     private double pixyRead(char command) {
         //  Declares and instantiates a variable for storing return from readData        
         Double dataReturned = Double.NaN;
-
-        //  Telemetry for testing communication: Print on enter to check for run
-        System.out.println("Enter pixyRead");
 
         //  Call the data methods with a command inputed in the Robot class
         sendCommand(command);
@@ -64,9 +87,6 @@ public class DuinoToRioComms {
         if(dataReturned.isNaN()){
             System.out.println("Nothing Returned");
         }
-
-        //  Telemetry for testing communication: Print for ensuring the method exits
-        System.out.println("Exit Read");
 
         return dataReturned;
     }
@@ -95,24 +115,29 @@ public class DuinoToRioComms {
         Double dataDouble = Double.NaN;
 
         //  Allocates recieved data to a string
-        String sPixyOut = m_duinoPort.readString();
+        String sPixyOut = m_duinoPort.readString(6);
 
         //  Checks to see if the passed in command is valid
-        if ( !(command == '2' || command == '1') ){
+        if ( (command != '2' && command != '1') && (command != '3' && command != '4') ){
             System.out.println("Invalid Command");
         }
         else {
-            //  Parses the double sent by the arduino
+            //  If the parseDouble throws an exception, the robot would crash. This catches
+            //  those exceptions and prints to tell us why
             try {
+                //  Parses the double sent by the arduino
                 dataDouble =  Double.parseDouble(sPixyOut);
             }
             catch (NumberFormatException e) {
+                //  If the value returned is not parsable, we hit this exception
                 System.out.println ("No parsable number returned");
             }
             catch (NullPointerException e) {
+                //  If the value returned is null, we hit this exception
                 System.out.println ("Null Pointer Exception: Nothing passed in");
             }
             catch (Exception e) {
+                //  If we hit this exception, we're in trouble, as it should not be possible for the parse method
                 System.out.println ("Unknown Exception");
             }
         }
