@@ -5,6 +5,8 @@ import edu.wpi.first.wpilibj.SerialPort;
 public class DuinoToRioComms {
     //  Declaration for usb port to interact with the Duino
 	private SerialPort m_duinoPort;
+
+	//	Declares command constants for communication
 	private final char GET_DEG_TO_TARGET = '2';
 	private final char GET_DIST_TO_TARGET = '1';
 	private final char GET_ANGLE_TO_CENTER = '3';
