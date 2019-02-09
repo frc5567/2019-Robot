@@ -13,7 +13,7 @@ public class Climber {
      * @param motorPort Port of the motor controller
      * @param topLimitSwitchPort The port of the top limit switch on the climber
      */
-    Climber(int motorPort, int topLimitSwitchPort) {
+    public Climber(int motorPort, int topLimitSwitchPort) {
         m_climberMotor = new Spark(motorPort);
         m_topLimitSwitch = new DigitalInput(topLimitSwitchPort);
     }

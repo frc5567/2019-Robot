@@ -16,7 +16,7 @@ public class NavX extends AHRS {
 	 * 
 	 * @param spi_port_id SPI port NavX is connected to
 	 */
-	NavX(SPI.Port spi_port_id) {
+	public NavX(SPI.Port spi_port_id) {
 		super(spi_port_id);
 		m_offsetApplied = false;
 	}
@@ -26,7 +26,7 @@ public class NavX extends AHRS {
 	 * 
 	 * @param i2c_port_id I2C port NavX is connected to
 	 */
-	NavX(I2C.Port i2c_port_id) {
+	public NavX(I2C.Port i2c_port_id) {
 		super(i2c_port_id);
 		m_offsetApplied = false;
 	}
@@ -36,7 +36,7 @@ public class NavX extends AHRS {
 	 * 
 	 * @param serial_port_id Serial port NavX is connected to
 	 */
-	NavX(SerialPort.Port serial_port_id) {
+	public NavX(SerialPort.Port serial_port_id) {
 		super(serial_port_id);
 		m_offsetApplied = false;
 	}
@@ -48,9 +48,17 @@ public class NavX extends AHRS {
 	 */
 	public float getOffsetYaw() {
 		// Checks if offset is enabled
+		float yaw = getYaw();
 		if (m_offsetApplied) {
+			yaw += RobotMap.ANGLE_OFFSET;
 			// Adds offset if enabled
-			return getYaw() + RobotMap.ANGLE_OFFSET;
+			if (yaw < -180) {
+				yaw += 360;
+			}
+			else if (yaw > 180) {
+				yaw -= 360;
+			}
+			return yaw;
 		} else {
 			// Returns yaw without offset applied
 			return getYaw();

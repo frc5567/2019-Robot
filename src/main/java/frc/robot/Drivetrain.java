@@ -42,7 +42,7 @@ public class Drivetrain {
     /**
      * Constructor for the motor controller declarations and the drivetrain object
      */
-    Drivetrain() {
+    public Drivetrain() {
         
         // Initializes the motorControllers using the ports passed in
         m_frontLeftMotor = new WPI_VictorSPX(RobotMap.FRONT_LEFT_DRIVE_MOTOR_PORT);

@@ -7,8 +7,6 @@
 
 package frc.robot;
 
-import com.kauailabs.navx.frc.AHRS;
-
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.SPI;
 
@@ -16,6 +14,8 @@ import frc.robot.Drivetrain;
 import frc.robot.Controller;
 import frc.robot.Climber;
 import frc.robot.NavX;
+import frc.robot.StateMachine;
+import frc.robot.StateMachine.States;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -38,11 +38,14 @@ public class Robot extends TimedRobot {
 	Climber m_backClimber;
 
 	// Declare NavX
-	NavX ahrs;
+	NavX m_ahrs;
+
+	// Declare state machine
+	StateMachine m_fsm;
 
 	// Declare our duino communication port
-	private DuinoToRioComms m_duinoToRio;
-	private DuinoCommStorage m_pkt;
+//	private DuinoToRioComms m_duinoToRio;
+//	private DuinoCommStorage m_pkt;
 
 	Robot() {
 
@@ -52,7 +55,7 @@ public class Robot extends TimedRobot {
 		m_backClimber = new Climber(RobotMap.BACK_CLIMBER_MOTOR_PORT, RobotMap.BACK_CLIMBER_LIMIT_TOP_PORT);
 
 		// Instantiate our duino to rio communication port
-		m_duinoToRio = new DuinoToRioComms();
+//		m_duinoToRio = new DuinoToRioComms();
 
 		try {
 			/*
@@ -70,10 +73,13 @@ public class Robot extends TimedRobot {
 			 * 
 			 * Multiple navX-model devices on a single robot are supported. //
 			 ************************************************************************/
-			ahrs = new NavX(SPI.Port.kMXP);
+			m_ahrs = new NavX(SPI.Port.kMXP);
 		} catch (RuntimeException ex) {
 			System.out.println("Error instantiating navX MXP");
 		}
+		
+
+		m_fsm = new StateMachine(m_pilotController, m_ahrs, m_drivetrain);
 	}
 
 	/**
@@ -128,7 +134,7 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void teleopInit() {
-
+		m_fsm.updateState(States.TELEOP);
 	}
 
 	/**
@@ -136,16 +142,7 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
-		// Test drivetrain included, uses Left stick Y for speed, Right stick X for
-		// turning, quick turn is auto-enabled at low speed
-		m_drivetrain.curvatureDrive(m_pilotController.getLeftStickY(), m_pilotController.getRightStickX());
-
-		if (m_pilotController.getAButtonReleased()) {
-			ahrs.zeroYaw();
-		}
-		if (m_pilotController.getBButtonReleased()) {
-			ahrs.flipOffset();
-		}
+		m_fsm.FSM();
 	}
 
 	/**
@@ -161,6 +158,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void testPeriodic() {
+/*
     //  Code for testing comms with arduino
     if (m_pilotController.getAButtonReleased()) {
       //  Assigns return value. Checking NaN should occur here
@@ -211,5 +209,6 @@ public class Robot extends TimedRobot {
       }
 		
 		}
+*/
   }
 }

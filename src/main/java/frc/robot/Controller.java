@@ -14,7 +14,7 @@ public class Controller extends XboxController {
      * Handles for input from driver's Xbox Controllers, and abjusts analog input using deadbands
      * @param port The Driver Station USB the controller is plugged into
      */
-    Controller(int port) {
+    public Controller(int port) {
         super(port);
 
         // Initializes controller to port passed in contructor
