@@ -4,7 +4,11 @@ import edu.wpi.first.wpilibj.SerialPort;
 
 public class DuinoToRioComms {
     //  Declaration for usb port to interact with the Duino
-    private SerialPort m_duinoPort;
+	private SerialPort m_duinoPort;
+	private final char GET_DEG_TO_TARGET = '2';
+	private final char GET_DIST_TO_TARGET = '1';
+	private final char GET_ANGLE_TO_CENTER = '3';
+	private final char GET_LOW_POSITION = '4';
 
     /**
      *  Constructor for the commuication class object
@@ -24,7 +28,7 @@ public class DuinoToRioComms {
         Double degToTarget = Double.NaN;
 
         //  Calls pixyRead with the command 2 to get deg to target and assign it to return variable
-        degToTarget = pixyRead('2');
+        degToTarget = pixyRead(GET_DEG_TO_TARGET);
 
         return degToTarget;
     }
@@ -38,7 +42,7 @@ public class DuinoToRioComms {
         Double distToTarget = Double.NaN;
 
         //  Calls pixyRead with the command 1 to get dist to target and assign it to return variable
-        distToTarget = pixyRead('1');
+        distToTarget = pixyRead(GET_DIST_TO_TARGET);
 
         return distToTarget;
     }
@@ -52,7 +56,7 @@ public class DuinoToRioComms {
         Double angleToCenter = Double.NaN;
 
         //  Calls pixyRead with the command 3 to get angle to center and assign it to return variable
-        angleToCenter = pixyRead('3');
+        angleToCenter = pixyRead(GET_ANGLE_TO_CENTER);
 
         return angleToCenter;
     }
@@ -66,7 +70,7 @@ public class DuinoToRioComms {
         Double lowPosition = Double.NaN;
 
         //  Calls pixyRead with the command 4 to get lowPosition and assign it to return variable
-        lowPosition = pixyRead('4');
+        lowPosition = pixyRead(GET_LOW_POSITION);
 
         return lowPosition;
     }
@@ -118,9 +122,9 @@ public class DuinoToRioComms {
         String sPixyOut = m_duinoPort.readString(6);
 
         //  Checks to see if the passed in command is valid
-        if ( (command != '2' && command != '1') && (command != '3' && command != '4') ){
+        if ( (command != GET_ANGLE_TO_CENTER && command != GET_DEG_TO_TARGET) && (command != GET_DIST_TO_TARGET && command != GET_LOW_POSITION) ){
             System.out.println("Invalid Command");
-        }
+		}
         else {
             //  If the parseDouble throws an exception, the robot would crash. This catches
             //  those exceptions and prints to tell us why
