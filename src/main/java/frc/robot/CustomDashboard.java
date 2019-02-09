@@ -43,7 +43,6 @@ public class CustomDashboard{
             double lowThreshhold = 0;
             double midThreshhold = 1;
             double highThreshhold = 2;
-            final double MAX_ELEVATOR_HEIGHT = 5.0;
 
             if(elevatorHeight < lowThreshhold + 2 && elevatorHeight > lowThreshhold - 2){
                 this.hatchElevatorState = 2;
@@ -54,7 +53,7 @@ public class CustomDashboard{
             else if(elevatorHeight < highThreshhold + 2 && elevatorHeight > highThreshhold - 2){
                 this.hatchElevatorState = 4;
             }
-            else if(elevatorHeight == MAX_ELEVATOR_HEIGHT){
+            else if(elevatorHeight == RobotMap.MAX_ELEVATOR_HEIGHT){
                 this.hatchElevatorState = 5;
             }
             else{

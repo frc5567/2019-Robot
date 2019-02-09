@@ -1,5 +1,11 @@
 package frc.robot;
 
+/**
+ * This class is to be able to command the robot via autonomous and auto assist
+ * using emthods within this class. The methods can combined together to form full pathing
+ * @author Matt
+ * @version Week 5 Pre-comp
+ */
 public class AutoCommands {
 
     Drivetrain m_drivetrain;

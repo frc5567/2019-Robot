@@ -1,5 +1,13 @@
 package frc.robot;
 
+/**
+ * DEPRICATED
+ * This class was designed to send commands to the robot basing on what state
+ * the robot is currently in.
+ * DO NOT USE. WILL BE REMOVED SOON
+ * @author Matt
+ * @version Week 5 Pre-comp
+ */
 public class StateMachine {
 
     /**

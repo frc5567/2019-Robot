@@ -6,6 +6,13 @@ import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.SerialPort;
 
+/**
+ * This class is an extension of the base AHRS class.
+ * The class extends the base class, but adds emthods to get
+ * the adjusted yaw with an 180 degreee ofset included.
+ * @author Matt
+ * @version Week 5 Pre-comp
+ */
 public class NavX extends AHRS {
 
 	// Boolean to keep track of status of offset application
