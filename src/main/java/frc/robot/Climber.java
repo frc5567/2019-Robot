@@ -20,8 +20,8 @@ public class Climber {
     }
 
     /**
-     * Raises climber while button is pressed and the limit switch is not reached.
-     * 
+     * Raises climber at a constant speed while button is pressed and the limit switch is not reached
+     * (Button to be determined later).
      * @param buttonInput Input from the controller button of our choice.
      */
     public void raiseClimber(boolean buttonInput) {
@@ -35,7 +35,7 @@ public class Climber {
     }
 
     /**
-     * Lowers climber when button is pressed
+     * Lowers climber at a constant speed when button is pressed (Button to be determined later).
      * 
      * @param buttonInput Input from the controller based on the button of our choice.
      */
