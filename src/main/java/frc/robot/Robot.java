@@ -149,6 +149,7 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void teleopInit() {
+		m_drivetrain.talonDriveConfig();
 	}
 
 	/**
@@ -159,8 +160,11 @@ public class Robot extends TimedRobot {
 
 		// Test drivetrain included, uses Left stick Y for speed, Right stick X for
 		// turning, quick turn is auto-enabled at low speed
-		m_drivetrain.curvatureDrive(m_pilotController.getLeftStickY(), m_pilotController.getRightStickX());
+//		m_drivetrain.curvatureDrive(m_pilotController.getLeftStickY(), m_pilotController.getRightStickX());
 
+		// PID based sample talon arcade drive
+		m_drivetrain.talonArcadeDrive(m_pilotController.getRightTrigger() - m_pilotController.getLeftTrigger(), m_pilotController.getLeftStickX());
+		
 		if (m_pilotController.getAButtonReleased()) {
 			m_ahrs.zeroYaw();
 		}
