@@ -71,6 +71,12 @@ double distToTarget;
 //  Command char recieved from the rio, where 2 is degToTarget, 1 is distToTarget, 3 is angleToCenter, and 4 is lowPosition
 char incCommand = '0';
 
+//	Commands we are comparing incCommand to
+const char GET_DEG_TO_TARGET = '2';
+const char GET_DIST_TO_TARGET = '1';
+const char GET_ANGLE_TO_CENTER = '3';
+const char GET_LOW_POSITION = '4';
+
 //  This is the return for the position according to the lowPixy, where 1 is left, 2 is center, and 3 is right. -1 is no blocks
 int lowPosition = -1;
 
@@ -152,19 +158,19 @@ void serialFlush()
 //  Writes data down the wire based on command passed in
 void sendData(char command)
 {
-	if (command == '2')
+	if (command == GET_DEG_TO_TARGET)
 	{
 		Serial.println(degToTarget);
 	}
-	else if (command == '1')
+	else if (command == GET_DIST_TO_TARGET)
 	{
 		Serial.println(distToTarget);
 	}
-	else if (command == '3')
+	else if (command == GET_ANGLE_TO_CENTER)
 	{
 		Serial.println(angleToCenter);
 	}
-	else if (command == '4')
+	else if (command == GET_LOW_POSITION)
 	{
 		Serial.println(lowPosition);
 	}

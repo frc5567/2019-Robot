@@ -32,6 +32,10 @@ public class RobotMap {
     public static final int BACK_RIGHT_DROVE_MOTOR_PORT = 3;
     // Elevator
     public static final int ELEVATOR_MOTOR_PORT = 4;
+    public static final double DRUM_DIAMETER_INCHES = 2.2;     //UPDATE THIS VALUE
+    public static final double PI = 3.14159265359;
+    public static final double DRUM_CIRCUMFERENCE = DRUM_DIAMETER_INCHES * PI;
+    public static final int TICKS_PER_REVOLUTION = 4096;
 
 	// PWM motor controller port numbers
 	// Climber
@@ -39,10 +43,10 @@ public class RobotMap {
 	public static final int BACK_CLIMBER_MOTOR_PORT = 1;
 
     // Sensors
-    // Elevator limit switches
+    // Elevator limit switches DIO port numbers
     public static final int ELEVATOR_LIMIT_TOP_PORT = 0;
     public static final int ELEVATOR_LIMIT_BOTTOM_PORT = 1;
-    // Climber limit switches
+    // Climber limit switches DIO port numbers
     public static final int FRONT_CLIMBER_LIMIT_TOP_PORT = 2;
     public static final int BACK_CLIMBER_LIMIT_TOP_PORT = 3;
     // Hatch mechanism limit switches

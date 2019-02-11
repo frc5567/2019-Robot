@@ -116,7 +116,7 @@ public class Elevator {
 		m_elevatorEncoder.setQuadraturePosition(0, 0);
 
 		// Sets the State enum to it's initial state
-		currentState = currentState.LEVEL_ZERO;
+		currentState = State.LEVEL_ZERO;
 	}
 
 	/**
@@ -144,9 +144,8 @@ public class Elevator {
 	 */
 	public double calcPosition(){
 		double position = 0.0;
-		double drumCircumference = (RobotMap.DRUM_DIAMETER_INCHES * Math.PI);
 		double numRevolutions = (m_elevatorEncoder.getQuadraturePosition() / RobotMap.TICKS_PER_REVOLUTION);
-		position = drumCircumference * numRevolutions;
+		position = RobotMap.DRUM_CIRCUMFERENCE * numRevolutions;
 		return position;
 	} 
 }
