@@ -225,8 +225,8 @@ public class Drivetrain implements PIDOutput {
     }
 
     /**
-     * 
-     * @return
+     * Runs the teleop init section of the sample code. This method shoud be called there
+     * Sets up and configs everything on the talons for arcade drive via velocity PID.
      */
     public void talonDriveConfig() {
         // Sets all motor controllers to zero to kill movement
@@ -239,101 +239,49 @@ public class Drivetrain implements PIDOutput {
 
         /** Feedback Sensor Configuration */
 
-        /* Configure the left Talon's selected sensor to a Quad Encoder */
-        m_backLeftMotor.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, // Local Feedback Source
+        // Configure the left Talon's selected sensor to a Quad Encoder
+        m_backLeftMotor.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, RobotMap.PID_PRIMARY, RobotMap.TIMEOUT_MS);
 
-                RobotMap.PID_PRIMARY, // PID Slot for Source [0, 1]
+        // Configure the Remote Talon's selected sensor as a remote sensor for the right Talon
+        m_backRightMotor.configRemoteFeedbackFilter(m_backLeftMotor.getDeviceID(), RemoteSensorSource.TalonSRX_SelectedSensor, RobotMap.REMOTE_1, RobotMap.TIMEOUT_MS);
 
-                RobotMap.TIMEOUT_MS); // Configuration Timeout
+        // Setup Sum signal to be used for Distance
+        // Feedback Device of Remote Talon
+        m_backRightMotor.configSensorTerm(SensorTerm.Sum0, FeedbackDevice.RemoteSensor1, RobotMap.TIMEOUT_MS); 
 
-        /*
-         * Configure the Remote Talon's selected sensor as a remote sensor for the right
-         * Talon
-         */
+        // Quadrature Encoder of current Talon
+        m_backRightMotor.configSensorTerm(SensorTerm.Sum1, FeedbackDevice.QuadEncoder, RobotMap.TIMEOUT_MS); 
 
-        m_backRightMotor.configRemoteFeedbackFilter(m_backLeftMotor.getDeviceID(), // Device ID of Source
-
-                RemoteSensorSource.TalonSRX_SelectedSensor, // Remote Feedback Source
-
-                RobotMap.REMOTE_1, // Source number [0, 1]
-
-                RobotMap.TIMEOUT_MS); // Configuration Timeout
-
-        /* Setup Sum signal to be used for Distance */
-
-        m_backRightMotor.configSensorTerm(SensorTerm.Sum0, FeedbackDevice.RemoteSensor1, RobotMap.TIMEOUT_MS); // Feedback
-                                                                                                                // Device
-                                                                                                                // of
-                                                                                                                // Remote
-                                                                                                                // Talon
-
-        m_backRightMotor.configSensorTerm(SensorTerm.Sum1, FeedbackDevice.QuadEncoder, RobotMap.TIMEOUT_MS); // Quadrature
-                                                                                                              // Encoder
-                                                                                                              // of
-                                                                                                              // current
-                                                                                                              // Talon
-
-        /* Setup Difference signal to be used for Turn */
-
+        // Setup Difference signal to be used for Turn
         m_backRightMotor.configSensorTerm(SensorTerm.Diff1, FeedbackDevice.RemoteSensor1, RobotMap.TIMEOUT_MS);
-
         m_backRightMotor.configSensorTerm(SensorTerm.Diff0, FeedbackDevice.QuadEncoder, RobotMap.TIMEOUT_MS);
 
-        /* Configure Sum [Sum of both QuadEncoders] to be used for Primary PID Index */
+        // Configure Sum [Sum of both QuadEncoders] to be used for Primary PID Index
+        m_backRightMotor.configSelectedFeedbackSensor(FeedbackDevice.SensorSum, RobotMap.PID_PRIMARY, RobotMap.TIMEOUT_MS);
 
-        m_backRightMotor.configSelectedFeedbackSensor(FeedbackDevice.SensorSum,
+        // Scale Feedback by 0.5 to half the sum of Distance
+        m_backRightMotor.configSelectedFeedbackCoefficient(0.5, RobotMap.PID_PRIMARY, RobotMap.TIMEOUT_MS);
 
-                RobotMap.PID_PRIMARY,
+        // Configure Difference [Difference between both QuadEncoders] to be used for Auxiliary PID Index
+        m_backRightMotor.configSelectedFeedbackSensor(FeedbackDevice.SensorDifference, RobotMap.PID_TURN, RobotMap.TIMEOUT_MS);
 
-                RobotMap.TIMEOUT_MS);
-
-        /* Scale Feedback by 0.5 to half the sum of Distance */
-
-        m_backRightMotor.configSelectedFeedbackCoefficient(0.5, // Coefficient
-
-                RobotMap.PID_PRIMARY, // PID Slot of Source
-
-                RobotMap.TIMEOUT_MS); // Configuration Timeout
-
-        /*
-         * Configure Difference [Difference between both QuadEncoders] to be used for
-         * Auxiliary PID Index
-         */
-
-        m_backRightMotor.configSelectedFeedbackSensor(FeedbackDevice.SensorDifference,
-
-                RobotMap.PID_TURN,
-
-                RobotMap.TIMEOUT_MS);
-
-        /* Don't scale the Feedback Sensor (use 1 for 1:1 ratio) */
-
+        // Don't scale the Feedback Sensor (use 1 for 1:1 ratio)
         m_backRightMotor.configSelectedFeedbackCoefficient(1, RobotMap.PID_TURN, RobotMap.TIMEOUT_MS);
 
-        /* Configure output and sensor direction */
-
+        // Configure output and sensor direction
         m_backLeftMotor.setInverted(false);
-
         m_backLeftMotor.setSensorPhase(true);
-
         m_backRightMotor.setInverted(true);
-
         m_backRightMotor.setSensorPhase(true);
 
-        /* Set status frame periods to ensure we don't have stale data */
-
+        // Set status frame periods to ensure we don't have stale data
         m_backRightMotor.setStatusFramePeriod(StatusFrame.Status_12_Feedback1, 20, RobotMap.TIMEOUT_MS);
-
         m_backRightMotor.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20, RobotMap.TIMEOUT_MS);
-
         m_backRightMotor.setStatusFramePeriod(StatusFrame.Status_14_Turn_PIDF1, 20, RobotMap.TIMEOUT_MS);
-
         m_backLeftMotor.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 5, RobotMap.TIMEOUT_MS);
 
-        /* Configure neutral deadband */
-
+        // Configure neutral deadband
         m_backRightMotor.configNeutralDeadband(RobotMap.kNeutralDeadband, RobotMap.TIMEOUT_MS);
-
         m_backLeftMotor.configNeutralDeadband(RobotMap.kNeutralDeadband, RobotMap.TIMEOUT_MS);
 
         /**
@@ -344,49 +292,27 @@ public class Drivetrain implements PIDOutput {
          * configClosedLoopPeakOutput().
          * 
          */
-
         m_backLeftMotor.configPeakOutputForward(+1.0, RobotMap.TIMEOUT_MS);
-
         m_backLeftMotor.configPeakOutputReverse(-1.0, RobotMap.TIMEOUT_MS);
-
         m_backRightMotor.configPeakOutputForward(+1.0, RobotMap.TIMEOUT_MS);
-
         m_backRightMotor.configPeakOutputReverse(-1.0, RobotMap.TIMEOUT_MS);
 
-        /* FPID Gains for velocity servo */
-
+        // FPID Gains for velocity servo
         m_backRightMotor.config_kP(RobotMap.kSlot_Velocit, RobotMap.kGains_Velocit.kP, RobotMap.TIMEOUT_MS);
-
         m_backRightMotor.config_kI(RobotMap.kSlot_Velocit, RobotMap.kGains_Velocit.kI, RobotMap.TIMEOUT_MS);
-
         m_backRightMotor.config_kD(RobotMap.kSlot_Velocit, RobotMap.kGains_Velocit.kD, RobotMap.TIMEOUT_MS);
-
         m_backRightMotor.config_kF(RobotMap.kSlot_Velocit, RobotMap.kGains_Velocit.kF, RobotMap.TIMEOUT_MS);
-
-        m_backRightMotor.config_IntegralZone(RobotMap.kSlot_Velocit, RobotMap.kGains_Velocit.kIzone,
-                RobotMap.TIMEOUT_MS);
-
-        m_backRightMotor.configClosedLoopPeakOutput(RobotMap.kSlot_Velocit, RobotMap.kGains_Velocit.kPeakOutput,
-                RobotMap.TIMEOUT_MS);
-
+        m_backRightMotor.config_IntegralZone(RobotMap.kSlot_Velocit, RobotMap.kGains_Velocit.kIzone, RobotMap.TIMEOUT_MS);
+        m_backRightMotor.configClosedLoopPeakOutput(RobotMap.kSlot_Velocit, RobotMap.kGains_Velocit.kPeakOutput, RobotMap.TIMEOUT_MS);
         m_backRightMotor.configAllowableClosedloopError(RobotMap.kSlot_Velocit, 0, RobotMap.TIMEOUT_MS);
 
-        /* FPID Gains for turn servo */
-
+        // FPID Gains for turn servo
         m_backRightMotor.config_kP(RobotMap.kSlot_Turning, RobotMap.kGains_Turning.kP, RobotMap.TIMEOUT_MS);
-
         m_backRightMotor.config_kI(RobotMap.kSlot_Turning, RobotMap.kGains_Turning.kI, RobotMap.TIMEOUT_MS);
-
         m_backRightMotor.config_kD(RobotMap.kSlot_Turning, RobotMap.kGains_Turning.kD, RobotMap.TIMEOUT_MS);
-
         m_backRightMotor.config_kF(RobotMap.kSlot_Turning, RobotMap.kGains_Turning.kF, RobotMap.TIMEOUT_MS);
-
-        m_backRightMotor.config_IntegralZone(RobotMap.kSlot_Turning, RobotMap.kGains_Turning.kIzone,
-                RobotMap.TIMEOUT_MS);
-
-        m_backRightMotor.configClosedLoopPeakOutput(RobotMap.kSlot_Turning, RobotMap.kGains_Turning.kPeakOutput,
-                RobotMap.TIMEOUT_MS);
-
+        m_backRightMotor.config_IntegralZone(RobotMap.kSlot_Turning, RobotMap.kGains_Turning.kIzone, RobotMap.TIMEOUT_MS);
+        m_backRightMotor.configClosedLoopPeakOutput(RobotMap.kSlot_Turning, RobotMap.kGains_Turning.kPeakOutput, RobotMap.TIMEOUT_MS);
         m_backRightMotor.configAllowableClosedloopError(RobotMap.kSlot_Turning, 0, RobotMap.TIMEOUT_MS);
 
         /**
@@ -407,7 +333,6 @@ public class Drivetrain implements PIDOutput {
         int closedLoopTimeMs = 1;
 
         m_backRightMotor.configClosedLoopPeriod(0, closedLoopTimeMs, RobotMap.TIMEOUT_MS);
-
         m_backRightMotor.configClosedLoopPeriod(1, closedLoopTimeMs, RobotMap.TIMEOUT_MS);
 
         /**
@@ -426,6 +351,11 @@ public class Drivetrain implements PIDOutput {
 
     }
 
+    /**
+     * An arcade drive using the integrated velocity PID on the talons
+     * @param forward -1.0 to 1.0, the speed at which you want the robot to move forward
+     * @param turn -1.0 to 1.0, the rate of rotation
+     */
     public void talonArcadeDrive (double forward, double turn) {
         m_backLeftMotor.set(ControlMode.PercentOutput, forward, DemandType.ArbitraryFeedForward, +turn);
         m_backLeftMotor.set(ControlMode.PercentOutput, forward, DemandType.ArbitraryFeedForward, -turn);
