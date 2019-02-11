@@ -99,6 +99,10 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void robotInit() {
+		//	Sets up the camera and inits the camera server
+		camera = CameraServer.getInstance().startAutomaticCapture();
+		camera.setResolution(160, 120);
+		camera.setFPS(1);
 
 	}
 
