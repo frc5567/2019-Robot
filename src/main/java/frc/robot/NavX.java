@@ -6,10 +6,17 @@ import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.SerialPort;
 
+/**
+ * This class is an extension of the base AHRS class.
+ * The class extends the base class, but adds emthods to get
+ * the adjusted yaw with an 180 degreee ofset included.
+ * @author Matt
+ * @version Week 5 Pre-comp
+ */
 public class NavX extends AHRS {
 
-    // Boolean to keep track of status of offset application
-    private boolean m_offsetApplied;
+	// Boolean to keep track of status of offset application
+	private boolean m_offsetApplied;
 
     /**
      * Constructor for NavX with SPI port parameter
@@ -38,41 +45,50 @@ public class NavX extends AHRS {
         m_offsetApplied = false;
     }
 
-    /**
-     * Returns the current Yaw reading from the NavX, with offset applied if enabled
-     * @return The yaw reading from the NavX
-     */
-    public float getOffsetYaw() {
-        // Checks if offset is enabled
-        if (m_offsetApplied) {
-            // Adds offset if enabled
-            return getYaw() + RobotMap.ANGLE_OFFSET;
-        }
-        else {
-            // Returns yaw without offset applied
-            return getYaw();
-        }
-    }
+	/**
+	 * Returns the current Yaw reading from the NavX, with offset applied if enabled
+	 * 
+	 * @return The yaw reading from the NavX
+	 */
+	public float getOffsetYaw() {
+		// Checks if offset is enabled
+		float yaw = getYaw();
+		if (m_offsetApplied) {
+			yaw += RobotMap.ANGLE_OFFSET;
+			// Adds offset if enabled
+			if (yaw < -180) {
+				yaw += 360;
+			}
+			else if (yaw > 180) {
+				yaw -= 360;
+			}
+			return yaw;
+		} else {
+			// Returns yaw without offset applied
+			return getYaw();
+		}
+	}
 
-    /**
-     * When called, flips the offset to enabled if disabled and vice versa
-     */
-    public void flipOffset() {
-        // If enabled, disable
-        if (m_offsetApplied) {
-            m_offsetApplied = false;
-        }
-        // If disabled, enable
-        else {
-            m_offsetApplied = true;
-        }
-    }
+	/**
+	 * When called, flips the offset to enabled if disabled and vice versa
+	 */
+	public void flipOffset() {
+		// If enabled, disable
+		if (m_offsetApplied) {
+			m_offsetApplied = false;
+		}
+		// If disabled, enable
+		else {
+			m_offsetApplied = true;
+		}
+	}
 
-    /**
-     * Gets the boolean stating whether or not the angle offset is being applied.
-     * @return The current status on if the angle offset is being applied
-     */
-    public boolean getOffsetStatus() {
-        return m_offsetApplied;
-    }
+	/**
+	 * Gets the boolean stating whether or not the angle offset is being applied.
+	 * 
+	 * @return The current status on if the angle offset is being applied
+	 */
+	public boolean getOffsetStatus() {
+		return m_offsetApplied;
+	}
 }

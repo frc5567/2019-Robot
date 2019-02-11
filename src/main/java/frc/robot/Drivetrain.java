@@ -17,8 +17,9 @@ import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.SPI;
 
 /**
- * This class defines the mechanism that allows the robot to move backwards and
- * forwards using motors and wheels.
+ * This class defines the main drivetrain used with CAN motor controllers
+ * @author Matt, Josh
+ * @version Week 5 Pre-comp
  */
 public class Drivetrain implements PIDOutput {
     // Declares NavX for rotation control
@@ -27,26 +28,8 @@ public class Drivetrain implements PIDOutput {
     // Declares turn control PID
     private PIDController m_rotController;
 
-    // Declares PID controller constants
-    // These constants are filler and untested. These absolutely must be replaced
-    private final double P_ROT = 0.00;
-    private final double I_ROT = 0.00;
-    private final double D_ROT = 0.00;
-    private final double F_ROT = 0.00;
-    private final double TOLERANCE_ROT = 2;
-
-    // Declare a threshold for ending the method if the PID controller is no longer
-    // moving the robot
-    private final double FINISHED_THRESHOLD = 0.01;
-
-    // Delcares a flag for checking if this is the first time entering this method
-    // in a given run
+    // Delcares a flag for checking if this is the first time entering this method in a given run
     boolean m_firstCall = true;
-
-    // Declares variables for drivetrain speed and rotate setter
-    // Constant is how large each step is in the setters
-    private final double MAX_DELTA_SPEED = 0.1;
-    private final double MAX_QUICK_TURN_SPEED = 0.1;
 
     // Declares variables for current speed and rotate rate
     // Variables used for feedback in speed setter and rotate setter
@@ -107,14 +90,13 @@ public class Drivetrain implements PIDOutput {
         } catch (RuntimeException ex) {
             System.out.println("Error instantiating navX MXP");
         }
-
-        // Initializes rotate PID controller with the PIDF constants, the ahrs, the PID
-        // output, and the loop time (s)
-        m_rotController = new PIDController(P_ROT, I_ROT, D_ROT, F_ROT, m_ahrs, this, 0.02);
+        
+        // Initializes rotate PID controller with the PIDF constants, the ahrs, the PID output, and the loop time (s)
+        m_rotController = new PIDController(RobotMap.P_ROTATE_CONTROLLER, RobotMap.I_ROTATE_CONTROLLER, RobotMap.D_ROTATE_CONTROLLER, RobotMap.F_ROTATE_CONTROLLER, m_ahrs, this, 0.02);
         m_rotController.setInputRange(-180.00f, 180.00f);
         // These values are temporary and need to be changed based on testing
         m_rotController.setOutputRange(-0.7, 0.7);
-        m_rotController.setAbsoluteTolerance(TOLERANCE_ROT);
+        m_rotController.setAbsoluteTolerance(RobotMap.TOLERANCE_ROTATE_CONTROLLER);
         m_rotController.setContinuous();
         m_rotController.disable();
     }
@@ -145,14 +127,14 @@ public class Drivetrain implements PIDOutput {
         // If desired speed is higher than current speed by a margin larger than
         // kMaxDeltaSpeed,
         // Increase current speed by kMaxDelaSpeed's amount
-        if (desiredSpeed > (m_currentSpeed + MAX_DELTA_SPEED)) {
-            m_currentSpeed += MAX_DELTA_SPEED;
+        if (desiredSpeed > (m_currentSpeed + RobotMap.DRIVE_MAX_DELTA_SPEED)) {
+            m_currentSpeed += RobotMap.DRIVE_MAX_DELTA_SPEED;
         }
         // If desired speed is less than current speed by a margin larger than
         // kMaxDeltaSpeed
         // Decrease current speed by kMaxDeltaSpeed's amount
-        else if (desiredSpeed < (m_currentSpeed - MAX_DELTA_SPEED)) {
-            m_currentSpeed -= MAX_DELTA_SPEED;
+        else if (desiredSpeed < (m_currentSpeed - RobotMap.DRIVE_MAX_DELTA_SPEED)) {
+            m_currentSpeed -= RobotMap.DRIVE_MAX_DELTA_SPEED;
         }
         // If desired speed is within kMaxDeltaSpeed's margin to current speed,
         // Set current speed to match desired speed
@@ -163,14 +145,14 @@ public class Drivetrain implements PIDOutput {
         // If desired rotate is higher than current rotate by a margin larger than
         // kMaxDeltaSpeed,
         // Increase current rotate by kMaxDelaSpeed's amount
-        if (desiredRotate > (m_currentRotate + MAX_DELTA_SPEED)) {
-            m_currentRotate += MAX_DELTA_SPEED;
+        if (desiredRotate > (m_currentRotate + RobotMap.DRIVE_MAX_DELTA_SPEED)) {
+            m_currentRotate += RobotMap.DRIVE_MAX_DELTA_SPEED;
         }
         // If desired rotate is less than current rotate by a margin larger than
         // kMaxDeltaSpeed
         // Decrease current rotate by kMaxDeltaSpeed's amount
-        else if (desiredRotate < (m_currentRotate - MAX_DELTA_SPEED)) {
-            m_currentRotate -= MAX_DELTA_SPEED;
+        else if (desiredRotate < (m_currentRotate - RobotMap.DRIVE_MAX_DELTA_SPEED)) {
+            m_currentRotate -= RobotMap.DRIVE_MAX_DELTA_SPEED;
         }
         // If desired rotate is within kMaxDeltaSpeed's margin to current rotate,
         // Set current rotate to match desired speed
@@ -178,7 +160,7 @@ public class Drivetrain implements PIDOutput {
             m_currentRotate = desiredRotate;
         }
 
-        if ((m_currentSpeed < MAX_QUICK_TURN_SPEED) && (m_currentSpeed > MAX_QUICK_TURN_SPEED)) {
+        if ((m_currentSpeed < RobotMap.DRIVE_MAX_QUICK_TURN_SPEED) && (m_currentSpeed > RobotMap.DRIVE_MAX_QUICK_TURN_SPEED)) {
             m_quickTurnEnabled = true;
         } else {
             m_quickTurnEnabled = false;
@@ -222,7 +204,7 @@ public class Drivetrain implements PIDOutput {
         curvatureDrive(0, returnedRotate);
 
         // Checks to see if the the PID is finished or close enough
-        if ((returnedRotate < FINISHED_THRESHOLD) && (returnedRotate > -FINISHED_THRESHOLD)) {
+        if ( (returnedRotate < RobotMap.FINISHED_PID_THRESHOLD) && (returnedRotate > -RobotMap.FINISHED_PID_THRESHOLD) ) {
             isFinished = true;
             m_firstCall = true;
         }

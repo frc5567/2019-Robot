@@ -1,5 +1,14 @@
 package frc.robot;
 
+/**
+ * The DashboardData class is used to move the data we need to display on our dashboard from our
+ * Robot.java to our CustomDashboard.java. We use this class so that we don't have a huge
+ * constructor in the CustomDashboard file and can instead use DashboardData as a parameter for
+ * CustomDashboard.
+ * 
+ * @author Patrick Philbin, Issac Liimatta
+ */
+
 public class DashboardData{
 
     double m_rawElevatorHeight;
@@ -45,6 +54,9 @@ public class DashboardData{
         
         m_driverAssist = driverAssistOn;
         
+        /* Statement used to format the output of our proximity sensor, rounding it to 4 decimal
+         * points and adding the unit.
+         */ 
         if(proximitySensorInches < 12.0){
             proximityFormat = Double.toString(proximitySensorInches);
             proximityFormat = proximityFormat.substring(0 , proximityFormat.indexOf(".") + 4);

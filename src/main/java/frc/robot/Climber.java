@@ -14,14 +14,14 @@ public class Climber {
      * @param motorPort          Port of the motor controller
      * @param topLimitSwitchPort The port of the top limit switch on the climber
      */
-    Climber(int motorPort, int topLimitSwitchPort) {
+    public Climber(int motorPort, int topLimitSwitchPort) {
         m_climberMotor = new Spark(motorPort);
         m_topLimitSwitch = new DigitalInput(topLimitSwitchPort);
     }
 
     /**
-     * Raises climber while button is pressed and the limit switch is not reached.
-     * 
+     * Raises climber at a constant speed while button is pressed and the limit switch is not reached
+     * (Button to be determined later).
      * @param buttonInput Input from the controller button of our choice.
      */
     public void raiseClimber(boolean buttonInput) {
@@ -35,7 +35,7 @@ public class Climber {
     }
 
     /**
-     * Lowers climber when button is pressed
+     * Lowers climber at a constant speed when button is pressed (Button to be determined later).
      * 
      * @param buttonInput Input from the controller based on the button of our choice.
      */

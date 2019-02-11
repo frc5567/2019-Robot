@@ -17,7 +17,7 @@ public class HatchMech{
     DigitalInput m_limitSwitchTop;
     DigitalInput m_limitSwitchBottom;
   
-    HatchMech(){
+    public HatchMech(){
         //Creates servo variable for hatch mechanism.
         //Need to add the channel that the servo will be plugged into.
         m_servo = new Servo(RobotMap.HATCH_MECH_SERVO_PORT);
