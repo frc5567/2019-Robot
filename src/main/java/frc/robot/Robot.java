@@ -9,6 +9,8 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.cscore.UsbCamera;
+import edu.wpi.first.wpilibj.CameraServer;
 
 import frc.robot.Drivetrain;
 import frc.robot.Controller;
@@ -52,6 +54,9 @@ public class Robot extends TimedRobot {
 	// Declare our duino communication port
 	// private DuinoToRioComms m_duinoToRio;
 	// private DuinoCommStorage m_pkt;
+
+	// Declaring the USB Camera
+	UsbCamera camera;
 
 	Robot() {
 
