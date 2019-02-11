@@ -92,8 +92,7 @@ public class RobotMap {
      * This is nice as it keeps 0.1 degrees of resolution, and is fairly intuitive.
      * 
      */
-
-    public final static double kTurnTravelUnitsPerRotation = 3600;
+    public final static double TURN_TRAVEL_UNITS_PER_ROTATION = 3600;
 
     /**
      * 
@@ -110,8 +109,7 @@ public class RobotMap {
      * This cannot be used without that testing
      * 
      */
-
-    public final static int kEncoderUnitsPerRotation = 51711;
+    public final static int ENCODER_UNITS_PER_ROTATION = 51711;
 
     /**
      * 
@@ -122,15 +120,10 @@ public class RobotMap {
      */
 
     public final static int TIMEOUT_MS = 30;
-
-    /**
-     *
-     */
-
     private static final int TIMEOUT_MS2 = TIMEOUT_MS;
 
     // Motor neutral dead-band, set to the minimum 0.1%.
-    public final static double kNeutralDeadband = 0.001;
+    public final static double NEUTRAL_DEADBAND = 0.001;
 
     /**
      * 
@@ -146,14 +139,10 @@ public class RobotMap {
      * 
      * kP kI kD kF Iz PeakOut
      */
-
-    public final static Gains kGains_Distanc = new Gains(0.1, 0.0, 0.0, 0.0, 100, 0.50);
-
-    public final static Gains kGains_Turning = new Gains(2.0, 0.0, 4.0, 0.0, 200, 1.00);
-
-    public final static Gains kGains_Velocit = new Gains(0.1, 0.0, 20.0, 1023.0 / 6800.0, 300, 0.50);
-
-    public final static Gains kGains_MotProf = new Gains(1.0, 0.0, 0.0, 1023.0 / 6800.0, 400, 1.00);
+    public final static Gains GAINS_DISTANC = new Gains(0.1, 0.0, 0.0, 0.0, 100, 0.50);
+    public final static Gains GAINS_TURNING = new Gains(2.0, 0.0, 4.0, 0.0, 200, 1.00);
+    public final static Gains GAINS_VELOCIT = new Gains(0.1, 0.0, 20.0, 1023.0 / 6800.0, 300, 0.50);
+    public final static Gains GAINS_MOT_PROF = new Gains(1.0, 0.0, 0.0, 1023.0 / 6800.0, 400, 1.00);
 
     /** ---- Flat constants, you should not need to change these ---- */
 
@@ -161,39 +150,27 @@ public class RobotMap {
      * We allow either a 0 or 1 when selecting an ordinal for remote devices [You
      * can have up to 2 devices assigned remotely to a talon/victor]
      */
-
     public final static int REMOTE_0 = 0;
-
     public final static int REMOTE_1 = 1;
 
     /*
      * We allow either a 0 or 1 when selecting a PID Index, where 0 is primary and 1
      * is auxiliary
      */
-
     public final static int PID_PRIMARY = 0;
-
     public final static int PID_TURN = 1;
 
     /*
      * Firmware currently supports slots [0, 3] and can be used for either PID Set
      */
-
     public final static int SLOT_0 = 0;
-
     public final static int SLOT_1 = 1;
-
     public final static int SLOT_2 = 2;
-
     public final static int SLOT_3 = 3;
 
     /* ---- Named slots, used to clarify code ---- */
-
-    public final static int kSlot_Distanc = SLOT_0;
-
-    public final static int kSlot_Turning = SLOT_1;
-
-    public final static int kSlot_Velocit = SLOT_2;
-
-    public final static int kSlot_MotProf = SLOT_3;
+    public final static int SLOT_DISTANC = SLOT_0;
+    public final static int SLOT_TURNING = SLOT_1;
+    public final static int SLOT_VELOCIT = SLOT_2;
+    public final static int SLOT_MOT_PROF = SLOT_3;
 }

@@ -281,8 +281,8 @@ public class Drivetrain implements PIDOutput {
         m_backLeftMotor.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 5, RobotMap.TIMEOUT_MS);
 
         // Configure neutral deadband
-        m_backRightMotor.configNeutralDeadband(RobotMap.kNeutralDeadband, RobotMap.TIMEOUT_MS);
-        m_backLeftMotor.configNeutralDeadband(RobotMap.kNeutralDeadband, RobotMap.TIMEOUT_MS);
+        m_backRightMotor.configNeutralDeadband(RobotMap.NEUTRAL_DEADBAND, RobotMap.TIMEOUT_MS);
+        m_backLeftMotor.configNeutralDeadband(RobotMap.NEUTRAL_DEADBAND, RobotMap.TIMEOUT_MS);
 
         /**
          * 
@@ -298,22 +298,22 @@ public class Drivetrain implements PIDOutput {
         m_backRightMotor.configPeakOutputReverse(-1.0, RobotMap.TIMEOUT_MS);
 
         // FPID Gains for velocity servo
-        m_backRightMotor.config_kP(RobotMap.kSlot_Velocit, RobotMap.kGains_Velocit.kP, RobotMap.TIMEOUT_MS);
-        m_backRightMotor.config_kI(RobotMap.kSlot_Velocit, RobotMap.kGains_Velocit.kI, RobotMap.TIMEOUT_MS);
-        m_backRightMotor.config_kD(RobotMap.kSlot_Velocit, RobotMap.kGains_Velocit.kD, RobotMap.TIMEOUT_MS);
-        m_backRightMotor.config_kF(RobotMap.kSlot_Velocit, RobotMap.kGains_Velocit.kF, RobotMap.TIMEOUT_MS);
-        m_backRightMotor.config_IntegralZone(RobotMap.kSlot_Velocit, RobotMap.kGains_Velocit.kIzone, RobotMap.TIMEOUT_MS);
-        m_backRightMotor.configClosedLoopPeakOutput(RobotMap.kSlot_Velocit, RobotMap.kGains_Velocit.kPeakOutput, RobotMap.TIMEOUT_MS);
-        m_backRightMotor.configAllowableClosedloopError(RobotMap.kSlot_Velocit, 0, RobotMap.TIMEOUT_MS);
+        m_backRightMotor.config_kP(RobotMap.SLOT_VELOCIT, RobotMap.GAINS_VELOCIT.kP, RobotMap.TIMEOUT_MS);
+        m_backRightMotor.config_kI(RobotMap.SLOT_VELOCIT, RobotMap.GAINS_VELOCIT.kI, RobotMap.TIMEOUT_MS);
+        m_backRightMotor.config_kD(RobotMap.SLOT_VELOCIT, RobotMap.GAINS_VELOCIT.kD, RobotMap.TIMEOUT_MS);
+        m_backRightMotor.config_kF(RobotMap.SLOT_VELOCIT, RobotMap.GAINS_VELOCIT.kF, RobotMap.TIMEOUT_MS);
+        m_backRightMotor.config_IntegralZone(RobotMap.SLOT_VELOCIT, RobotMap.GAINS_VELOCIT.kIzone, RobotMap.TIMEOUT_MS);
+        m_backRightMotor.configClosedLoopPeakOutput(RobotMap.SLOT_VELOCIT, RobotMap.GAINS_VELOCIT.kPeakOutput, RobotMap.TIMEOUT_MS);
+        m_backRightMotor.configAllowableClosedloopError(RobotMap.SLOT_VELOCIT, 0, RobotMap.TIMEOUT_MS);
 
         // FPID Gains for turn servo
-        m_backRightMotor.config_kP(RobotMap.kSlot_Turning, RobotMap.kGains_Turning.kP, RobotMap.TIMEOUT_MS);
-        m_backRightMotor.config_kI(RobotMap.kSlot_Turning, RobotMap.kGains_Turning.kI, RobotMap.TIMEOUT_MS);
-        m_backRightMotor.config_kD(RobotMap.kSlot_Turning, RobotMap.kGains_Turning.kD, RobotMap.TIMEOUT_MS);
-        m_backRightMotor.config_kF(RobotMap.kSlot_Turning, RobotMap.kGains_Turning.kF, RobotMap.TIMEOUT_MS);
-        m_backRightMotor.config_IntegralZone(RobotMap.kSlot_Turning, RobotMap.kGains_Turning.kIzone, RobotMap.TIMEOUT_MS);
-        m_backRightMotor.configClosedLoopPeakOutput(RobotMap.kSlot_Turning, RobotMap.kGains_Turning.kPeakOutput, RobotMap.TIMEOUT_MS);
-        m_backRightMotor.configAllowableClosedloopError(RobotMap.kSlot_Turning, 0, RobotMap.TIMEOUT_MS);
+        m_backRightMotor.config_kP(RobotMap.SLOT_TURNING, RobotMap.GAINS_TURNING.kP, RobotMap.TIMEOUT_MS);
+        m_backRightMotor.config_kI(RobotMap.SLOT_TURNING, RobotMap.GAINS_TURNING.kI, RobotMap.TIMEOUT_MS);
+        m_backRightMotor.config_kD(RobotMap.SLOT_TURNING, RobotMap.GAINS_TURNING.kD, RobotMap.TIMEOUT_MS);
+        m_backRightMotor.config_kF(RobotMap.SLOT_TURNING, RobotMap.GAINS_TURNING.kF, RobotMap.TIMEOUT_MS);
+        m_backRightMotor.config_IntegralZone(RobotMap.SLOT_TURNING, RobotMap.GAINS_TURNING.kIzone, RobotMap.TIMEOUT_MS);
+        m_backRightMotor.configClosedLoopPeakOutput(RobotMap.SLOT_TURNING, RobotMap.GAINS_TURNING.kPeakOutput, RobotMap.TIMEOUT_MS);
+        m_backRightMotor.configAllowableClosedloopError(RobotMap.SLOT_TURNING, 0, RobotMap.TIMEOUT_MS);
 
         /**
          * 
