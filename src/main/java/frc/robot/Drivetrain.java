@@ -58,7 +58,7 @@ public class Drivetrain implements PIDOutput{
         m_frontLeftMotor = new WPI_VictorSPX(RobotMap.FRONT_LEFT_DRIVE_MOTOR_PORT);
         m_frontRightMotor = new WPI_VictorSPX(RobotMap.FRONT_RIGHT_DRIVE_MOTOR_PORT);
         m_backLeftMotor = new WPI_TalonSRX(RobotMap.BACK_LEFT_DRIVE_MOTOR_PORT);
-        m_backRightMotor = new WPI_TalonSRX(RobotMap.BACK_RIGHT_DROVE_MOTOR_PORT);
+        m_backRightMotor = new WPI_TalonSRX(RobotMap.BACK_RIGHT_DRIVE_MOTOR_PORT);
 
         // Initializes classes to call encoders connected to TalonSRXs
         m_leftDriveEncoder = new SensorCollection(m_backLeftMotor);

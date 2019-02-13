@@ -11,31 +11,33 @@ public class RobotMap {
 	// Math constants
 	// NavX angle offset
     public static final int ANGLE_OFFSET = 180;
-    // Elevator drum measurement
-    public static final double DRUM_DIAMETER_INCHES = 0.0;     //UPDATE THIS VALUE
-    // Encoder ticks / rotation
+    // PI constant
+    public static final double PI = 3.14159265359;
+    // Encoder ticks / revolution
     public static final int TICKS_PER_REVOLUTION = 4096;
+    // Controller deadbands
+    public static final double CONTROLLER_STICK_DEADBAND = 0.05;
+    public static final double CONTROLLER_TRIGGER_DEADBAND = 0.05;
+    // Elevator drum measurements
+    public static final double DRUM_DIAMETER_INCHES = 2.2;     //UPDATE THIS VALUE
+    public static final double DRUM_CIRCUMFERENCE = DRUM_DIAMETER_INCHES * PI;
 
     // Controllers
     // Controller ports
 	public static final int PILOT_CONTROLLER_PORT = 0;
     public static final int COPILOT_CONTROLLER_PORT = 1;
-    // Controller deadbands
-    public static final double CONTROLLER_STICK_DEADBAND = 0.05;
-    public static final double CONTROLLER_TRIGGER_DEADBAND = 0.05;
 
     // CAN motor controller ID numbers
     // Drivetrain
-    public static final int FRONT_LEFT_DRIVE_MOTOR_PORT = 0;
+    // NOTE: Test robot can IDs for drivetrain.
+    // TODO: Rename variables to reflect Victor or Talon. Front/back tags do not apply
+    public static final int FRONT_LEFT_DRIVE_MOTOR_PORT = 3;
     public static final int FRONT_RIGHT_DRIVE_MOTOR_PORT = 1;
-    public static final int BACK_LEFT_DRIVE_MOTOR_PORT = 2;
-    public static final int BACK_RIGHT_DROVE_MOTOR_PORT = 3;
+    public static final int BACK_LEFT_DRIVE_MOTOR_PORT = 4;
+    public static final int BACK_RIGHT_DRIVE_MOTOR_PORT = 2;
     // Elevator
-    public static final int ELEVATOR_MOTOR_PORT = 4;
-    public static final double DRUM_DIAMETER_INCHES = 2.2;     //UPDATE THIS VALUE
-    public static final double PI = 3.14159265359;
-    public static final double DRUM_CIRCUMFERENCE = DRUM_DIAMETER_INCHES * PI;
-    public static final int TICKS_PER_REVOLUTION = 4096;
+    public static final int ELEVATOR_MOTOR_PORT = 5;
+
 
 	// PWM motor controller port numbers
 	// Climber
