@@ -34,7 +34,7 @@ public class RobotMap {
     public static final int ELEVATOR_MOTOR_PORT = 4;
     public static final double DRUM_DIAMETER_INCHES = 2.2;     //UPDATE THIS VALUE
     public static final double PI = 3.14159265359;
-    public static final double DRUM_CIRCUMFERENCE = DRUM_DIAMETER_INCHES * PI;
+    public static final double DRUM_CIRCUMFERENCE = DRUM_DIAMETER_INCHES * PI;  //roughly ~6.908 inches per revolution
     public static final int TICKS_PER_REVOLUTION = 4096;
 
 	// PWM motor controller port numbers
@@ -63,18 +63,23 @@ public class RobotMap {
     public static final double HATCH_MECH_CLOSE_SERVO_POSITION = 0.3;
     // Elevator height
     public static final double MAX_ELEVATOR_HEIGHT = 5.0;
+    public static final double MID_ELEVATOR_HEIGHT = _._;                  //Insert mid height value
+    public static final double LOW_ELEVATOR_HEIGHT = _._;                  //Insert mid height value
 
     // Motor speed constants
     //Drivetrain
     public static final double DRIVE_MAX_DELTA_SPEED = 0.1;
     public static final double DRIVE_MAX_QUICK_TURN_SPEED = 0.1;
     //HatchMech motor speeds
-    public static final double HATCH_MECH_ARM_UP_MOTOR_SPEED = 0.5;
-    public static final double HATCH_MECH_ARM_DOWN_MOTOR_SPEED = -0.5;
+    public static final double HATCH_MECH_ARM_UP_MOTOR_SPEED = 0.5;         //CHECK SPEED
+    public static final double HATCH_MECH_ARM_DOWN_MOTOR_SPEED = -0.5;      //CHECK SPEED
     public static final double HATCH_MECH_STOP_MOTOR_SPEED = 0.0;
     // Climber motor speeds
     public static final double CLIMBER_SPEED_UP = 0.3;      //UPDATE THIS VALUE
     public static final double CLIMBER_SPEED_DOWN = -0.3;       //UPDATE THIS VALUE
+    //Elevator motor speeds
+    public static final double ELEVATOR_MOTOR_SPEED_UP = 0.4;
+    public static final double ELEVATOR_MOTOR_SPEED_DOWN = -0.4;
 
     // PID Controller
     // Rotate Controller

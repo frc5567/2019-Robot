@@ -148,4 +148,49 @@ public class Elevator {
 		position = RobotMap.DRUM_CIRCUMFERENCE * numRevolutions;
 		return position;
 	} 
+
+	public void HighElevatorPosition(boolean button){
+		if(calcPosition()<RobotMap.MAX_ELEVATOR_HEIGHT){		//Double check that MAX_ELEVATOR_HEIGHT is the right thing to use
+			while(calcPosition()<RobotMap.MAX_ELEVATOR_HEIGHT){
+				m_elevatorMotor.set(RobotMap.ELEVATOR_MOTOR_SPEED_UP);
+			}
+			//set speed to 0.0
+		}
+		else {
+			while(calcPosition()>RobotMap.MAX_ELEVATOR_HEIGHT){
+				m_elevatorMotor.set(RobotMap.ELEVATOR_MOTOR_SPEED_DOWN);
+			}
+		}
+	}
+	
+	public void MidElevatorPosition(boolean button){
+		if(calcPosition()<RobotMap.MID_ELEVATOR_HEIGHT){
+			while(calcPosition()<RobotMap.MID_ELEVATOR_HEIGHT){
+				m_elevatorMotor.set(RobotMap.ELEVATOR_MOTOR_SPEED_UP);
+			}
+		}
+		else{
+			while(calcPosition()>RobotMap.MID_ELEVATOR_HEIGHT){
+				m_elevatorMotor.set(RobotMap.ELEVATOR_MOTOR_SPEED_DOWN);
+
+			}
+		}
+	}
+
+	public void LowElevatorPosition(boolean button){
+		if(calcPosition()<RobotMap.LOW_ELEVATOR_HEIGHT){
+			while(calcPosition()<RobotMap.LOW_ELEVATOR_HEIGHT){
+				m_elevatorMotor.set(RobotMap.ELEVATOR_MOTOR_SPEED_UP)
+
+			}
+		}
+		else{
+			while(calcPosition()>RobotMap.LOW_ELEVATOR_HEIGHT){
+				m_elevatorMotor.set(RobotMap.ELEVATOR_MOTOR_SPEED_DOWN);
+			}
+		}
+	}
+	
+
+
 }
