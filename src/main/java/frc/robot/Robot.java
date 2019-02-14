@@ -26,12 +26,6 @@ import frc.robot.Elevator;
  * project.
  */
 public class Robot extends TimedRobot {
-	// Test doubles for storing return from read classes
-	private Double m_degToTarget = Double.NaN;
-	private Double m_distToTarget = Double.NaN;
-	private Double m_angleToCenter = Double.NaN;
-	private Double m_lowPosition = Double.NaN;
-
 	// Declare drivetrain
 	Drivetrain m_drivetrain;
 
@@ -51,10 +45,6 @@ public class Robot extends TimedRobot {
 	// Declare Auto Commands class for auto and auto assist commands
 	AutoCommands autoCommands;
 
-	// Declare our duino communication port
-	// private DuinoToRioComms m_duinoToRio;
-	// private DuinoCommStorage m_pkt;
-
 	// Declaring the USB Camera
 	UsbCamera camera;
 
@@ -70,21 +60,6 @@ public class Robot extends TimedRobot {
 		// m_duinoToRio = new DuinoToRioComms();
 
 		try {
-			/*
-			 * navX-MXP: - Communication via RoboRIO MXP (SPI, I2C, TTL UART) --
-			 * 
-			 * and USB. - See
-			 * 
-			 * http://navx-mxp.kauailabs.com/guidance/selecting-an-interface.
-			 * 
-			 * navX-Micro: - Communication via I2C (RoboRIO MXP or Onboard) and --
-			 * 
-			 * USB. - See
-			 * 
-			 * http://navx-micro.kauailabs.com/guidance/selecting-an-interface.
-			 * 
-			 * Multiple navX-model devices on a single robot are supported. //
-			 ************************************************************************/
 			m_ahrs = new NavX(SPI.Port.kMXP);
 		} catch (RuntimeException ex) {
 			System.out.println("Error instantiating navX MXP");
@@ -103,7 +78,6 @@ public class Robot extends TimedRobot {
 		camera = CameraServer.getInstance().startAutomaticCapture();
 		camera.setResolution(160, 120);
 		camera.setFPS(1);
-
 	}
 
 	/**
@@ -188,36 +162,6 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void testPeriodic() {
-		/*
-		 * // Code for testing comms with arduino if
-		 * (m_pilotController.getAButtonReleased()) { // Assigns return value. Checking
-		 * NaN should occur here m_degToTarget = m_duinoToRio.getDegToTarget(); if
-		 * (m_degToTarget.isNaN()){ System.out.println("No number returned"); } else {
-		 * System.out.println("degToTarget: " + m_degToTarget); //m_pkt.degTargetHigh =
-		 * degToTarget; }
-		 * 
-		 * } else if (m_pilotController.getBButtonReleased()) { // Assigns return value.
-		 * Checking NaN should occur here m_distToTarget =
-		 * m_duinoToRio.getDistToTarget(); if (m_distToTarget.isNaN()){
-		 * System.out.println("No number returned"); } else {
-		 * System.out.println("distToTarget: " + m_distToTarget); //m_pkt.distTargetHigh
-		 * = distToTarget; }
-		 * 
-		 * 
-		 * } else if (m_pilotController.getXButtonReleased()) { // Assigns return value.
-		 * Checking NaN should occur here m_angleToCenter =
-		 * m_duinoToRio.getAngleToCenter(); if (m_distToTarget.isNaN()){
-		 * System.out.println("No number returned"); } else {
-		 * System.out.println("angleToCenter: " + m_angleToCenter);
-		 * //m_pkt.distTargetHigh = distToTarget; }
-		 * 
-		 * } else if (m_pilotController.getYButtonReleased()) { // Assigns return value.
-		 * Checking NaN should occur here m_lowPosition = m_duinoToRio.getLowPosition();
-		 * if (m_lowPosition.isNaN()){ System.out.println("No number returned"); } else
-		 * { System.out.println("lowPosition: " + m_lowPosition); //m_pkt.distTargetHigh
-		 * = distToTarget; }
-		 * 
-		 * }
-		 */
+		
 	}
 }

@@ -160,6 +160,10 @@ void sendData(char command)
 {
 	if (command == GET_DEG_TO_TARGET)
 	{
+		if (String(degToTarget) == ("-81.42"))
+		{
+			degToTarget = -180;
+		}
 		Serial.println(degToTarget);
 	}
 	else if (command == GET_DIST_TO_TARGET)
