@@ -203,9 +203,10 @@ public class Pathing {
      */
     private boolean rotLowTarget() {
         if(!m_foundLowTarget) {
-            //
+            // Assigns the target if there is no previous valid target
             m_degToTarget = m_duinoToRio.getAngleToCenter();
 
+            // If the target is a valid number, assigns necesary target variables
             if(!m_degToTarget.isNaN()) {
                 m_startingDegrees = m_ahrs.getAngle();
                 m_absoluteDegToTarget = m_startingDegrees - m_degToTarget;
@@ -214,6 +215,7 @@ public class Pathing {
             return false;
         }
         else {
+            // Rotates until the method says that its done
             if (m_drivetrain.rotateToAngle(m_absoluteDegToTarget)) {
                 return true;
             }
@@ -228,6 +230,7 @@ public class Pathing {
      * @return Returns whether the method is finished (True if it is)
      */
     private boolean driveLowTarget() {
+        // Drives forward until within certain distance of the wall
         if(!m_drivetrain.driveToUltra(5)) {
             return false;
         }
