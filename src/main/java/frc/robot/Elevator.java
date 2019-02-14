@@ -2,6 +2,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.SensorCollection;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
@@ -84,7 +85,7 @@ public class Elevator {
 		}
 	}
 
-	// Defining the limit switches at the top and bottom of the elevator.
+	// Defining the limit switches at the op and bottom of the elevator.
 	DigitalInput m_limitTop;
 	DigitalInput m_limitBottom;
 
@@ -142,10 +143,27 @@ public class Elevator {
 	 * 
 	 * @return The elevator's current height
 	 */
-	public double calcPosition(){
+	public double calcPosition() {
 		double position = 0.0;
 		double numRevolutions = (m_elevatorEncoder.getQuadraturePosition() / RobotMap.TICKS_PER_REVOLUTION);
 		position = RobotMap.DRUM_CIRCUMFERENCE * numRevolutions;
 		return position;
-	} 
+	}
+
+	public void setPoisition(State state) {
+		if (getElevatorEncoderPosition() < state.getDeltaHeight()) {
+			m_elevatorMotor.set(ControlMode.MotionMagic,state.getMaxAngleRate());
+		}
+		else if (getElevatorEncoderPosition() > state.getDeltaHeight()) {
+			m_elevatorMotor.set(ControlMode.MotionMagic,-(state.getMaxAngleRate()));
+		}
+		else {
+			m_elevatorMotor.set(0);
+			currentState = state;
+		}
+	}
+
+	public void setPositionManual(double input) {
+		m_elevatorMotor.set(input);
+	}
 }

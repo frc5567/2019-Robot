@@ -14,6 +14,7 @@ import frc.robot.Drivetrain;
 import frc.robot.Controller;
 import frc.robot.Climber;
 import frc.robot.NavX;
+import frc.robot.Elevator.State;
 import frc.robot.Elevator;
 
 /**
@@ -35,6 +36,10 @@ public class Robot extends TimedRobot {
 
 	// Declare Pilot XBox Controller
 	Controller m_pilotController;
+
+	// Declares xbox controller for co-pilot
+	// Used for testing, gamepad will be used in comp
+	Controller m_copilotController;
 
 	// Declare climbing mechanisms for front and back climbers
 	Climber m_frontClimber;
@@ -175,6 +180,9 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void testPeriodic() {
+
+		System.out.println("Elevator is currently in manual mode. \n The right stick Y axis on the copilot controller");
+		m_elevator.setPositionManual(m_copilotController.getRightStickY());
 		/*
 		 * // Code for testing comms with arduino if
 		 * (m_pilotController.getAButtonReleased()) { // Assigns return value. Checking

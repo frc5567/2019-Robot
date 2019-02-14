@@ -31,10 +31,10 @@ public class RobotMap {
     // Drivetrain
     // NOTE: Test robot can IDs for drivetrain.
     // TODO: Rename variables to reflect Victor or Talon. Front/back tags do not apply
-    public static final int FRONT_LEFT_DRIVE_MOTOR_PORT = 3;
-    public static final int FRONT_RIGHT_DRIVE_MOTOR_PORT = 1;
-    public static final int BACK_LEFT_DRIVE_MOTOR_PORT = 4;
-    public static final int BACK_RIGHT_DRIVE_MOTOR_PORT = 2;
+    public static final int SLAVE_LEFT_DRIVE_MOTOR_PORT = 3;
+    public static final int SLAVE_RIGHT_DRIVE_MOTOR_PORT = 1;
+    public static final int MASTER_LEFT_DRIVE_MOTOR_PORT = 4;
+    public static final int MASTER_RIGHT_DRIVE_MOTOR_PORT = 2;
     // Elevator
     public static final int ELEVATOR_MOTOR_PORT = 5;
 
