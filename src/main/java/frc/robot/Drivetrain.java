@@ -27,6 +27,8 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 // Import needed to initialize NavX and rotation controller
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.Ultrasonic;
+import edu.wpi.first.wpilibj.Ultrasonic.Unit;
 
 /**
  * This class defines the main drivetrain used with CAN motor controllers
@@ -63,6 +65,10 @@ public class Drivetrain implements PIDOutput {
 
     // Declaration for the drivetrain
     private DifferentialDrive m_drivetrain;
+
+    // Declaration for ultrasonics
+    private Ultrasonic ultraLeft;
+    private Ultrasonic ultraRight;
 
     /**
      * Constructor for the motor controller declarations and the drivetrain object
@@ -102,6 +108,16 @@ public class Drivetrain implements PIDOutput {
         } catch (RuntimeException ex) {
             System.out.println("Error instantiating navX MXP");
         }
+
+        // Instantiates the Ultrasonics
+        ultraLeft = new Ultrasonic(1, 0);
+        ultraRight = new Ultrasonic(3, 2);
+        ultraLeft.setEnabled(true);
+        ultraLeft.setAutomaticMode(true);
+        ultraLeft.setDistanceUnits(Unit.kInches);
+        ultraRight.setEnabled(true);
+        ultraRight.setAutomaticMode(true);
+        ultraRight.setDistanceUnits(Unit.kInches);
         
         // Initializes rotate PID controller with the PIDF constants, the ahrs, the PID output, and the loop time (s)
         m_rotController = new PIDController(RobotMap.P_ROTATE_CONTROLLER, RobotMap.I_ROTATE_CONTROLLER, RobotMap.D_ROTATE_CONTROLLER, RobotMap.F_ROTATE_CONTROLLER, m_ahrs, this, 0.02);
@@ -222,6 +238,20 @@ public class Drivetrain implements PIDOutput {
         }
 
         return isFinished;
+    }
+
+    /**
+     * 
+     */
+    public boolean driveToUltra(double stopDistance) {
+        if (ultraLeft.getRangeInches() > stopDistance && ultraRight.getRangeInches() > stopDistance) {
+            talonArcadeDrive(.5, 0);
+            return false;
+        }
+        else {
+            talonArcadeDrive(0, 0);
+            return true;
+        }
     }
 
     /**

@@ -95,38 +95,31 @@ public class RobotMap {
     public final static double TURN_TRAVEL_UNITS_PER_ROTATION = 3600;
 
     /**
-     * 
      * Empirically measure what the difference between encoders per 360'
      * 
      * Drive the robot in clockwise rotations and measure the units per rotation.
      * 
-     * Drive the robot in counter clockwise rotations and measure the units per
-     * rotation.
+     * Drive the robot in counter clockwise rotations and measure the units per rotation.
      * 
      * Take the average of the two.
      * 
      * Josh's note: This is referring to the actual robot, which means we need to test with said robot.
      * This cannot be used without that testing
-     * 
      */
     public final static int ENCODER_UNITS_PER_ROTATION = 51711;
 
     /**
-     * 
      * Set to zero to skip waiting for confirmation.
      * 
      * Set to nonzero to wait and report to DS if action fails.
-     * 
      */
 
     public final static int TIMEOUT_MS = 30;
-    private static final int TIMEOUT_MS2 = TIMEOUT_MS;
 
     // Motor neutral dead-band, set to the minimum 0.1%.
     public final static double NEUTRAL_DEADBAND = 0.001;
 
     /**
-     * 
      * PID Gains may have to be adjusted based on the responsiveness of control
      * loop.
      * 
@@ -134,9 +127,6 @@ public class RobotMap {
      * units at 100% output
      * 
      * Not all set of Gains are used in this project and may be removed as desired.
-     * 
-     * 
-     * 
      * kP kI kD kF Iz PeakOut
      */
     public final static Gains GAINS_DISTANC = new Gains(0.1, 0.0, 0.0, 0.0, 100, 0.50);
