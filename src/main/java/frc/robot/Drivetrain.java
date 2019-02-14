@@ -241,7 +241,8 @@ public class Drivetrain implements PIDOutput {
     }
 
     /**
-     * 
+     * Method for driving a specific distance in auton
+     * @param stopDistance Inches away from the target we want to stop
      */
     public boolean driveToUltra(double stopDistance) {
         if (ultraLeft.getRangeInches() > stopDistance && ultraRight.getRangeInches() > stopDistance) {

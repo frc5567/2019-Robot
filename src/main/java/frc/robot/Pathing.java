@@ -24,8 +24,8 @@ public class Pathing {
     private double m_ticsToTarget;
     
     // Flags for running through the code
-    private boolean foundTarget = false;
-    private boolean foundLowTarget = false;
+    private boolean m_foundTarget = false;
+    private boolean m_foundLowTarget = false;
     private boolean m_rotEndLineFinished = false;
     private boolean m_foundDistTarget = false;
     private boolean m_driveEndLineFinished = false;
@@ -42,18 +42,35 @@ public class Pathing {
     // Declare NavX
     NavX m_ahrs;
     
+    // Declares a drivetrain to use in the auto movement
     Drivetrain m_drivetrain;
-	
+    
+    /**
+     * Constructor for our pathing sequence, passing in the drivetrain we want to use
+     * @param drivetrain The drivetrain for using with the pathing sequence
+     */
     public Pathing(Drivetrain drivetrain) {
+        // Instantiates the duino comms system to get data from the pixys
         m_duinoToRio = new DuinoToRioComms();
+
+        // Instantiates the NavX for gyro data
         try {
 			m_ahrs = new NavX(SPI.Port.kMXP);
 		} catch (RuntimeException ex) {
 			System.out.println("Error instantiating navX MXP");
         }
+
+        // Instantiates the drivetrain with the drivetrain passed in
         m_drivetrain = drivetrain;
+
+        // Configs the talon PIDs
+        m_drivetrain.talonDriveConfig();
     }
 
+    /**
+     * Super method for calling all of the helper methods in sequence that should path to target
+     * @return Returns whether the method is finished (True if it is)
+     */
     public boolean pathToTarget() {
         if(!m_rotEndLineFinished) {
             m_rotEndLineFinished = rotEndOfLine();
@@ -80,20 +97,29 @@ public class Pathing {
         }
     }
 
+    /**
+     * Converts inches to drive encoder tics
+     * @param inches The inches we want to convert
+     * @return Returns the resultant tips
+     */
     private double inToTics(double inches) {
          return inches*DRIVE_TICS_PER_INCH;
     }
 
+    /**
+     * Helper method to rotate to face the end of the line
+     * @return Returns whether the method is finished (True if it is)
+     */
     private boolean rotEndOfLine() {
         //
-        if(!foundTarget) {
+        if(!m_foundTarget) {
             //
             m_degToTarget = m_duinoToRio.getDegToTarget();
 
             if(!m_degToTarget.isNaN()) {
                 m_startingDegrees = m_ahrs.getAngle();
                 m_absoluteDegToTarget = m_startingDegrees - m_degToTarget;
-                foundTarget = true;
+                m_foundTarget = true;
             }
             return false;
         }
@@ -107,6 +133,10 @@ public class Pathing {
         }
     }
 
+    /**
+     * Helper method that drives to the end of the line
+     * @return Returns whether the method is finished (True if it is)
+     */
     private boolean driveToLineEnd() {
         if (!m_foundDistTarget) {
             m_distToTarget = m_duinoToRio.getDistToTarget();
@@ -131,6 +161,10 @@ public class Pathing {
         }
     }
 
+    /**
+     * Helper method that checks if the robot can see the low target
+     * @return Returns whether the method is finished (True if it is)
+     */
     private boolean checkForLowTarget() {
         if(m_duinoToRio.getLowPosition() == -1) {
             return false;
@@ -143,15 +177,19 @@ public class Pathing {
         }
     }
 
+    /**
+     * Helper method that rotates to face the low target
+     * @return Returns whether the method is finished (True if it is)
+     */
     private boolean rotLowTarget() {
-        if(!foundLowTarget) {
+        if(!m_foundLowTarget) {
             //
             m_degToTarget = m_duinoToRio.getAngleToCenter();
 
             if(!m_degToTarget.isNaN()) {
                 m_startingDegrees = m_ahrs.getAngle();
                 m_absoluteDegToTarget = m_startingDegrees - m_degToTarget;
-                foundLowTarget = true;
+                m_foundLowTarget = true;
             }
             return false;
         }
@@ -165,6 +203,10 @@ public class Pathing {
         }
     }
 
+    /**
+     * Method that drives to the low target
+     * @return Returns whether the method is finished (True if it is)
+     */
     private boolean driveLowTarget() {
         if(!m_drivetrain.driveToUltra(5)) {
             return false;
@@ -174,16 +216,18 @@ public class Pathing {
         }
     }
 
+    /**
+     * Resets all sequence flags
+     */
+    public void resetFlags() {
+        m_foundTarget = false;
+        m_foundLowTarget = false;
+        m_rotEndLineFinished = false;
+        m_foundDistTarget = false;
+        m_driveEndLineFinished = false;
+        m_lowTargetFound = false;
+        m_rotLowTargetFinished = false;
+        m_lowDriveFinished = false;
+    }
 
-    // Pull data for deg vector
-
-    // Rotate to new target
-
-    // Switch to approach
-
-    // Check low position, if not negative proceed
-
-    // Perpetually get angle to center and adjust
-
-    // Continue driving forward until ultrasonics say to stop
 }
