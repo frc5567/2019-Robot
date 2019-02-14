@@ -14,7 +14,7 @@ public class Pathing {
 	private Double m_angleToCenter = Double.NaN;
     private Double m_lowPosition = Double.NaN;
 
-    //
+    // Doubles for storing calcs using the arduino
     private double m_startingDegrees = Double.NaN;
     private double m_absoluteDegToTarget = Double.NaN;
     private double m_leftInitTics;
@@ -37,8 +37,10 @@ public class Pathing {
 	private DuinoToRioComms m_duinoToRio;
     private DuinoCommStorage m_pkt;
     
+    // Constants for calculating drive distance
     public static final double DRIVE_TICS_PER_INCH = 4096 / (6*RobotMap.PI);
     private final double AUTO_SPEED = 0.3;
+
     // Declare NavX
     NavX m_ahrs;
     
@@ -72,26 +74,32 @@ public class Pathing {
      * @return Returns whether the method is finished (True if it is)
      */
     public boolean pathToTarget() {
+        // Runs the rotEndOfLine method
         if(!m_rotEndLineFinished) {
             m_rotEndLineFinished = rotEndOfLine();
             return false;
         }
+        // Runs the driveToLineEnd method after the rotEndLine is finished
         else if (!m_driveEndLineFinished) {
             m_driveEndLineFinished = driveToLineEnd();
             return false;
         }
+        // Runs the checkForLowTarget method after all previous are finished
         else if (!m_lowTargetFound) {
             m_lowTargetFound = checkForLowTarget();
             return false;
         }
+        // Runs the rotLowTarget method after all previous are finished and only if we see a target
         else if (!m_rotLowTargetFinished) {
             m_rotLowTargetFinished = rotLowTarget();
             return false;
         }
+        // Runs the driveLowTarget method after all previous are finished
         else if (!m_lowDriveFinished) {
             m_lowDriveFinished = driveLowTarget();
             return false;
         }
+        // Returns true after all are true
         else {
             return true;
         }
@@ -111,11 +119,12 @@ public class Pathing {
      * @return Returns whether the method is finished (True if it is)
      */
     private boolean rotEndOfLine() {
-        //
+        // Gets data off the arduino only if we haven't found data
         if(!m_foundTarget) {
-            //
+            // Assigns data from the duino to a storage double
             m_degToTarget = m_duinoToRio.getDegToTarget();
 
+            // Assigns the target for rotation if we have a valid number
             if(!m_degToTarget.isNaN()) {
                 m_startingDegrees = m_ahrs.getAngle();
                 m_absoluteDegToTarget = m_startingDegrees - m_degToTarget;
@@ -124,6 +133,7 @@ public class Pathing {
             return false;
         }
         else {
+            // Returns true if the drive is finished
             if (m_drivetrain.rotateToAngle(m_absoluteDegToTarget)) {
                 return true;
             }
@@ -138,8 +148,12 @@ public class Pathing {
      * @return Returns whether the method is finished (True if it is)
      */
     private boolean driveToLineEnd() {
+        // Gets data off of the arduino only if there is none already
         if (!m_foundDistTarget) {
+            // Assigns data from the duino to a storage double
             m_distToTarget = m_duinoToRio.getDistToTarget();
+
+            // If the return value is valid, run needed calculation
             if (!m_distToTarget.isNaN()) {
                 m_foundDistTarget = true;
                 m_ticsToTarget = inToTics(m_distToTarget);
@@ -151,11 +165,14 @@ public class Pathing {
             return false;
         }
         else {
+            // Drives straight if we have not reached our target
             if (m_leftTargetTics < m_drivetrain.getLeftDriveEncoderPosition() && m_rightTargetTics < m_drivetrain.getLeftDriveEncoderPosition()) {
                 m_drivetrain.talonArcadeDrive(AUTO_SPEED, 0);
                 return false;
             }
             else {
+                // Stops the arcade drive otherwise
+                m_drivetrain.talonArcadeDrive(0, 0);
                 return true;
             }
         }
@@ -167,13 +184,16 @@ public class Pathing {
      */
     private boolean checkForLowTarget() {
         if(m_duinoToRio.getLowPosition() == -1) {
+            // Returns false if the value returned is the known "No Target" value
             return false;
         }
         else if (m_duinoToRio.getLowPosition() >= 1 || m_duinoToRio.getLowPosition() <= 3) {
-            return false;
+            // Returns false if the value returned is expected and seen
+            return true;
         }
         else {
-            return true;
+            // Returns false if the value is unexpected
+            return false;
         }
     }
 
