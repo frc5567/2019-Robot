@@ -60,6 +60,7 @@ public class Robot extends TimedRobot {
 
 	Robot() {
 
+		// Instanciates drivetrain, driver controllers, climbers, and elevator
 		m_drivetrain = new Drivetrain();
 		m_pilotController = new Controller(RobotMap.PILOT_CONTROLLER_PORT);
 		m_frontClimber = new Climber(RobotMap.FRONT_CLIMBER_MOTOR_PORT, RobotMap.FRONT_CLIMBER_LIMIT_TOP_PORT);
@@ -90,6 +91,7 @@ public class Robot extends TimedRobot {
 			System.out.println("Error instantiating navX MXP");
 		}
 
+		// Instanciates auto commands class for using auto assist
 		autoCommands = new AutoCommands(m_drivetrain, m_ahrs, m_elevator, m_frontClimber, m_backClimber);
 	}
 
@@ -157,6 +159,7 @@ public class Robot extends TimedRobot {
 		// turning, quick turn is auto-enabled at low speed
 		m_drivetrain.curvatureDrive(m_pilotController.getLeftStickY(), m_pilotController.getRightStickX());
 
+		// Zeros yaw if 'A' is pressed, and adds 180 degree offset if 'B' is pressed
 		if (m_pilotController.getAButtonReleased()) {
 			m_ahrs.zeroYaw();
 		}
@@ -164,6 +167,7 @@ public class Robot extends TimedRobot {
 			m_ahrs.flipOffset();
 		}
 
+		// Prints yaw and if offset is applied to console
 		System.out.println(m_ahrs.getOffsetYaw() + "\t\t" + m_ahrs.getOffsetStatus());
 	}
 
@@ -180,9 +184,6 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void testPeriodic() {
-
-		System.out.println("Elevator is currently in manual mode. \n The right stick Y axis on the copilot controller");
-		m_elevator.setPositionManual(m_copilotController.getRightStickY());
 		/*
 		 * // Code for testing comms with arduino if
 		 * (m_pilotController.getAButtonReleased()) { // Assigns return value. Checking

@@ -152,22 +152,6 @@ public class Elevator {
 		return position;
 	}
 
-	public void setPoisition(State state) {
-		if (getElevatorEncoderPosition() < state.getDeltaHeight()) {
-			m_elevatorMotor.set(ControlMode.MotionMagic,state.getMaxAngleRate());
-		}
-		else if (getElevatorEncoderPosition() > state.getDeltaHeight()) {
-			m_elevatorMotor.set(ControlMode.MotionMagic,-(state.getMaxAngleRate()));
-		}
-		else {
-			m_elevatorMotor.set(0);
-			currentState = state;
-		}
-	}
-
-	public void setPositionManual(double input) {
-		m_elevatorMotor.set(input);
-	}
 	/**
 	 * Method to set currentState based on the current height of the elevator.
 	 * 
