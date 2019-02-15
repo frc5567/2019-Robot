@@ -32,9 +32,10 @@ public class Elevator {
 		CARGO_L3(72.75, 0.40, 0.20 , "Cargo Level 3"),
 		HATCH_L1(8.25, 0.90, 0.50 , "Hatch Level 1"),
 		HATCH_L2(36.25, 0.65, 0.30 , "Hatch Level 2"),
-		HATCH_L3(64.25, 0.45, 0.20 , "Hatch Level 3");
+		HATCH_L3(64.25, 0.45, 0.20 , "Hatch Level 3"),
+		TRANSITION(0.0, 0.40, 0.20, "Transitioning");
 
-		private double deltaHeightInches;
+		private double deltaInches;
 		private double maxSpeedPercent;
 		private double maxAngleRate;
 		private String stateName;
@@ -50,7 +51,7 @@ public class Elevator {
 		 *                         is in this state.
 		 */
 		State(double deltaInches, double maxSpeedModifier, double maxAngleRate , String stateName) {
-			this.deltaHeightInches = deltaInches;
+			this.deltaInches = deltaInches;
 			this.maxSpeedPercent = maxSpeedModifier;
 			this.maxAngleRate = maxAngleRate;
 			this.stateName = stateName;
@@ -60,7 +61,7 @@ public class Elevator {
 		 * @return The change in height from initial to current state.
 		 */
 		public double getDeltaHeight() {
-			return this.deltaHeightInches;
+			return this.deltaInches;
 		}
 
 		/**
@@ -143,10 +144,11 @@ public class Elevator {
 	 * 
 	 * @return The elevator's current height
 	 */
-	public double calcPosition() {
+	public double getPosition(){
 		double position = 0.0;
 		double numRevolutions = (m_elevatorEncoder.getQuadraturePosition() / RobotMap.TICKS_PER_REVOLUTION);
 		position = RobotMap.DRUM_CIRCUMFERENCE * numRevolutions;
+		currentState = getState(position);
 		return position;
 	}
 
@@ -166,4 +168,34 @@ public class Elevator {
 	public void setPositionManual(double input) {
 		m_elevatorMotor.set(input);
 	}
+	/**
+	 * Method to set currentState based on the current height of the elevator.
+	 * 
+	 * @param position The position gathered by the getPosition method.
+	 * @return The state of the elevator based on it's height.
+	 */
+	private State getState(double position){
+		if(position < State.CARGO_L1.deltaInches + 2 && position > State.CARGO_L1.deltaInches - 2){
+			return State.CARGO_L1;
+		}
+		else if(position < State.CARGO_L2.deltaInches + 2 && position > State.CARGO_L2.deltaInches - 2){
+			return State.CARGO_L2;
+		}
+		else if(position < State.CARGO_L3.deltaInches + 2 && position > State.CARGO_L3.deltaInches - 2){
+			return State.CARGO_L3;
+		}
+		else if(position < State.HATCH_L1.deltaInches + 2 && position > State.HATCH_L1.deltaInches - 2){
+			return State.HATCH_L1;
+		}
+		else if(position < State.HATCH_L2.deltaInches + 2 && position > State.HATCH_L2.deltaInches - 2){
+			return State.HATCH_L2;
+		}
+		else if(position < State.HATCH_L3.deltaInches + 2 && position > State.HATCH_L3.deltaInches - 2){
+			return State.HATCH_L3;
+		}
+		else{
+			return State.TRANSITION;
+		}
+	}
+
 }
