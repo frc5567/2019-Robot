@@ -400,8 +400,8 @@ public class Drivetrain implements PIDOutput {
      * @param turn -1.0 to 1.0, the rate of rotation
      */
     public void talonArcadeDrive (double forward, double turn) {
-        m_backLeftMotor.set(ControlMode.PercentOutput, forward, DemandType.ArbitraryFeedForward, +turn);
-        m_backRightMotor.set(ControlMode.PercentOutput, forward, DemandType.ArbitraryFeedForward, -turn);
+        m_backLeftMotor.set(ControlMode.PercentOutput, turn, DemandType.ArbitraryFeedForward, +forward);
+        m_backRightMotor.set(ControlMode.PercentOutput, turn, DemandType.ArbitraryFeedForward, -forward);
     }
 
     public void driveToPosition(double distToTarget) {
@@ -418,12 +418,13 @@ public class Drivetrain implements PIDOutput {
         else {
             // Drives straight if we have not reached our target
             if (m_leftTargetTics < getLeftDriveEncoderPosition() && m_rightTargetTics < getLeftDriveEncoderPosition()) {
-                talonArcadeDrive(0, AUTO_SPEED);
+                talonArcadeDrive(AUTO_SPEED, 0);
                 System.out.println("Driving");
             }
             else {
                 // Stops the arcade drive otherwise
                 System.out.println("Stopped");
+                m_firstCallTest = true;
                 talonArcadeDrive(0, 0);
             }
         }
