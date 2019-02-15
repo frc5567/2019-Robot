@@ -78,7 +78,7 @@ public class Drivetrain implements PIDOutput {
     // Constants for calculating drive distance
     public static final double DRIVE_TICS_PER_INCH = 4096 / (6*RobotMap.PI);
     private final double AUTO_SPEED = 0.3;
-    private boolean m_firstCallTest;
+    private boolean m_firstCallTest = true;
 
 
     /**

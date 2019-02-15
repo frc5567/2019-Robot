@@ -141,6 +141,8 @@ public class Robot extends TimedRobot {
 		if(m_pilotController.getYButton()) {
 			m_drivetrain.driveToPosition(36);
 			System.out.println("Why are buttons?");
+			System.out.println("LeftEnc/t" + m_drivetrain.getLeftDriveEncoderPosition());
+			System.out.println("RightEnc/t" + m_drivetrain.getRightDriveEncoderPosition());
 		}
 		else {
 			m_drivetrain.curvatureDrive(m_pilotController.getLeftStickY(), m_pilotController.getRightStickX());
