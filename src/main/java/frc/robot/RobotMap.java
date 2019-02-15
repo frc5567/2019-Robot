@@ -52,8 +52,11 @@ public class RobotMap {
     public static final int FRONT_CLIMBER_LIMIT_TOP_PORT = 2;
     public static final int BACK_CLIMBER_LIMIT_TOP_PORT = 3;
     // Hatch mechanism limit switches
-    public static final int HATCH_MECH_LIMIT_TOP_PORT = 1;
-    public static final int HATCH_MECH_LIMIT_BOTTOM_PORT = 2;
+    public static final int HATCH_MECH_LIMIT_TOP_PORT = 4;
+    public static final int HATCH_MECH_LIMIT_BOTTOM_PORT = 5;
+    // Hatch mech encoder
+    public static final int HATCH_MECH_ENCODER_A = 6;
+    public static final int HATCH_MECH_ENCODER_B = 7;
 
     // Servo PWM ports
     // HatchMech
@@ -63,6 +66,10 @@ public class RobotMap {
     // HatchMech servo positions
     public static final double HATCH_MECH_OPEN_SERVO_POSITION = 0.6;
     public static final double HATCH_MECH_CLOSE_SERVO_POSITION = 0.3;
+    // HatchMech motor encoder limits
+    public static final int HATCH_MECH_UP_MOTOR_POSITION = 0;
+    public static final int HATCH_MECH_DOWN_MOTOR_POSITION = 60;
+
     // Elevator height
     public static final double MAX_ELEVATOR_HEIGHT = 5.0;
 
