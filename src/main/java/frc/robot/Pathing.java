@@ -120,12 +120,15 @@ public class Pathing {
      */
     private boolean rotEndOfLine() {
         // Gets data off the arduino only if we haven't found data
-        if(!m_foundTarget) {
+        if (!m_foundTarget) {
             // Assigns data from the duino to a storage double
             m_degToTarget = m_duinoToRio.getDegToTarget();
 
             // Assigns the target for rotation if we have a valid number
-            if(!m_degToTarget.isNaN()) {
+            if (m_degToTarget == -180) {
+                System.out.println("No target found");
+            }
+            else if (!m_degToTarget.isNaN()) {
                 m_startingDegrees = m_ahrs.getAngle();
                 m_absoluteDegToTarget = m_startingDegrees - m_degToTarget;
                 m_foundTarget = true;
