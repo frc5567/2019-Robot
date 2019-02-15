@@ -137,7 +137,13 @@ public class Robot extends TimedRobot {
 //		m_drivetrain.curvatureDrive(m_pilotController.getLeftStickY(), m_pilotController.getRightStickX());
 
 		// PID based sample talon arcade drive
-		m_drivetrain.talonArcadeDrive(m_pilotController.getRightTrigger() - m_pilotController.getLeftTrigger(), m_pilotController.getLeftStickX());
+		// m_drivetrain.talonArcadeDrive(m_pilotController.getRightTrigger() - m_pilotController.getLeftTrigger(), m_pilotController.getLeftStickX());
+		if(m_pilotController.getYButton()) {
+			m_drivetrain.driveToPosition(36);
+		}
+		else {
+			m_drivetrain.talonArcadeDrive(0, 0);
+		}
 		
 		if (m_pilotController.getAButtonReleased()) {
 			m_ahrs.zeroYaw();

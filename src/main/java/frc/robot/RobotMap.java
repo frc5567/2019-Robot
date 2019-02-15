@@ -23,10 +23,10 @@ public class RobotMap {
 
     // CAN motor controller ID numbers
     // Drivetrain
-    public static final int FRONT_LEFT_DRIVE_MOTOR_PORT = 0;
+    public static final int FRONT_LEFT_DRIVE_MOTOR_PORT = 3;
     public static final int FRONT_RIGHT_DRIVE_MOTOR_PORT = 1;
-    public static final int BACK_LEFT_DRIVE_MOTOR_PORT = 2;
-    public static final int BACK_RIGHT_DROVE_MOTOR_PORT = 3;
+    public static final int BACK_LEFT_DRIVE_MOTOR_PORT = 4;
+    public static final int BACK_RIGHT_DROVE_MOTOR_PORT = 2;
     // Elevator
     public static final int ELEVATOR_MOTOR_PORT = 4;
     public static final double DRUM_DIAMETER_INCHES = 2.2; // UPDATE THIS VALUE

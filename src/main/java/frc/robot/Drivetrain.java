@@ -70,6 +70,17 @@ public class Drivetrain implements PIDOutput {
     private Ultrasonic ultraLeft;
     private Ultrasonic ultraRight;
 
+    private double m_leftInitTics;
+    private double m_rightInitTics;
+    private double m_leftTargetTics;
+    private double m_rightTargetTics;
+    private double m_ticsToTarget;
+    // Constants for calculating drive distance
+    public static final double DRIVE_TICS_PER_INCH = 4096 / (6*RobotMap.PI);
+    private final double AUTO_SPEED = 0.3;
+    private boolean m_firstCallTest;
+
+
     /**
      * Constructor for the motor controller declarations and the drivetrain object
      */
@@ -391,6 +402,37 @@ public class Drivetrain implements PIDOutput {
         m_backLeftMotor.set(ControlMode.PercentOutput, forward, DemandType.ArbitraryFeedForward, +turn);
         m_backLeftMotor.set(ControlMode.PercentOutput, forward, DemandType.ArbitraryFeedForward, -turn);
     }
+
+    public void driveToPosition(double distToTarget) {
+        // If the return value is valid, run needed calculation
+        if (m_firstCallTest) {
+            m_ticsToTarget = inToTics(distToTarget);
+            m_leftInitTics = getLeftDriveEncoderPosition();
+            m_rightInitTics = getRightDriveEncoderPosition();
+            m_leftTargetTics = m_leftInitTics + m_ticsToTarget;
+            m_rightTargetTics = m_rightInitTics + m_ticsToTarget;
+            m_firstCallTest = false;
+        }
+        else {
+            // Drives straight if we have not reached our target
+            if (m_leftTargetTics < getLeftDriveEncoderPosition() && m_rightTargetTics < getLeftDriveEncoderPosition()) {
+                talonArcadeDrive(AUTO_SPEED, 0);
+            }
+            else {
+                // Stops the arcade drive otherwise
+                talonArcadeDrive(0, 0);
+            }
+        }
+    }
+
+    /**
+     * Converts inches to drive encoder tics
+     * @param inches The inches we want to convert
+     * @return Returns the resultant tips
+     */
+    private double inToTics(double inches) {
+        return inches*DRIVE_TICS_PER_INCH;
+   }
 
     /**
      * Returns the encoder position of the drivetrain left side encoder
