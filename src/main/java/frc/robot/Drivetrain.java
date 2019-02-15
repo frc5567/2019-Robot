@@ -313,7 +313,7 @@ public class Drivetrain implements PIDOutput {
         // Configure output and sensor direction
         m_backLeftMotor.setInverted(false);
         m_backLeftMotor.setSensorPhase(true);
-        m_backRightMotor.setInverted(true);
+        m_backRightMotor.setInverted(false);
         m_backRightMotor.setSensorPhase(true);
 
         // Set status frame periods to ensure we don't have stale data
@@ -400,7 +400,7 @@ public class Drivetrain implements PIDOutput {
      */
     public void talonArcadeDrive (double forward, double turn) {
         m_backLeftMotor.set(ControlMode.PercentOutput, forward, DemandType.ArbitraryFeedForward, +turn);
-        m_backLeftMotor.set(ControlMode.PercentOutput, forward, DemandType.ArbitraryFeedForward, -turn);
+        m_backRightMotor.set(ControlMode.PercentOutput, forward, DemandType.ArbitraryFeedForward, -turn);
     }
 
     public void driveToPosition(double distToTarget) {

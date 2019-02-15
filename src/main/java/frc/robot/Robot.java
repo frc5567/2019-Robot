@@ -33,28 +33,28 @@ public class Robot extends TimedRobot {
 	Controller m_pilotController;
 
 	// Declare climbing mechanisms for front and back climbers
-	Climber m_frontClimber;
-	Climber m_backClimber;
+//	Climber m_frontClimber;
+//	Climber m_backClimber;
 
 	// Declare NavX
 	NavX m_ahrs;
 
 	// Declares Elevator
-	Elevator m_elevator;
+//	Elevator m_elevator;
 
 	// Declare Auto Commands class for auto and auto assist commands
 	AutoCommands autoCommands;
 
 	// Declaring the USB Camera
-	UsbCamera camera;
+//	UsbCamera camera;
 
 	Robot() {
 
 		m_drivetrain = new Drivetrain();
 		m_pilotController = new Controller(RobotMap.PILOT_CONTROLLER_PORT);
-		m_frontClimber = new Climber(RobotMap.FRONT_CLIMBER_MOTOR_PORT, RobotMap.FRONT_CLIMBER_LIMIT_TOP_PORT);
-		m_backClimber = new Climber(RobotMap.BACK_CLIMBER_MOTOR_PORT, RobotMap.BACK_CLIMBER_LIMIT_TOP_PORT);
-		m_elevator = new Elevator();
+//		m_frontClimber = new Climber(RobotMap.FRONT_CLIMBER_MOTOR_PORT, RobotMap.FRONT_CLIMBER_LIMIT_TOP_PORT);
+//		m_backClimber = new Climber(RobotMap.BACK_CLIMBER_MOTOR_PORT, RobotMap.BACK_CLIMBER_LIMIT_TOP_PORT);
+//		m_elevator = new Elevator();
 
 		// Instantiate our duino to rio communication port
 		// m_duinoToRio = new DuinoToRioComms();
@@ -65,7 +65,7 @@ public class Robot extends TimedRobot {
 			System.out.println("Error instantiating navX MXP");
 		}
 
-		autoCommands = new AutoCommands(m_drivetrain, m_ahrs, m_elevator, m_frontClimber, m_backClimber);
+//		autoCommands = new AutoCommands(m_drivetrain, m_ahrs, m_elevator, m_frontClimber, m_backClimber);
 	}
 
 	/**
@@ -75,9 +75,9 @@ public class Robot extends TimedRobot {
 	@Override
 	public void robotInit() {
 		//	Sets up the camera and inits the camera server
-		camera = CameraServer.getInstance().startAutomaticCapture();
-		camera.setResolution(160, 120);
-		camera.setFPS(1);
+//		camera = CameraServer.getInstance().startAutomaticCapture();
+//		camera.setResolution(160, 120);
+//		camera.setFPS(1);
 	}
 
 	/**
@@ -134,15 +134,16 @@ public class Robot extends TimedRobot {
 
 		// Test drivetrain included, uses Left stick Y for speed, Right stick X for
 		// turning, quick turn is auto-enabled at low speed
-//		m_drivetrain.curvatureDrive(m_pilotController.getLeftStickY(), m_pilotController.getRightStickX());
+
 
 		// PID based sample talon arcade drive
 		// m_drivetrain.talonArcadeDrive(m_pilotController.getRightTrigger() - m_pilotController.getLeftTrigger(), m_pilotController.getLeftStickX());
 		if(m_pilotController.getYButton()) {
 			m_drivetrain.driveToPosition(36);
+			System.out.println("Why are buttons?");
 		}
 		else {
-			m_drivetrain.talonArcadeDrive(0, 0);
+			m_drivetrain.curvatureDrive(m_pilotController.getLeftStickY(), m_pilotController.getRightStickX());
 		}
 		
 		if (m_pilotController.getAButtonReleased()) {
@@ -152,7 +153,7 @@ public class Robot extends TimedRobot {
 			m_ahrs.flipOffset();
 		}
 
-		System.out.println(m_ahrs.getOffsetYaw() + "\t\t" + m_ahrs.getOffsetStatus());
+//		System.out.println(m_ahrs.getOffsetYaw() + "\t\t" + m_ahrs.getOffsetStatus());
 	}
 
 	/**
