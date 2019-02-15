@@ -18,7 +18,7 @@ public class RobotMap {
     public static final int PILOT_CONTROLLER_PORT = 0;
     public static final int COPILOT_CONTROLLER_PORT = 1;
     // Controller deadbands
-    public static final double CONTROLLER_STICK_DEADBAND = 0.05;
+    public static final double CONTROLLER_STICK_DEADBAND = 0.2;
     public static final double CONTROLLER_TRIGGER_DEADBAND = 0.05;
 
     // CAN motor controller ID numbers
