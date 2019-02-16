@@ -1,6 +1,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.Timer;
 
 /**
  * This class is what will drive the robot 
@@ -46,6 +47,8 @@ public class Pathing {
     
     // Declares a drivetrain to use in the auto movement
     Drivetrain m_drivetrain;
+
+    int counter;
     
     /**
      * Constructor for our pathing sequence, passing in the drivetrain we want to use
@@ -62,6 +65,7 @@ public class Pathing {
 
         // Configs the talon PIDs
         m_drivetrain.talonDriveConfig();
+        counter = 0;
     }
 
     /**
@@ -77,7 +81,6 @@ public class Pathing {
         }
         // Runs the driveToLineEnd method after the rotEndLine is finished
         else if (!m_driveEndLineFinished) {
-            System.out.println("drive end line");
             m_driveEndLineFinished = driveToLineEnd();
             return false;
         }
@@ -131,16 +134,20 @@ public class Pathing {
                 System.out.println("No target found");
             }
             else if (!m_degToTarget.isNaN()) {
-                m_startingDegrees = m_ahrs.getAngle();
-                m_absoluteDegToTarget = m_startingDegrees - m_degToTarget;
+                m_startingDegrees = m_ahrs.getYaw();
+                m_absoluteDegToTarget = m_startingDegrees + m_degToTarget;
                 m_foundTarget = true;
             }
             return false;
         }
         else {
             // Returns true if the drive is finished
-            System.out.println("Current Angle : \t" + m_ahrs.getAngle());
-            if (m_drivetrain.rotateToAngle(m_absoluteDegToTarget)) {
+            System.out.println("Current Angle : \t" + m_ahrs.getYaw());
+            System.out.println("Target Angle: \t" + m_absoluteDegToTarget);
+            System.out.println("PIDOutput: \t" + m_drivetrain.m_rotController.get());
+            m_drivetrain.rotateToAngle(m_absoluteDegToTarget);
+            System.out.println("Post method PIDOutput: \t" + m_drivetrain.m_rotController.get());
+            if ((m_drivetrain.m_rotController.get() < RobotMap.FINISHED_PID_THRESHOLD) && (m_drivetrain.m_rotController.get() > -RobotMap.FINISHED_PID_THRESHOLD)) {
                 return true;
             }
             else {
@@ -157,7 +164,7 @@ public class Pathing {
         // Gets data off of the arduino only if there is none already
         if (!m_foundDistTarget) {
             // Assigns data from the duino to a storage double
-            m_distToTarget = m_duinoToRio.getDistToTarget();
+            m_distToTarget = Math.abs(m_duinoToRio.getDistToTarget());
             System.out.println(m_distToTarget);
 
             // If the return value is valid, run needed calculation
@@ -176,7 +183,6 @@ public class Pathing {
             // Drives straight if we have not reached our target
             if (m_leftTargetTics < m_drivetrain.getLeftDriveEncoderPosition() && m_rightTargetTics < m_drivetrain.getLeftDriveEncoderPosition()) {
                 m_drivetrain.talonArcadeDrive(AUTO_SPEED, 0);
-                System.out.println("Still driving");
                 return false;
             }
             else {
@@ -218,18 +224,21 @@ public class Pathing {
 
             // If the target is a valid number, assigns necesary target variables
             if(!m_degToTarget.isNaN()) {
-                m_startingDegrees = m_ahrs.getAngle();
+                m_startingDegrees = m_ahrs.getYaw();
                 m_absoluteDegToTarget = m_startingDegrees - m_degToTarget;
                 m_foundLowTarget = true;
             }
             return false;
         }
         else {
+            Timer.delay(0.1);
             // Rotates until the method says that its done
-            if (m_drivetrain.rotateToAngle(m_absoluteDegToTarget)) {
+            if (counter > 3 && m_drivetrain.rotateToAngle(m_absoluteDegToTarget)) {
                 return true;
             }
             else {
+                counter++;
+                Timer.delay(0.05);
                 return false;
             }
         }
@@ -253,6 +262,7 @@ public class Pathing {
      * Resets all sequence flags
      */
     public void resetFlags() {
+        counter = 0;
         m_foundTarget = false;
         m_foundLowTarget = false;
         m_rotEndLineFinished = false;
