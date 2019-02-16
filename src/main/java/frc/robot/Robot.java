@@ -28,6 +28,7 @@ import frc.robot.Elevator;
 public class Robot extends TimedRobot {
 	// Declare drivetrain
 	Drivetrain m_drivetrain;
+	Pathing m_pather;
 
 	// Declare Pilot XBox Controller
 	Controller m_pilotController;
@@ -51,6 +52,7 @@ public class Robot extends TimedRobot {
 	Robot() {
 
 		m_drivetrain = new Drivetrain();
+		m_pather = new Pathing(m_drivetrain);
 		m_pilotController = new Controller(RobotMap.PILOT_CONTROLLER_PORT);
 //		m_frontClimber = new Climber(RobotMap.FRONT_CLIMBER_MOTOR_PORT, RobotMap.FRONT_CLIMBER_LIMIT_TOP_PORT);
 //		m_backClimber = new Climber(RobotMap.BACK_CLIMBER_MOTOR_PORT, RobotMap.BACK_CLIMBER_LIMIT_TOP_PORT);
@@ -139,7 +141,7 @@ public class Robot extends TimedRobot {
 		// PID based sample talon arcade drive
 		// m_drivetrain.talonArcadeDrive(m_pilotController.getRightTrigger() - m_pilotController.getLeftTrigger(), m_pilotController.getLeftStickX());
 		if(m_pilotController.getYButton()) {
-			m_drivetrain.driveToPosition(36);
+			System.out.println(m_pather.pathToTarget());
 			System.out.println("Why are buttons?");
 			System.out.println("LeftEnc\t" + m_drivetrain.getLeftDriveEncoderPosition());
 			System.out.println("RightEnc\t" + m_drivetrain.getRightDriveEncoderPosition());

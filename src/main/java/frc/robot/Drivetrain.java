@@ -286,27 +286,27 @@ public class Drivetrain implements PIDOutput {
         m_backRightMotor.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, RobotMap.PID_PRIMARY, RobotMap.TIMEOUT_MS);
 
         // Configure the Remote Talon's selected sensor as a remote sensor for the right Talon
-        //m_backRightMotor.configRemoteFeedbackFilter(m_backLeftMotor.getDeviceID(), RemoteSensorSource.TalonSRX_SelectedSensor, RobotMap.REMOTE_1, RobotMap.TIMEOUT_MS);
+        m_backRightMotor.configRemoteFeedbackFilter(m_backLeftMotor.getDeviceID(), RemoteSensorSource.TalonSRX_SelectedSensor, RobotMap.REMOTE_1, RobotMap.TIMEOUT_MS);
 
         // Setup Sum signal to be used for Distance
         // Feedback Device of Remote Talon
-        //m_backRightMotor.configSensorTerm(SensorTerm.Sum0, FeedbackDevice.RemoteSensor1, RobotMap.TIMEOUT_MS); 
+        m_backRightMotor.configSensorTerm(SensorTerm.Sum0, FeedbackDevice.RemoteSensor1, RobotMap.TIMEOUT_MS); 
 
         // Quadrature Encoder of current Talon
-        //m_backRightMotor.configSensorTerm(SensorTerm.Sum1, FeedbackDevice.QuadEncoder, RobotMap.TIMEOUT_MS); 
+        m_backRightMotor.configSensorTerm(SensorTerm.Sum1, FeedbackDevice.QuadEncoder, RobotMap.TIMEOUT_MS); 
 
         // Setup Difference signal to be used for Turn
-        //m_backRightMotor.configSensorTerm(SensorTerm.Diff1, FeedbackDevice.RemoteSensor1, RobotMap.TIMEOUT_MS);
-        //m_backRightMotor.configSensorTerm(SensorTerm.Diff0, FeedbackDevice.QuadEncoder, RobotMap.TIMEOUT_MS);
+        m_backRightMotor.configSensorTerm(SensorTerm.Diff1, FeedbackDevice.RemoteSensor1, RobotMap.TIMEOUT_MS);
+        m_backRightMotor.configSensorTerm(SensorTerm.Diff0, FeedbackDevice.QuadEncoder, RobotMap.TIMEOUT_MS);
 
         // Configure Sum [Sum of both QuadEncoders] to be used for Primary PID Index
-        //m_backRightMotor.configSelectedFeedbackSensor(FeedbackDevice.SensorSum, RobotMap.PID_PRIMARY, RobotMap.TIMEOUT_MS);
+        m_backRightMotor.configSelectedFeedbackSensor(FeedbackDevice.SensorSum, RobotMap.PID_PRIMARY, RobotMap.TIMEOUT_MS);
 
         // Scale Feedback by 0.5 to half the sum of Distance
-        //m_backRightMotor.configSelectedFeedbackCoefficient(0.5, RobotMap.PID_PRIMARY, RobotMap.TIMEOUT_MS);
+        m_backRightMotor.configSelectedFeedbackCoefficient(0.5, RobotMap.PID_PRIMARY, RobotMap.TIMEOUT_MS);
 
         // Configure Difference [Difference between both QuadEncoders] to be used for Auxiliary PID Index
-        //m_backRightMotor.configSelectedFeedbackSensor(FeedbackDevice.SensorDifference, RobotMap.PID_TURN, RobotMap.TIMEOUT_MS);
+        m_backRightMotor.configSelectedFeedbackSensor(FeedbackDevice.SensorDifference, RobotMap.PID_TURN, RobotMap.TIMEOUT_MS);
 
         // Don't scale the Feedback Sensor (use 1 for 1:1 ratio)
         m_backRightMotor.configSelectedFeedbackCoefficient(1, RobotMap.PID_TURN, RobotMap.TIMEOUT_MS);
