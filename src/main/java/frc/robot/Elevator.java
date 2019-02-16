@@ -153,6 +153,27 @@ public class Elevator {
 	}
 
 	/**
+	 * Method used to move the elevator to our desired height while a button of our choice
+	 * is pressed.
+	 * 
+	 * @param button The button we want associated with moving to the desired state.
+	 * @param desiredState The state we want the button to move the elevator to.
+	 */
+	public void moveToPosition(boolean button , State desiredState){
+		if(button && currentState != desiredState){
+			if(currentState.deltaInches > desiredState.deltaInches){
+				m_elevatorMotor.set(RobotMap.ELEVATOR_MOTOR_SPEED_DOWN);
+			}
+			else if(currentState.deltaInches < desiredState.deltaInches){
+				m_elevatorMotor.set(RobotMap.ELEVATOR_MOTOR_SPEED_UP);
+			}
+		}
+		else if(currentState == desiredState){
+			m_elevatorMotor.set(0.0);
+		}
+	}
+
+	/**
 	 * Method to set currentState based on the current height of the elevator.
 	 * 
 	 * @param position The position gathered by the getPosition method.

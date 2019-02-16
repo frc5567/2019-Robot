@@ -4,15 +4,19 @@ package frc.robot;
  * This class is designed to map out the port numbers for motor controllers,
  * sensors, and other objects on the robot that require a dedicated port on the
  * RoboRIO.
- * @version Week 5 Pre-comp
+ * @version Week 6 Pre-comp
  */
 public class RobotMap {
 
-	// Math constants
+    // Math constants
+    public static final double PI = 3.14159265359;
 	// NavX angle offset
     public static final int ANGLE_OFFSET = 180;
     // PI constant
     public static final double PI = 3.14159265359;
+    // Elevator drum measurement
+    public static final double DRUM_DIAMETER_INCHES = 0.0;     //UPDATE THIS VALUE
+    public static final double DRUM_CIRCUMFERENCE = DRUM_DIAMETER_INCHES * PI;
     // Encoder ticks / revolution
     public static final int TICKS_PER_REVOLUTION = 4096;
     // Controller deadbands
@@ -37,7 +41,6 @@ public class RobotMap {
     public static final int MASTER_RIGHT_DRIVE_MOTOR_PORT = 2;
     // Elevator
     public static final int ELEVATOR_MOTOR_PORT = 5;
-
 
 	// PWM motor controller port numbers
 	// Climber
@@ -78,12 +81,15 @@ public class RobotMap {
     public static final double DRIVE_MAX_DELTA_SPEED = 0.1;
     public static final double DRIVE_MAX_QUICK_TURN_SPEED = 0.1;
     //HatchMech motor speeds
-    public static final double HATCH_MECH_ARM_UP_MOTOR_SPEED = 0.5;
-    public static final double HATCH_MECH_ARM_DOWN_MOTOR_SPEED = -0.5;
+    public static final double HATCH_MECH_ARM_UP_MOTOR_SPEED = 0.5;     // Check Speed
+    public static final double HATCH_MECH_ARM_DOWN_MOTOR_SPEED = -0.5;  // Check Speed
     public static final double HATCH_MECH_STOP_MOTOR_SPEED = 0.0;
     // Climber motor speeds
     public static final double CLIMBER_SPEED_UP = 0.3;      //UPDATE THIS VALUE
     public static final double CLIMBER_SPEED_DOWN = -0.3;       //UPDATE THIS VALUE
+    // Elevator Motor Speed
+    public static final double ELEVATOR_MOTOR_SPEED_UP = 0.4;
+    public static final double ELEVATOR_MOTOR_SPEED_DOWN = -0.4;
 
     // PID Controller
     // Rotate Controller
