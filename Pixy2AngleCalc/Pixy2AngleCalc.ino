@@ -30,7 +30,7 @@ double pi = 3.1415926535;
 
 //  Height and angle of the pixy (in)
 double cameraHeight = 46;
-double cameraAngle = 25;
+double cameraAngle = 40;
 
 //  Coordinates of the origin point (p)
 double originX = 39;
