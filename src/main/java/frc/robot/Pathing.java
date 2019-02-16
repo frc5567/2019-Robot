@@ -139,6 +139,7 @@ public class Pathing {
         }
         else {
             // Returns true if the drive is finished
+            System.out.println("Current Angle : \t" + m_ahrs.getAngle());
             if (m_drivetrain.rotateToAngle(m_absoluteDegToTarget)) {
                 return true;
             }
