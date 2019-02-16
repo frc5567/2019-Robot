@@ -240,7 +240,7 @@ public class Drivetrain implements PIDOutput {
         double returnedRotate = m_rotController.get();
 
         // Runs the drivetrain with 0 speed and the rotate speed set by the PID
-        curvatureDrive(0, returnedRotate);
+        curvatureDrive(0.1, returnedRotate);
 
         // Checks to see if the the PID is finished or close enough
         if ( (returnedRotate < RobotMap.FINISHED_PID_THRESHOLD) && (returnedRotate > -RobotMap.FINISHED_PID_THRESHOLD) ) {

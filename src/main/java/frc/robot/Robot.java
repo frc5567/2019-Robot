@@ -52,21 +52,21 @@ public class Robot extends TimedRobot {
 	Robot() {
 
 		m_drivetrain = new Drivetrain();
-		m_pather = new Pathing(m_drivetrain);
 		m_pilotController = new Controller(RobotMap.PILOT_CONTROLLER_PORT);
-//		m_frontClimber = new Climber(RobotMap.FRONT_CLIMBER_MOTOR_PORT, RobotMap.FRONT_CLIMBER_LIMIT_TOP_PORT);
-//		m_backClimber = new Climber(RobotMap.BACK_CLIMBER_MOTOR_PORT, RobotMap.BACK_CLIMBER_LIMIT_TOP_PORT);
-//		m_elevator = new Elevator();
-
+		//		m_frontClimber = new Climber(RobotMap.FRONT_CLIMBER_MOTOR_PORT, RobotMap.FRONT_CLIMBER_LIMIT_TOP_PORT);
+		//		m_backClimber = new Climber(RobotMap.BACK_CLIMBER_MOTOR_PORT, RobotMap.BACK_CLIMBER_LIMIT_TOP_PORT);
+		//		m_elevator = new Elevator();
+		
 		// Instantiate our duino to rio communication port
 		// m_duinoToRio = new DuinoToRioComms();
-
+		
 		try {
 			m_ahrs = new NavX(SPI.Port.kMXP);
 		} catch (RuntimeException ex) {
 			System.out.println("Error instantiating navX MXP");
 		}
-
+		
+		m_pather = new Pathing(m_drivetrain, m_ahrs);
 //		autoCommands = new AutoCommands(m_drivetrain, m_ahrs, m_elevator, m_frontClimber, m_backClimber);
 	}
 
@@ -126,6 +126,7 @@ public class Robot extends TimedRobot {
 	@Override
 	public void teleopInit() {
 		m_drivetrain.talonDriveConfig();
+		m_pather.resetFlags();
 	}
 
 	/**
@@ -142,9 +143,9 @@ public class Robot extends TimedRobot {
 		// m_drivetrain.talonArcadeDrive(m_pilotController.getRightTrigger() - m_pilotController.getLeftTrigger(), m_pilotController.getLeftStickX());
 		if(m_pilotController.getYButton()) {
 			System.out.println(m_pather.pathToTarget());
-			System.out.println("Why are buttons?");
-			System.out.println("LeftEnc\t" + m_drivetrain.getLeftDriveEncoderPosition());
-			System.out.println("RightEnc\t" + m_drivetrain.getRightDriveEncoderPosition());
+//			System.out.println("Why are buttons?");
+//			System.out.println("LeftEnc\t" + m_drivetrain.getLeftDriveEncoderPosition());
+//			System.out.println("RightEnc\t" + m_drivetrain.getRightDriveEncoderPosition());
 		}
 		else {
 			m_drivetrain.talonArcadeDrive(m_pilotController.getLeftStickY(), m_pilotController.getRightStickX());

@@ -51,19 +51,14 @@ public class Pathing {
      * Constructor for our pathing sequence, passing in the drivetrain we want to use
      * @param drivetrain The drivetrain for using with the pathing sequence
      */
-    public Pathing(Drivetrain drivetrain) {
+    public Pathing(Drivetrain drivetrain, NavX ahrs) {
         // Instantiates the duino comms system to get data from the pixys
         m_duinoToRio = new DuinoToRioComms();
 
-        // Instantiates the NavX for gyro data
-        try {
-			m_ahrs = new NavX(SPI.Port.kMXP);
-		} catch (RuntimeException ex) {
-			System.out.println("Error instantiating navX MXP");
-        }
-
         // Instantiates the drivetrain with the drivetrain passed in
         m_drivetrain = drivetrain;
+        // Instantiates the navx with the passed in ahrs
+        m_ahrs = ahrs;
 
         // Configs the talon PIDs
         m_drivetrain.talonDriveConfig();
@@ -76,31 +71,37 @@ public class Pathing {
     public boolean pathToTarget() {
         // Runs the rotEndOfLine method
         if(!m_rotEndLineFinished) {
+            System.out.println("rot end line");
             m_rotEndLineFinished = rotEndOfLine();
             return false;
         }
         // Runs the driveToLineEnd method after the rotEndLine is finished
         else if (!m_driveEndLineFinished) {
+            System.out.println("drive end line");
             m_driveEndLineFinished = driveToLineEnd();
             return false;
         }
         // Runs the checkForLowTarget method after all previous are finished
         else if (!m_lowTargetFound) {
+            System.out.println("low target found");
             m_lowTargetFound = checkForLowTarget();
             return false;
         }
         // Runs the rotLowTarget method after all previous are finished and only if we see a target
         else if (!m_rotLowTargetFinished) {
+            System.out.println("rot low target");
             m_rotLowTargetFinished = rotLowTarget();
             return false;
         }
         // Runs the driveLowTarget method after all previous are finished
         else if (!m_lowDriveFinished) {
+            System.out.println("low drive");
             m_lowDriveFinished = driveLowTarget();
             return false;
         }
         // Returns true after all are true
         else {
+            System.out.println("finished");
             return true;
         }
     }
@@ -123,6 +124,7 @@ public class Pathing {
         if (!m_foundTarget) {
             // Assigns data from the duino to a storage double
             m_degToTarget = m_duinoToRio.getDegToTarget();
+            System.out.println(m_degToTarget);
 
             // Assigns the target for rotation if we have a valid number
             if (m_degToTarget == -180) {
@@ -155,6 +157,7 @@ public class Pathing {
         if (!m_foundDistTarget) {
             // Assigns data from the duino to a storage double
             m_distToTarget = m_duinoToRio.getDistToTarget();
+            System.out.println(m_distToTarget);
 
             // If the return value is valid, run needed calculation
             if (!m_distToTarget.isNaN()) {
@@ -162,20 +165,23 @@ public class Pathing {
                 m_ticsToTarget = inToTics(m_distToTarget);
                 m_leftInitTics = m_drivetrain.getLeftDriveEncoderPosition();
                 m_rightInitTics = m_drivetrain.getRightDriveEncoderPosition();
-                m_leftTargetTics = m_leftInitTics + m_ticsToTarget;
-                m_rightTargetTics = m_rightInitTics + m_ticsToTarget;
+                m_leftTargetTics = m_leftInitTics - m_ticsToTarget;
+                m_rightTargetTics = m_rightInitTics - m_ticsToTarget;
             }
+            System.out.println("First entry");
             return false;
         }
         else {
             // Drives straight if we have not reached our target
             if (m_leftTargetTics < m_drivetrain.getLeftDriveEncoderPosition() && m_rightTargetTics < m_drivetrain.getLeftDriveEncoderPosition()) {
                 m_drivetrain.talonArcadeDrive(AUTO_SPEED, 0);
+                System.out.println("Still driving");
                 return false;
             }
             else {
                 // Stops the arcade drive otherwise
                 m_drivetrain.talonArcadeDrive(0, 0);
+                System.out.println("Done driving");
                 return true;
             }
         }
@@ -190,7 +196,7 @@ public class Pathing {
             // Returns false if the value returned is the known "No Target" value
             return false;
         }
-        else if (m_duinoToRio.getLowPosition() >= 1 || m_duinoToRio.getLowPosition() <= 3) {
+        else if (m_duinoToRio.getLowPosition() >= 1 && m_duinoToRio.getLowPosition() <= 3) {
             // Returns false if the value returned is expected and seen
             return true;
         }
