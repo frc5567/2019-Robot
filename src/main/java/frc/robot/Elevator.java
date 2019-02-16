@@ -138,6 +138,19 @@ public class Elevator {
 	public int getElevatorEncoderVelocity() {
 		return m_elevatorEncoder.getQuadratureVelocity();
 	}
+
+	/**
+	 * Method used to manually move the elevator.
+	 * @param input Joystick/variable input.
+	 */
+	public void moveRaw(double input){
+		if(input > 0.4 || input < -0.4){
+			m_elevatorMotor.set(0.0);
+		}
+		else{
+			m_elevatorMotor.set(input);
+		}
+	}
 	
 	/**
 	 * Calculates and returns the height of the elevator in inches.
