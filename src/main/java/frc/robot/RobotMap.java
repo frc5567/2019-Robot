@@ -12,28 +12,35 @@ public class RobotMap {
     public static final double PI = 3.14159265359;
 	// NavX angle offset
     public static final int ANGLE_OFFSET = 180;
+    // PI constant
+    public static final double PI = 3.14159265359;
     // Elevator drum measurement
     public static final double DRUM_DIAMETER_INCHES = 0.0;     //UPDATE THIS VALUE
     public static final double DRUM_CIRCUMFERENCE = DRUM_DIAMETER_INCHES * PI;
-    // Encoder ticks / rotation
+    // Encoder ticks / revolution
     public static final int TICKS_PER_REVOLUTION = 4096;
+    // Controller deadbands
+    public static final double CONTROLLER_STICK_DEADBAND = 0.05;
+    public static final double CONTROLLER_TRIGGER_DEADBAND = 0.05;
+    // Elevator drum measurements
+    public static final double DRUM_DIAMETER_INCHES = 2.2;     //UPDATE THIS VALUE
+    public static final double DRUM_CIRCUMFERENCE = DRUM_DIAMETER_INCHES * PI;
 
     // Controllers
     // Controller ports
 	public static final int PILOT_CONTROLLER_PORT = 0;
     public static final int COPILOT_CONTROLLER_PORT = 1;
-    // Controller deadbands
-    public static final double CONTROLLER_STICK_DEADBAND = 0.05;
-    public static final double CONTROLLER_TRIGGER_DEADBAND = 0.05;
 
     // CAN motor controller ID numbers
     // Drivetrain
-    public static final int FRONT_LEFT_DRIVE_MOTOR_PORT = 0;
-    public static final int FRONT_RIGHT_DRIVE_MOTOR_PORT = 1;
-    public static final int BACK_LEFT_DRIVE_MOTOR_PORT = 2;
-    public static final int BACK_RIGHT_DROVE_MOTOR_PORT = 3;
+    // NOTE: Test robot can IDs for drivetrain.
+    // TODO: Rename variables to reflect Victor or Talon. Front/back tags do not apply
+    public static final int SLAVE_LEFT_DRIVE_MOTOR_PORT = 3;
+    public static final int SLAVE_RIGHT_DRIVE_MOTOR_PORT = 1;
+    public static final int MASTER_LEFT_DRIVE_MOTOR_PORT = 4;
+    public static final int MASTER_RIGHT_DRIVE_MOTOR_PORT = 2;
     // Elevator
-    public static final int ELEVATOR_MOTOR_PORT = 4;
+    public static final int ELEVATOR_MOTOR_PORT = 5;
 
 	// PWM motor controller port numbers
 	// Climber
@@ -48,8 +55,11 @@ public class RobotMap {
     public static final int FRONT_CLIMBER_LIMIT_TOP_PORT = 2;
     public static final int BACK_CLIMBER_LIMIT_TOP_PORT = 3;
     // Hatch mechanism limit switches
-    public static final int HATCH_MECH_LIMIT_TOP_PORT = 1;
-    public static final int HATCH_MECH_LIMIT_BOTTOM_PORT = 2;
+    public static final int HATCH_MECH_LIMIT_TOP_PORT = 4;
+    public static final int HATCH_MECH_LIMIT_BOTTOM_PORT = 5;
+    // Hatch mech encoder
+    public static final int HATCH_MECH_ENCODER_A = 6;
+    public static final int HATCH_MECH_ENCODER_B = 7;
 
     // Servo PWM ports
     // HatchMech
@@ -59,6 +69,10 @@ public class RobotMap {
     // HatchMech servo positions
     public static final double HATCH_MECH_OPEN_SERVO_POSITION = 0.6;
     public static final double HATCH_MECH_CLOSE_SERVO_POSITION = 0.3;
+    // HatchMech motor encoder limits
+    public static final int HATCH_MECH_UP_MOTOR_POSITION = 0;
+    public static final int HATCH_MECH_DOWN_MOTOR_POSITION = 60;
+
     // Elevator height
     public static final double MAX_ELEVATOR_HEIGHT = 5.0;
 

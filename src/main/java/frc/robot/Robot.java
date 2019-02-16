@@ -14,6 +14,7 @@ import frc.robot.Drivetrain;
 import frc.robot.Controller;
 import frc.robot.Climber;
 import frc.robot.NavX;
+import frc.robot.Elevator.State;
 import frc.robot.Elevator;
 
 /**
@@ -36,6 +37,10 @@ public class Robot extends TimedRobot {
 	// Declare Pilot XBox Controller
 	Controller m_pilotController;
 
+	// Declares xbox controller for co-pilot
+	// Used for testing, gamepad will be used in comp
+	Controller m_copilotController;
+
 	// Declare climbing mechanisms for front and back climbers
 	Climber m_frontClimber;
 	Climber m_backClimber;
@@ -55,6 +60,7 @@ public class Robot extends TimedRobot {
 
 	Robot() {
 
+		// Instanciates drivetrain, driver controllers, climbers, and elevator
 		m_drivetrain = new Drivetrain();
 		m_pilotController = new Controller(RobotMap.PILOT_CONTROLLER_PORT);
 		m_frontClimber = new Climber(RobotMap.FRONT_CLIMBER_MOTOR_PORT, RobotMap.FRONT_CLIMBER_LIMIT_TOP_PORT);
@@ -85,6 +91,7 @@ public class Robot extends TimedRobot {
 			System.out.println("Error instantiating navX MXP");
 		}
 
+		// Instanciates auto commands class for using auto assist
 		autoCommands = new AutoCommands(m_drivetrain, m_ahrs, m_elevator, m_frontClimber, m_backClimber);
 	}
 
@@ -152,6 +159,7 @@ public class Robot extends TimedRobot {
 		// turning, quick turn is auto-enabled at low speed
 		m_drivetrain.curvatureDrive(m_pilotController.getLeftStickY(), m_pilotController.getRightStickX());
 
+		// Zeros yaw if 'A' is pressed, and adds 180 degree offset if 'B' is pressed
 		if (m_pilotController.getAButtonReleased()) {
 			m_ahrs.zeroYaw();
 		}
@@ -159,6 +167,7 @@ public class Robot extends TimedRobot {
 			m_ahrs.flipOffset();
 		}
 
+		// Prints yaw and if offset is applied to console
 		System.out.println(m_ahrs.getOffsetYaw() + "\t\t" + m_ahrs.getOffsetStatus());
 	}
 
