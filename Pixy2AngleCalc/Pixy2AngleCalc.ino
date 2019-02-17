@@ -1,3 +1,8 @@
+#include <PIDLoop.h>
+#include <Pixy2.h>
+#include <Pixy2Line.h>
+#include <Pixy2UART.h>
+
 #include <Pixy2I2C.h>
 #include <Pixy2SPI_SS.h>
 
@@ -24,13 +29,16 @@ int centerPoint;
 int absoluteCenter = 158;
 int distToCenter;
 double angleToCenter;
+double tempDistCenter;
+double selectedDistCenter = 39;
+double targetIndex;
 
 //  Value of pi for calculations
 double pi = 3.1415926535;
 
 //  Height and angle of the pixy (in)
-double cameraHeight = 46;
-double cameraAngle = 40;
+double cameraHeight = 47.375;
+double cameraAngle = 30;
 
 //  Coordinates of the origin point (p)
 double originX = 39;
@@ -38,7 +46,8 @@ double originY = 51;
 
 //  Constants for the pixy
 double thirtyDegInRad = ((pi / 180) * 30);
-double degPerVertPix = (40 / 51);
+double degPerVertPix = (40.0 / 51.0);
+double degPerHorizPix = (60.0 / 78.0);
 
 //  Values for calculating position later [RECOMMENT]
 //  Degrees from vertical to the end of the blindspot
@@ -51,9 +60,12 @@ double yDist;
 //  Diagonal distance from the camera to the target point
 double hypToCamera;
 double yDistDeg;
+double xDistDeg;
 
 //  Y Distance in inches from the robot to the target
 double distRobotToTarget;
+
+double xDistRobotToTarget;
 
 //  Width of the projection at the given y value
 double xWidth;
@@ -93,40 +105,37 @@ void calcInPerPix(double height, double angle, double tailX, double tailY)
 	xDist = (tailX - originX);
 	yDist = (originY - tailY);
 	yDistDeg = (blindspotDeg + (yDist * degPerVertPix));
-	distRobotToTarget = height * tan(degToRad(yDistDeg));
+	distRobotToTarget = 11+(height * tan(degToRad(yDistDeg)));
 	hypToCamera = sqrt(sq(height) + sq(distRobotToTarget));
-	xWidth = 2 * (hypToCamera * tan(thirtyDegInRad));
-	xInPerPix = xWidth / 78;
-
-	//  Calc for xDistIn for distToTarget
-	xDistIn = xDist * xInPerPix;
+  xDistDeg = (xDist * degPerHorizPix);
+  xDistRobotToTarget = hypToCamera * tan(degToRad(abs(xDistDeg)));
 }
 
-void calcDistToCenterLow()
-{
-	if (lowPixy.ccc.blocks[0].m_x < lowPixy.ccc.blocks[1].m_x)
-	{
-		leftX = lowPixy.ccc.blocks[0].m_x;
-		rightX = lowPixy.ccc.blocks[1].m_x;
-		leftWidth = lowPixy.ccc.blocks[0].m_width;
-		rightWidth = lowPixy.ccc.blocks[1].m_width;
-	}
-	else if (lowPixy.ccc.blocks[0].m_x > lowPixy.ccc.blocks[1].m_x)
-	{
-		leftX = lowPixy.ccc.blocks[1].m_x;
-		rightX = lowPixy.ccc.blocks[0].m_x;
-		leftWidth = lowPixy.ccc.blocks[1].m_width;
-		rightWidth = lowPixy.ccc.blocks[0].m_width;
-	}
-
-	xLOne = leftX - (leftWidth / 2);
-	xROne = rightX + (leftWidth / 2);
-	xLTwo = leftX - (rightWidth / 2);
-	xRTwo = rightX + (rightWidth / 2);
-	centerPoint = ((xLTwo - xROne) / 2) + xROne;
-	distToCenter = absoluteCenter - centerPoint;
-	angleToCenter = distToCenter * 0.189873;
-}
+//void calcDistToCenterLow()
+//{
+//	if (lowPixy.ccc.blocks[0].m_x < lowPixy.ccc.blocks[1].m_x)
+//	{
+//		leftX = lowPixy.ccc.blocks[0].m_x;
+//		rightX = lowPixy.ccc.blocks[1].m_x;
+//		leftWidth = lowPixy.ccc.blocks[0].m_width;
+//		rightWidth = lowPixy.ccc.blocks[1].m_width;
+//	}
+//	else if (lowPixy.ccc.blocks[0].m_x > lowPixy.ccc.blocks[1].m_x)
+//	{
+//		leftX = lowPixy.ccc.blocks[1].m_x;
+//		rightX = lowPixy.ccc.blocks[0].m_x;
+//		leftWidth = lowPixy.ccc.blocks[1].m_width;
+//		rightWidth = lowPixy.ccc.blocks[0].m_width;
+//	}
+//
+//	xLOne = leftX - (leftWidth / 2);
+//	xROne = rightX + (leftWidth / 2);
+//	xLTwo = leftX - (rightWidth / 2);
+//	xRTwo = rightX + (rightWidth / 2);
+//	centerPoint = ((xLTwo - xROne) / 2) + xROne;
+//	distToCenter = absoluteCenter - centerPoint;
+//	angleToCenter = distToCenter * 0.189873;
+//}
 
 void setup()
 {
@@ -136,8 +145,9 @@ void setup()
 	//  Initializes the Pixy
 	//  Hexadecimal values passed in correspond to address set on the pixy
 	highPixy.init(0x54);
-	lowPixy.init(0x53);
-	highPixy.changeProg("line");
+////	lowPixy.init(0x53);
+//	highPixy.changeProg("line");
+//  highPixy.line.setMode(LINE_MODE_MANUAL_SELECT_VECTOR);
 }
 
 //  Reads command off of the wire and converts it to a usable char
@@ -160,7 +170,7 @@ void sendData(char command)
 {
 	if (command == GET_DEG_TO_TARGET)
 	{
-		if (String(degToTarget) == ("-81.42"))
+		if (String(degToTarget) == ("-34.36"))
 		{
 			degToTarget = -180;
 		}
@@ -170,51 +180,68 @@ void sendData(char command)
 	{
 		Serial.println(distToTarget);
 	}
-	else if (command == GET_ANGLE_TO_CENTER)
-	{
-		Serial.println(angleToCenter);
-	}
-	else if (command == GET_LOW_POSITION)
-	{
-		Serial.println(lowPosition);
-	}
+//	else if (command == GET_ANGLE_TO_CENTER)
+//	{
+//		Serial.println(angleToCenter);
+//	}
+//	else if (command == GET_LOW_POSITION)
+//	{
+//		Serial.println(lowPosition);
+//	}
 }
 
 void loop()
 {
+  int indexindex = 0;
+  targetIndex = -500;
 	//  Gets data from the highPixy
-	highPixy.line.getMainFeatures();
+	highPixy.line.getAllFeatures(1, false);
+ 
+  selectedDistCenter = 39;
+  tempDistCenter = 39;
+  
+  for(indexindex = 0; indexindex < highPixy.line.numVectors; indexindex++) 
+  {
+    tempDistCenter = abs(originX - highPixy.line.vectors[indexindex].m_x0);
+    if (tempDistCenter < selectedDistCenter)
+    {
+      selectedDistCenter = tempDistCenter;
+      targetIndex = highPixy.line.vectors[indexindex].m_index;
+    }
+  }
+  highPixy.line.setVector(targetIndex);
+  highPixy.line.getMainFeatures();
 
 	//  Calculates return values for the highPixy
 	calcInPerPix(cameraHeight, cameraAngle, highPixy.line.vectors->m_x0, highPixy.line.vectors->m_y0);
-	degToTarget = atan((xDist * xInPerPix) / distRobotToTarget) * (180 / pi);
-	distToTarget = sqrt(sq(distRobotToTarget) + sq(xDistIn));
+	degToTarget = (atan(xDistRobotToTarget / distRobotToTarget) * (180 / pi)) * (abs(xDist)/xDist);
+	distToTarget = sqrt(sq(distRobotToTarget) + sq(xDistRobotToTarget));
 
 	//  Gets data from the lowPixy
-	lowPixy.ccc.getBlocks(true, 255, 2);
+//	lowPixy.ccc.getBlocks(true, 255, 2);
 
 	//  Calculates return values for the lowPixy
-	if (lowPixy.ccc.numBlocks)
-	{
-		calcDistToCenterLow();
-
-		if (absoluteCenter - centerPoint < 2)
-		{
-			lowPosition = 1;
-		}
-		else if (absoluteCenter - centerPoint > 2)
-		{
-			lowPosition = 3;
-		}
-		else
-		{
-			lowPosition = 2;
-		}
-	}
-	else
-	{
-		lowPosition = -1;
-	}
+//	if (lowPixy.ccc.numBlocks)
+//	{
+//		calcDistToCenterLow();
+//
+//		if (absoluteCenter - centerPoint < 2)
+//		{
+//			lowPosition = 1;
+//		}
+//		else if (absoluteCenter - centerPoint > 2)
+//		{
+//			lowPosition = 3;
+//		}
+//		else
+//		{
+//			lowPosition = 2;
+//		}
+//	}
+//	else
+//	{
+//		lowPosition = -1;
+//	}
 
 	//  Runs the communication code if a command is available
 	if (Serial.available() > 0)
@@ -226,3 +253,5 @@ void loop()
 		incCommand = 0;
 	}
 }
+
+

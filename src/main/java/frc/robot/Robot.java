@@ -148,6 +148,9 @@ public class Robot extends TimedRobot {
 //			System.out.println("LeftEnc\t" + m_drivetrain.getLeftDriveEncoderPosition());
 //			System.out.println("RightEnc\t" + m_drivetrain.getRightDriveEncoderPosition());
 		}
+		else if (m_pilotController.getXButton()) {
+			m_pather.secondHalfPath();
+		}
 		else {
 			m_drivetrain.talonArcadeDrive(m_pilotController.getLeftStickY(), m_pilotController.getRightStickX());
 		}

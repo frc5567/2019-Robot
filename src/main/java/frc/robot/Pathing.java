@@ -109,6 +109,31 @@ public class Pathing {
         }
     }
 
+    public boolean secondHalfPath () {
+        if (!m_lowTargetFound) {
+            System.out.println("low target found");
+            m_lowTargetFound = checkForLowTarget();
+            return false;
+        }
+        // Runs the rotLowTarget method after all previous are finished and only if we see a target
+        else if (!m_rotLowTargetFinished) {
+            System.out.println("rot low target");
+            m_rotLowTargetFinished = rotLowTarget();
+            return false;
+        }
+        // Runs the driveLowTarget method after all previous are finished
+        else if (!m_lowDriveFinished) {
+            System.out.println("low drive");
+            m_lowDriveFinished = driveLowTarget();
+            return false;
+        }
+        // Returns true after all are true
+        else {
+            System.out.println("finished");
+            return true;
+        }
+    }
+
     /**
      * Converts inches to drive encoder tics
      * @param inches The inches we want to convert
