@@ -8,15 +8,10 @@ package frc.robot;
  */
 public class RobotMap {
 
-    // Math constants
-    public static final double PI = 3.14159265359;
 	// NavX angle offset
     public static final int ANGLE_OFFSET = 180;
     // PI constant
     public static final double PI = 3.14159265359;
-    // Elevator drum measurement
-    public static final double DRUM_DIAMETER_INCHES = 0.0;     //UPDATE THIS VALUE
-    public static final double DRUM_CIRCUMFERENCE = DRUM_DIAMETER_INCHES * PI;
     // Encoder ticks / revolution
     public static final int TICKS_PER_REVOLUTION = 4096;
     // Controller deadbands

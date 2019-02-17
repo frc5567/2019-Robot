@@ -76,7 +76,7 @@ public class HatchMech{
     }
    
     /**
-     * Lowers the Hatch MEch arm to its low arm when called
+     * Lowers the Hatch Mech arm to its low arm when called
      */
     public void ArmDown(){
         if (m_hatchMechEncoder.get() <= RobotMap.HATCH_MECH_DOWN_MOTOR_POSITION) {
