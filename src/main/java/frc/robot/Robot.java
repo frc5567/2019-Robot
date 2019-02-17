@@ -8,6 +8,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.cscore.UsbCamera;
@@ -160,6 +161,9 @@ public class Robot extends TimedRobot {
 		}
 		if (m_pilotController.getBButtonReleased()) {
 			m_ahrs.flipOffset();
+		}
+		if (m_pilotController.getBumper(Hand.kRight)) {
+			m_pather.resetFlags();
 		}
 		m_pilotController.setRumble(RumbleType.kLeftRumble, 0);
 		m_pilotController.setRumble(RumbleType.kRightRumble, 0);

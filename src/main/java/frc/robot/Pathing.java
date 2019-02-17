@@ -48,7 +48,7 @@ public class Pathing {
     // Declares a drivetrain to use in the auto movement
     Drivetrain m_drivetrain;
 
-    int counter;
+    int m_counter;
     
     /**
      * Constructor for our pathing sequence, passing in the drivetrain we want to use
@@ -65,7 +65,8 @@ public class Pathing {
 
         // Configs the talon PIDs
         m_drivetrain.talonDriveConfig();
-        counter = 0;
+
+        m_counter = 0;
     }
 
     /**
@@ -172,10 +173,11 @@ public class Pathing {
             System.out.println("PIDOutput: \t" + m_drivetrain.m_rotController.get());
             m_drivetrain.rotateToAngle(m_absoluteDegToTarget);
             System.out.println("Post method PIDOutput: \t" + m_drivetrain.m_rotController.get());
-            if ((m_drivetrain.m_rotController.get() < RobotMap.FINISHED_PID_THRESHOLD) && (m_drivetrain.m_rotController.get() > -RobotMap.FINISHED_PID_THRESHOLD)) {
+            if ((m_counter > 25) && ((m_drivetrain.m_rotController.get() < RobotMap.FINISHED_PID_THRESHOLD) && (m_drivetrain.m_rotController.get() > -RobotMap.FINISHED_PID_THRESHOLD))) {
                 return true;
             }
             else {
+                m_counter++;
                 return false;
             }
         }
@@ -243,12 +245,15 @@ public class Pathing {
      * @return Returns whether the method is finished (True if it is)
      */
     private boolean rotLowTarget() {
+        System.out.println("target angle: \t" + m_absoluteDegToTarget);
+        System.out.println("current angle: \t" + m_ahrs.getYaw());
         if(!m_foundLowTarget) {
             // Assigns the target if there is no previous valid target
             m_degToTarget = m_duinoToRio.getAngleToCenter();
-
+            System.out.println("Looking for target");
             // If the target is a valid number, assigns necesary target variables
             if(!m_degToTarget.isNaN()) {
+                System.out.println("Found Target");
                 m_startingDegrees = m_ahrs.getYaw();
                 m_absoluteDegToTarget = m_startingDegrees - m_degToTarget;
                 m_foundLowTarget = true;
@@ -256,14 +261,16 @@ public class Pathing {
             return false;
         }
         else {
-            Timer.delay(0.1);
+//            Timer.delay(0.1);
             // Rotates until the method says that its done
-            if (counter > 3 && m_drivetrain.rotateToAngle(m_absoluteDegToTarget)) {
+            if ((m_counter > 25) && (m_drivetrain.rotateToAngle(m_absoluteDegToTarget))) {
+                m_counter = 0;
+                System.out.println("Done Rotating");
                 return true;
             }
             else {
-                counter++;
-                Timer.delay(0.05);
+                m_counter++;
+                System.out.println("Rotating");
                 return false;
             }
         }
@@ -275,7 +282,7 @@ public class Pathing {
      */
     private boolean driveLowTarget() {
         // Drives forward until within certain distance of the wall
-        if(!m_drivetrain.driveToUltra(5)) {
+        if(!m_drivetrain.driveToUltra(18)) {
             return false;
         }
         else {
@@ -287,7 +294,6 @@ public class Pathing {
      * Resets all sequence flags
      */
     public void resetFlags() {
-        counter = 0;
         m_foundTarget = false;
         m_foundLowTarget = false;
         m_rotEndLineFinished = false;
