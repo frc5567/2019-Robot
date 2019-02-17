@@ -8,7 +8,9 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 
 import frc.robot.Drivetrain;
 import frc.robot.Controller;
@@ -53,6 +55,10 @@ public class Robot extends TimedRobot {
 
 	// Declare Auto Commands class for auto and auto assist commands
 	AutoCommands autoCommands;
+
+	// Declare Dashboard and Dashboard data bus
+	DashboardData m_dataStream;
+	CustomDashboard m_roboDash;
 
 	// Declare our duino communication port
 	// private DuinoToRioComms m_duinoToRio;
@@ -215,5 +221,36 @@ public class Robot extends TimedRobot {
 		 * 
 		 * }
 		 */
+
+
+		// BIG TEST CODE
+		
+		// Stuff from Teleop
+		// Test drivetrain included, uses Left stick Y for speed, Right stick X for
+		// turning, quick turn is auto-enabled at low speed
+		m_drivetrain.curvatureDrive(m_pilotController.getLeftStickY(), m_pilotController.getRightStickX());
+
+		// Zeros yaw if 'A' is pressed, and adds 180 degree offset if 'B' is pressed
+		if (m_pilotController.getAButtonReleased()) {
+			m_ahrs.zeroYaw();
+		}
+		if (m_pilotController.getBButtonReleased()) {
+			m_ahrs.flipOffset();
+		}
+
+		// Prints yaw and if offset is applied to console
+		System.out.println(m_ahrs.getOffsetYaw() + "\t\t" + m_ahrs.getOffsetStatus());
+
+		// New Stuff
+		// Elevator controls, triggers are for testing as of 2/16
+		m_elevator.moveRaw(m_pilotController.getLeftTrigger() - m_pilotController.getRightTrigger());
+		// Elevator move to position methods
+		m_elevator.moveToPosition(m_pilotController.getXButton() , State.HATCH_L1);
+		m_elevator.moveToPosition(m_pilotController.getYButton() , State.HATCH_L2);
+		m_elevator.moveToPosition(m_pilotController.getBumper(Hand.kLeft) , State.HATCH_L3);
+		m_elevator.moveToPosition(m_pilotController.getBumper(Hand.kRight), State.LEVEL_ZERO);
+
+		// Hatch Mech
+
 	}
 }

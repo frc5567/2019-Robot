@@ -144,12 +144,7 @@ public class Elevator {
 	 * @param input Joystick/variable input.
 	 */
 	public void moveRaw(double input){
-		if(input > 0.4 || input < -0.4){
-			m_elevatorMotor.set(0.0);
-		}
-		else{
-			m_elevatorMotor.set(input);
-		}
+			m_elevatorMotor.set(input * 0.4);
 	}
 	
 	/**
@@ -193,22 +188,22 @@ public class Elevator {
 	 * @return The state of the elevator based on it's height.
 	 */
 	private State getState(double position){
-		if(position < State.CARGO_L1.deltaInches + 2 && position > State.CARGO_L1.deltaInches - 2){
+		if(position < State.CARGO_L1.deltaInches + 0.5 && position > State.CARGO_L1.deltaInches - 0.5){
 			return State.CARGO_L1;
 		}
-		else if(position < State.CARGO_L2.deltaInches + 2 && position > State.CARGO_L2.deltaInches - 2){
+		else if(position < State.CARGO_L2.deltaInches + 0.5 && position > State.CARGO_L2.deltaInches - 0.5){
 			return State.CARGO_L2;
 		}
-		else if(position < State.CARGO_L3.deltaInches + 2 && position > State.CARGO_L3.deltaInches - 2){
+		else if(position < State.CARGO_L3.deltaInches + 0.5 && position > State.CARGO_L3.deltaInches - 0.5){
 			return State.CARGO_L3;
 		}
-		else if(position < State.HATCH_L1.deltaInches + 2 && position > State.HATCH_L1.deltaInches - 2){
+		else if(position < State.HATCH_L1.deltaInches + 0.5 && position > State.HATCH_L1.deltaInches - 0.5){
 			return State.HATCH_L1;
 		}
-		else if(position < State.HATCH_L2.deltaInches + 2 && position > State.HATCH_L2.deltaInches - 2){
+		else if(position < State.HATCH_L2.deltaInches + 0.5 && position > State.HATCH_L2.deltaInches - 0.5){
 			return State.HATCH_L2;
 		}
-		else if(position < State.HATCH_L3.deltaInches + 2 && position > State.HATCH_L3.deltaInches - 2){
+		else if(position < State.HATCH_L3.deltaInches + 0.5 && position > State.HATCH_L3.deltaInches - 0.5){
 			return State.HATCH_L3;
 		}
 		else{
