@@ -8,6 +8,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.CameraServer;
@@ -51,7 +52,6 @@ public class Robot extends TimedRobot {
 
 	Robot() {
 
-		m_drivetrain = new Drivetrain();
 		m_pilotController = new Controller(RobotMap.PILOT_CONTROLLER_PORT);
 		//		m_frontClimber = new Climber(RobotMap.FRONT_CLIMBER_MOTOR_PORT, RobotMap.FRONT_CLIMBER_LIMIT_TOP_PORT);
 		//		m_backClimber = new Climber(RobotMap.BACK_CLIMBER_MOTOR_PORT, RobotMap.BACK_CLIMBER_LIMIT_TOP_PORT);
@@ -66,6 +66,7 @@ public class Robot extends TimedRobot {
 			System.out.println("Error instantiating navX MXP");
 		}
 		
+		m_drivetrain = new Drivetrain(m_ahrs);
 		m_pather = new Pathing(m_drivetrain, m_ahrs);
 //		autoCommands = new AutoCommands(m_drivetrain, m_ahrs, m_elevator, m_frontClimber, m_backClimber);
 	}
@@ -142,7 +143,7 @@ public class Robot extends TimedRobot {
 		// PID based sample talon arcade drive
 		// m_drivetrain.talonArcadeDrive(m_pilotController.getRightTrigger() - m_pilotController.getLeftTrigger(), m_pilotController.getLeftStickX());
 		if(m_pilotController.getYButton()) {
-			System.out.println(m_pather.pathToTarget());
+			/*System.out.println*/m_pather.pathToTarget();
 //			System.out.println("Why are buttons?");
 //			System.out.println("LeftEnc\t" + m_drivetrain.getLeftDriveEncoderPosition());
 //			System.out.println("RightEnc\t" + m_drivetrain.getRightDriveEncoderPosition());
@@ -157,6 +158,8 @@ public class Robot extends TimedRobot {
 		if (m_pilotController.getBButtonReleased()) {
 			m_ahrs.flipOffset();
 		}
+		m_pilotController.setRumble(RumbleType.kLeftRumble, 0);
+		m_pilotController.setRumble(RumbleType.kRightRumble, 0);
 
 //		System.out.println(m_ahrs.getOffsetYaw() + "\t\t" + m_ahrs.getOffsetStatus());
 	}

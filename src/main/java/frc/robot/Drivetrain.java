@@ -27,6 +27,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 // Import needed to initialize NavX and rotation controller
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.Ultrasonic.Unit;
 
@@ -40,7 +41,7 @@ public class Drivetrain implements PIDOutput {
     private NavX m_ahrs;
 
     // Declares turn control PID
-    private PIDController m_rotController;
+    PIDController m_rotController;
 
     // Delcares a flag for checking if this is the first time entering this method in a given run
     boolean m_firstCall = true;
@@ -84,7 +85,7 @@ public class Drivetrain implements PIDOutput {
     /**
      * Constructor for the motor controller declarations and the drivetrain object
      */
-    public Drivetrain() {
+    public Drivetrain(NavX ahrs) {
 
         // Initializes the motorControllers using the ports passed in
         m_frontLeftMotor = new WPI_VictorSPX(RobotMap.FRONT_LEFT_DRIVE_MOTOR_PORT);
@@ -114,11 +115,7 @@ public class Drivetrain implements PIDOutput {
         m_currentRotate = 0;
 
         // Instantiates the NavX
-        try {
-            m_ahrs = new NavX(SPI.Port.kMXP);
-        } catch (RuntimeException ex) {
-            System.out.println("Error instantiating navX MXP");
-        }
+        m_ahrs = ahrs;
 
         // Instantiates the Ultrasonics
         ultraLeft = new Ultrasonic(1, 0);
@@ -134,7 +131,7 @@ public class Drivetrain implements PIDOutput {
         m_rotController = new PIDController(RobotMap.P_ROTATE_CONTROLLER, RobotMap.I_ROTATE_CONTROLLER, RobotMap.D_ROTATE_CONTROLLER, RobotMap.F_ROTATE_CONTROLLER, m_ahrs, this, 0.02);
         m_rotController.setInputRange(-180.00f, 180.00f);
         // These values are temporary and need to be changed based on testing
-        m_rotController.setOutputRange(-0.7, 0.7);
+        m_rotController.setOutputRange(-0.5, 0.5);
         m_rotController.setAbsoluteTolerance(RobotMap.TOLERANCE_ROTATE_CONTROLLER);
         m_rotController.setContinuous();
         m_rotController.disable();
@@ -235,12 +232,13 @@ public class Drivetrain implements PIDOutput {
             // Prevents us from repeating the reset until we run the method again seperately
             m_firstCall = false;
         }
-
+        System.out.println("In method PID check: \t" + m_rotController.get());
         // Sets our rotate speed to the return of the PID
         double returnedRotate = m_rotController.get();
-
+        Timer.delay(0.05);
+        System.out.println("Returned Rotate: \t" + returnedRotate);
         // Runs the drivetrain with 0 speed and the rotate speed set by the PID
-        curvatureDrive(0.2, returnedRotate);
+        talonArcadeDrive(0, returnedRotate);
 
         // Checks to see if the the PID is finished or close enough
         if ( (returnedRotate < RobotMap.FINISHED_PID_THRESHOLD) && (returnedRotate > -RobotMap.FINISHED_PID_THRESHOLD) ) {
