@@ -82,6 +82,8 @@ public class Drivetrain implements PIDOutput {
     private boolean m_firstCallTest = true;
 
 
+    int m_counter;
+
     /**
      * Constructor for the motor controller declarations and the drivetrain object
      */
@@ -135,6 +137,8 @@ public class Drivetrain implements PIDOutput {
         m_rotController.setAbsoluteTolerance(RobotMap.TOLERANCE_ROTATE_CONTROLLER);
         m_rotController.setContinuous();
         m_rotController.disable();
+
+        m_counter = 0;
     }
 
     /**
@@ -231,6 +235,8 @@ public class Drivetrain implements PIDOutput {
 
             // Prevents us from repeating the reset until we run the method again seperately
             m_firstCall = false;
+
+            m_counter = 0;
         }
         System.out.println("In method PID check: \t" + m_rotController.get());
         // Sets our rotate speed to the return of the PID
@@ -238,12 +244,23 @@ public class Drivetrain implements PIDOutput {
         Timer.delay(0.05);
         System.out.println("Returned Rotate: \t" + returnedRotate);
         // Runs the drivetrain with 0 speed and the rotate speed set by the PID
+        System.out.println("target angle: \t" + targetAngle);
+        System.out.println("current angle: \t" + m_ahrs.getYaw());
         talonArcadeDrive(0, returnedRotate);
 
         // Checks to see if the the PID is finished or close enough
         if ( (returnedRotate < RobotMap.FINISHED_PID_THRESHOLD) && (returnedRotate > -RobotMap.FINISHED_PID_THRESHOLD) ) {
             isFinished = true;
             m_firstCall = true;
+        }
+        
+        if (m_counter > 10) {
+            isFinished = true;
+            m_firstCall = true;
+        }
+
+        if (isFinished) {
+            m_counter = 0;
         }
 
         return isFinished;
@@ -256,6 +273,7 @@ public class Drivetrain implements PIDOutput {
     public boolean driveToUltra(double stopDistance) {
         if (ultraLeft.getRangeInches() > stopDistance && ultraRight.getRangeInches() > stopDistance) {
             talonArcadeDrive(.5, 0);
+            System.out.println("LUS: " + ultraLeft.getRangeInches() + "\tRUS: " + ultraRight.getRangeInches());
             return false;
         }
         else {
