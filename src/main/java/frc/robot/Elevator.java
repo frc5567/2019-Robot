@@ -2,6 +2,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.SensorCollection;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
@@ -85,7 +86,7 @@ public class Elevator {
 		}
 	}
 
-	// Defining the limit switches at the top and bottom of the elevator.
+	// Defining the limit switches at the op and bottom of the elevator.
 	DigitalInput m_limitTop;
 	DigitalInput m_limitBottom;
 
@@ -137,6 +138,14 @@ public class Elevator {
 	public int getElevatorEncoderVelocity() {
 		return m_elevatorEncoder.getQuadratureVelocity();
 	}
+
+	/**
+	 * Method used to manually move the elevator.
+	 * @param input Joystick/variable input.
+	 */
+	public void moveRaw(double input){
+			m_elevatorMotor.set(input * 0.4);
+	}
 	
 	/**
 	 * Calculates and returns the height of the elevator in inches.
@@ -152,28 +161,49 @@ public class Elevator {
 	}
 
 	/**
+	 * Method used to move the elevator to our desired height while a button of our choice
+	 * is pressed.
+	 * 
+	 * @param button The button we want associated with moving to the desired state.
+	 * @param desiredState The state we want the button to move the elevator to.
+	 */
+	public void moveToPosition(boolean button , State desiredState){
+		if(button && currentState != desiredState){
+			if(currentState.deltaInches > desiredState.deltaInches){
+				m_elevatorMotor.set(RobotMap.ELEVATOR_MOTOR_SPEED_DOWN);
+			}
+			else if(currentState.deltaInches < desiredState.deltaInches){
+				m_elevatorMotor.set(RobotMap.ELEVATOR_MOTOR_SPEED_UP);
+			}
+		}
+		else if(currentState == desiredState){
+			m_elevatorMotor.set(0.0);
+		}
+	}
+
+	/**
 	 * Method to set currentState based on the current height of the elevator.
 	 * 
 	 * @param position The position gathered by the getPosition method.
 	 * @return The state of the elevator based on it's height.
 	 */
 	private State getState(double position){
-		if(position < State.CARGO_L1.deltaInches + 2 && position > State.CARGO_L1.deltaInches - 2){
+		if(position < State.CARGO_L1.deltaInches + 0.5 && position > State.CARGO_L1.deltaInches - 0.5){
 			return State.CARGO_L1;
 		}
-		else if(position < State.CARGO_L2.deltaInches + 2 && position > State.CARGO_L2.deltaInches - 2){
+		else if(position < State.CARGO_L2.deltaInches + 0.5 && position > State.CARGO_L2.deltaInches - 0.5){
 			return State.CARGO_L2;
 		}
-		else if(position < State.CARGO_L3.deltaInches + 2 && position > State.CARGO_L3.deltaInches - 2){
+		else if(position < State.CARGO_L3.deltaInches + 0.5 && position > State.CARGO_L3.deltaInches - 0.5){
 			return State.CARGO_L3;
 		}
-		else if(position < State.HATCH_L1.deltaInches + 2 && position > State.HATCH_L1.deltaInches - 2){
+		else if(position < State.HATCH_L1.deltaInches + 0.5 && position > State.HATCH_L1.deltaInches - 0.5){
 			return State.HATCH_L1;
 		}
-		else if(position < State.HATCH_L2.deltaInches + 2 && position > State.HATCH_L2.deltaInches - 2){
+		else if(position < State.HATCH_L2.deltaInches + 0.5 && position > State.HATCH_L2.deltaInches - 0.5){
 			return State.HATCH_L2;
 		}
-		else if(position < State.HATCH_L3.deltaInches + 2 && position > State.HATCH_L3.deltaInches - 2){
+		else if(position < State.HATCH_L3.deltaInches + 0.5 && position > State.HATCH_L3.deltaInches - 0.5){
 			return State.HATCH_L3;
 		}
 		else{

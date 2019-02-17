@@ -42,7 +42,7 @@ public class GamePad extends GenericHID {
 	 * @param button Button to view if pressed
 	 * @return Returns button status (if pressed)
 	 */
-	public boolean getGPButtonPressed(GamePadControls button) {
+	public boolean getButtonPressed(GamePadControls button) {
 		return super.getRawButtonPressed(button.value);
 	}
 
