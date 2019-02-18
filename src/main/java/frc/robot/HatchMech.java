@@ -4,8 +4,9 @@ package frc.robot;
 
 //Imports servo, motor controller, and digital input (true or false) for later use.
 import edu.wpi.first.wpilibj.Servo;
-import edu.wpi.first.wpilibj.VictorSP;          //Might change VictorSP for motor later
+import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Encoder;
 
 public class HatchMech{
 
@@ -13,9 +14,10 @@ public class HatchMech{
     Servo m_servo;  
 
     //Initializes the victor, and the limit switches for use moving the hatch mechanism arm.
-    VictorSP m_hatchArmMotor;
+    WPI_VictorSPX m_hatchArmMotor;
     DigitalInput m_limitSwitchTop;
     DigitalInput m_limitSwitchBottom;
+    Encoder m_hatchMechEncoder;
   
     public HatchMech(){
         //Creates servo variable for hatch mechanism.
@@ -25,6 +27,9 @@ public class HatchMech{
         //This defines the limit switches as new digital inputs.
         m_limitSwitchTop = new DigitalInput(RobotMap.HATCH_MECH_LIMIT_TOP_PORT);
         m_limitSwitchBottom = new DigitalInput(RobotMap.HATCH_MECH_LIMIT_BOTTOM_PORT);
+
+        m_hatchMechEncoder = new Encoder(RobotMap.HATCH_MECH_ENCODER_A, RobotMap.HATCH_MECH_ENCODER_B, false, Encoder.EncodingType.k4X);
+        m_hatchMechEncoder.reset();
     }
 
     /**
@@ -57,25 +62,28 @@ public class HatchMech{
         }
     }
 
-    //TODO: Double check direction and speed for both ArmUp and ArmDown
     /**
-     * This creates a method for raising the arm up.
+     * Raises the Hatch Mech arm to its high position when called
      */
     public void ArmUp(){
-        while(m_limitSwitchTop.get() == false){
+        if (m_hatchMechEncoder.get() >= RobotMap.HATCH_MECH_UP_MOTOR_POSITION) {
             m_hatchArmMotor.set(RobotMap.HATCH_MECH_ARM_UP_MOTOR_SPEED);
         }
-        m_hatchArmMotor.set(RobotMap.HATCH_MECH_STOP_MOTOR_SPEED);
+        else {
+            m_hatchArmMotor.set(RobotMap.HATCH_MECH_STOP_MOTOR_SPEED);
+        }
                                
     }
    
     /**
-     * Creates a method that lowers arm. 
+     * Lowers the Hatch Mech arm to its low arm when called
      */
     public void ArmDown(){
-        while(m_limitSwitchBottom.get() == false){
-        m_hatchArmMotor.set(RobotMap.HATCH_MECH_ARM_DOWN_MOTOR_SPEED);                            
+        if (m_hatchMechEncoder.get() <= RobotMap.HATCH_MECH_DOWN_MOTOR_POSITION) {
+            m_hatchArmMotor.set(RobotMap.HATCH_MECH_ARM_DOWN_MOTOR_SPEED);                            
         }
-        m_hatchArmMotor.set(RobotMap.HATCH_MECH_STOP_MOTOR_SPEED);
+        else {
+            m_hatchArmMotor.set(RobotMap.HATCH_MECH_STOP_MOTOR_SPEED);
+        }
     }
 }

@@ -8,12 +8,15 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 
 import frc.robot.Drivetrain;
 import frc.robot.Controller;
 import frc.robot.Climber;
 import frc.robot.NavX;
+import frc.robot.Elevator.State;
 import frc.robot.Elevator;
 
 /**
@@ -36,6 +39,10 @@ public class Robot extends TimedRobot {
 	// Declare Pilot XBox Controller
 	Controller m_pilotController;
 
+	// Declares xbox controller for co-pilot
+	// Used for testing, gamepad will be used in comp
+	Controller m_copilotController;
+
 	// Declare climbing mechanisms for front and back climbers
 	Climber m_frontClimber;
 	Climber m_backClimber;
@@ -49,12 +56,17 @@ public class Robot extends TimedRobot {
 	// Declare Auto Commands class for auto and auto assist commands
 	AutoCommands autoCommands;
 
+	// Declare Dashboard and Dashboard data bus
+	DashboardData m_dataStream;
+	CustomDashboard m_roboDash;
+
 	// Declare our duino communication port
 	// private DuinoToRioComms m_duinoToRio;
 	// private DuinoCommStorage m_pkt;
 
 	Robot() {
 
+		// Instanciates drivetrain, driver controllers, climbers, and elevator
 		m_drivetrain = new Drivetrain();
 		m_pilotController = new Controller(RobotMap.PILOT_CONTROLLER_PORT);
 		m_frontClimber = new Climber(RobotMap.FRONT_CLIMBER_MOTOR_PORT, RobotMap.FRONT_CLIMBER_LIMIT_TOP_PORT);
@@ -85,6 +97,7 @@ public class Robot extends TimedRobot {
 			System.out.println("Error instantiating navX MXP");
 		}
 
+		// Instanciates auto commands class for using auto assist
 		autoCommands = new AutoCommands(m_drivetrain, m_ahrs, m_elevator, m_frontClimber, m_backClimber);
 	}
 
@@ -152,6 +165,7 @@ public class Robot extends TimedRobot {
 		// turning, quick turn is auto-enabled at low speed
 		m_drivetrain.curvatureDrive(m_pilotController.getLeftStickY(), m_pilotController.getRightStickX());
 
+		// Zeros yaw if 'A' is pressed, and adds 180 degree offset if 'B' is pressed
 		if (m_pilotController.getAButtonReleased()) {
 			m_ahrs.zeroYaw();
 		}
@@ -159,6 +173,7 @@ public class Robot extends TimedRobot {
 			m_ahrs.flipOffset();
 		}
 
+		// Prints yaw and if offset is applied to console
 		System.out.println(m_ahrs.getOffsetYaw() + "\t\t" + m_ahrs.getOffsetStatus());
 	}
 
@@ -206,5 +221,36 @@ public class Robot extends TimedRobot {
 		 * 
 		 * }
 		 */
+
+
+		// BIG TEST CODE
+		
+		// Stuff from Teleop
+		// Test drivetrain included, uses Left stick Y for speed, Right stick X for
+		// turning, quick turn is auto-enabled at low speed
+		m_drivetrain.curvatureDrive(m_pilotController.getLeftStickY(), m_pilotController.getRightStickX());
+
+		// Zeros yaw if 'A' is pressed, and adds 180 degree offset if 'B' is pressed
+		if (m_pilotController.getAButtonReleased()) {
+			m_ahrs.zeroYaw();
+		}
+		if (m_pilotController.getBButtonReleased()) {
+			m_ahrs.flipOffset();
+		}
+
+		// Prints yaw and if offset is applied to console
+		System.out.println(m_ahrs.getOffsetYaw() + "\t\t" + m_ahrs.getOffsetStatus());
+
+		// New Stuff
+		// Elevator controls, triggers are for testing as of 2/16
+		m_elevator.moveRaw(m_pilotController.getLeftTrigger() - m_pilotController.getRightTrigger());
+		// Elevator move to position methods
+		m_elevator.moveToPosition(m_pilotController.getXButton() , State.HATCH_L1);
+		m_elevator.moveToPosition(m_pilotController.getYButton() , State.HATCH_L2);
+		m_elevator.moveToPosition(m_pilotController.getBumper(Hand.kLeft) , State.HATCH_L3);
+		m_elevator.moveToPosition(m_pilotController.getBumper(Hand.kRight), State.LEVEL_ZERO);
+
+		// Hatch Mech
+
 	}
 }

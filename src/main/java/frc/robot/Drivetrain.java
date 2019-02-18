@@ -36,10 +36,10 @@ public class Drivetrain implements PIDOutput{
     boolean m_quickTurnEnabled;
 
     // Declarations for the motor controllers
-    private WPI_VictorSPX m_frontLeftMotor;
-    private WPI_VictorSPX m_frontRightMotor;
-    private WPI_TalonSRX m_backLeftMotor;
-    private WPI_TalonSRX m_backRightMotor;
+    private WPI_VictorSPX m_slaveLeftMotor;
+    private WPI_VictorSPX m_slaveRightMotor;
+    private WPI_TalonSRX m_masterLeftMotor;
+    private WPI_TalonSRX m_masterRightMotor;
 
     // Declaration for encoders connected to TalonSRXs
     private SensorCollection m_leftDriveEncoder;
@@ -55,25 +55,25 @@ public class Drivetrain implements PIDOutput{
     public Drivetrain() {
         
         // Initializes the motorControllers using the ports passed in
-        m_frontLeftMotor = new WPI_VictorSPX(RobotMap.FRONT_LEFT_DRIVE_MOTOR_PORT);
-        m_frontRightMotor = new WPI_VictorSPX(RobotMap.FRONT_RIGHT_DRIVE_MOTOR_PORT);
-        m_backLeftMotor = new WPI_TalonSRX(RobotMap.BACK_LEFT_DRIVE_MOTOR_PORT);
-        m_backRightMotor = new WPI_TalonSRX(RobotMap.BACK_RIGHT_DROVE_MOTOR_PORT);
+        m_slaveLeftMotor = new WPI_VictorSPX(RobotMap.SLAVE_LEFT_DRIVE_MOTOR_PORT);
+        m_slaveRightMotor = new WPI_VictorSPX(RobotMap.SLAVE_RIGHT_DRIVE_MOTOR_PORT);
+        m_masterLeftMotor = new WPI_TalonSRX(RobotMap.MASTER_LEFT_DRIVE_MOTOR_PORT);
+        m_masterRightMotor = new WPI_TalonSRX(RobotMap.MASTER_RIGHT_DRIVE_MOTOR_PORT);
 
         // Initializes classes to call encoders connected to TalonSRXs
-        m_leftDriveEncoder = new SensorCollection(m_backLeftMotor);
-        m_rightDriveEncoder = new SensorCollection(m_backRightMotor);
+        m_leftDriveEncoder = new SensorCollection(m_masterLeftMotor);
+        m_rightDriveEncoder = new SensorCollection(m_masterRightMotor);
 
         // Zeroes the encoder positions on the drivetrain (connected to TalonSRX)
         m_leftDriveEncoder.setQuadraturePosition(0, 0);
         m_rightDriveEncoder.setQuadraturePosition(0, 0);
 
         // Sets VictorSPXs to follow TalonSRXs output
-        m_frontLeftMotor.follow(m_backLeftMotor);
-        m_frontRightMotor.follow(m_backRightMotor);
+        m_slaveLeftMotor.follow(m_masterLeftMotor);
+        m_slaveRightMotor.follow(m_masterRightMotor);
         
         // Initializes the drivetrain with the TalonSRX  as the Motors (VictorSPX follows TalonSRX output)
-        m_drivetrain = new DifferentialDrive(m_backLeftMotor, m_backRightMotor);
+        m_drivetrain = new DifferentialDrive(m_masterLeftMotor, m_masterRightMotor);
 
         // Initializes feedback variables for speed setter and rotate setter
         // Setters use variables as feedback in order to "ramp" the output gradually

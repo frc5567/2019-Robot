@@ -55,7 +55,9 @@ public class Controller extends XboxController {
         }
         // If the stick is outside deadband, sets variable to stick value
         else {
-            leftStickYValue = m_myController.getY(Hand.kLeft);
+            // Negative added to fix y-stick values
+            // Up on stick is now positive
+            leftStickYValue = -m_myController.getY(Hand.kLeft);
         }
         // Returns the stick value
         return leftStickYValue;
@@ -93,7 +95,9 @@ public class Controller extends XboxController {
         }
         // If the stick is outside of deadband, sets variable to stick value
         else {
-            rightStickYValue = m_myController.getY(Hand.kLeft);
+            // Negative added to fix y-stick values
+            // Up on stick is now positive
+            rightStickYValue = -m_myController.getY(Hand.kLeft);
         }
         // Returns the stick value
         return rightStickYValue;

@@ -2,6 +2,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.SensorCollection;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
@@ -31,9 +32,10 @@ public class Elevator {
 		CARGO_L3(72.75, 0.40, 0.20 , "Cargo Level 3"),
 		HATCH_L1(8.25, 0.90, 0.50 , "Hatch Level 1"),
 		HATCH_L2(36.25, 0.65, 0.30 , "Hatch Level 2"),
-		HATCH_L3(64.25, 0.45, 0.20 , "Hatch Level 3");
+		HATCH_L3(64.25, 0.45, 0.20 , "Hatch Level 3"),
+		TRANSITION(0.0, 0.40, 0.20, "Transitioning");
 
-		private double deltaHeightInches;
+		private double deltaInches;
 		private double maxSpeedPercent;
 		private double maxAngleRate;
 		private String stateName;
@@ -49,7 +51,7 @@ public class Elevator {
 		 *                         is in this state.
 		 */
 		State(double deltaInches, double maxSpeedModifier, double maxAngleRate , String stateName) {
-			this.deltaHeightInches = deltaInches;
+			this.deltaInches = deltaInches;
 			this.maxSpeedPercent = maxSpeedModifier;
 			this.maxAngleRate = maxAngleRate;
 			this.stateName = stateName;
@@ -59,7 +61,7 @@ public class Elevator {
 		 * @return The change in height from initial to current state.
 		 */
 		public double getDeltaHeight() {
-			return this.deltaHeightInches;
+			return this.deltaInches;
 		}
 
 		/**
@@ -84,7 +86,7 @@ public class Elevator {
 		}
 	}
 
-	// Defining the limit switches at the top and bottom of the elevator.
+	// Defining the limit switches at the op and bottom of the elevator.
 	DigitalInput m_limitTop;
 	DigitalInput m_limitBottom;
 
@@ -136,17 +138,27 @@ public class Elevator {
 	public int getElevatorEncoderVelocity() {
 		return m_elevatorEncoder.getQuadratureVelocity();
 	}
+
+	/**
+	 * Method used to manually move the elevator.
+	 * @param input Joystick/variable input.
+	 */
+	public void moveRaw(double input){
+			m_elevatorMotor.set(input * 0.4);
+	}
 	
 	/**
 	 * Calculates and returns the height of the elevator in inches.
 	 * 
 	 * @return The elevator's current height
 	 */
-	public double calcPosition(){
+	public double getPosition(){
 		double position = 0.0;
 		double numRevolutions = (m_elevatorEncoder.getQuadraturePosition() / RobotMap.TICKS_PER_REVOLUTION);
 		position = RobotMap.DRUM_CIRCUMFERENCE * numRevolutions;
+		currentState = getState(position);
 		return position;
+<<<<<<< HEAD
 	} 
 
 	public void HighElevatorPosition(boolean button){
@@ -192,5 +204,59 @@ public class Elevator {
 	}
 	
 
+=======
+	}
+
+	/**
+	 * Method used to move the elevator to our desired height while a button of our choice
+	 * is pressed.
+	 * 
+	 * @param button The button we want associated with moving to the desired state.
+	 * @param desiredState The state we want the button to move the elevator to.
+	 */
+	public void moveToPosition(boolean button , State desiredState){
+		if(button && currentState != desiredState){
+			if(currentState.deltaInches > desiredState.deltaInches){
+				m_elevatorMotor.set(RobotMap.ELEVATOR_MOTOR_SPEED_DOWN);
+			}
+			else if(currentState.deltaInches < desiredState.deltaInches){
+				m_elevatorMotor.set(RobotMap.ELEVATOR_MOTOR_SPEED_UP);
+			}
+		}
+		else if(currentState == desiredState){
+			m_elevatorMotor.set(0.0);
+		}
+	}
+
+	/**
+	 * Method to set currentState based on the current height of the elevator.
+	 * 
+	 * @param position The position gathered by the getPosition method.
+	 * @return The state of the elevator based on it's height.
+	 */
+	private State getState(double position){
+		if(position < State.CARGO_L1.deltaInches + 0.5 && position > State.CARGO_L1.deltaInches - 0.5){
+			return State.CARGO_L1;
+		}
+		else if(position < State.CARGO_L2.deltaInches + 0.5 && position > State.CARGO_L2.deltaInches - 0.5){
+			return State.CARGO_L2;
+		}
+		else if(position < State.CARGO_L3.deltaInches + 0.5 && position > State.CARGO_L3.deltaInches - 0.5){
+			return State.CARGO_L3;
+		}
+		else if(position < State.HATCH_L1.deltaInches + 0.5 && position > State.HATCH_L1.deltaInches - 0.5){
+			return State.HATCH_L1;
+		}
+		else if(position < State.HATCH_L2.deltaInches + 0.5 && position > State.HATCH_L2.deltaInches - 0.5){
+			return State.HATCH_L2;
+		}
+		else if(position < State.HATCH_L3.deltaInches + 0.5 && position > State.HATCH_L3.deltaInches - 0.5){
+			return State.HATCH_L3;
+		}
+		else{
+			return State.TRANSITION;
+		}
+	}
+>>>>>>> 1dcf4c991d7e78244cdbf1b95120cfbd211926cd
 
 }
