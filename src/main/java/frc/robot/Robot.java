@@ -21,6 +21,7 @@ import frc.robot.Climber;
 import frc.robot.NavX;
 import frc.robot.Elevator.State;
 import frc.robot.Elevator;
+import frc.robot.HatchMech;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -42,8 +43,8 @@ public class Robot extends TimedRobot {
 	Controller m_copilotController;
 
 	// Declare climbing mechanisms for front and back climbers
-//	Climber m_frontClimber;
-//	Climber m_backClimber;
+	Climber m_frontClimber;
+	Climber m_backClimber;
 
 	// Declare NavX
 	NavX m_ahrs;
@@ -60,6 +61,7 @@ public class Robot extends TimedRobot {
 
 	// Declaring the USB Camera
 	UsbCamera camera;
+	HatchMech m_hatchMech;
 
 	// Declare our duino communication port
 	// private DuinoToRioComms m_duinoToRio;
@@ -74,6 +76,12 @@ public class Robot extends TimedRobot {
 		//		m_backClimber = new Climber(RobotMap.BACK_CLIMBER_MOTOR_PORT, RobotMap.BACK_CLIMBER_LIMIT_TOP_PORT);
 		m_elevator = new Elevator();
 		
+		m_copilotController = new Controller(RobotMap.COPILOT_CONTROLLER_PORT);
+		m_frontClimber = new Climber(RobotMap.FRONT_CLIMBER_MOTOR_PORT, RobotMap.FRONT_CLIMBER_LIMIT_TOP_PORT, RobotMap.FRONT_CLIMBER_LIMIT_BOTTOM_PORT);
+		m_backClimber = new Climber(RobotMap.BACK_CLIMBER_MOTOR_PORT, RobotMap.BACK_CLIMBER_LIMIT_TOP_PORT, RobotMap.BACK_CLIMBER_LIMIT_BOTTOM_PORT);
+		m_elevator = new Elevator();
+		m_elevator.elevatorPIDConfig();
+
 		// Instantiate our duino to rio communication port
 		// m_duinoToRio = new DuinoToRioComms();
 		
@@ -240,27 +248,80 @@ public class Robot extends TimedRobot {
 		// Stuff from Teleop
 		// Test drivetrain included, uses Left stick Y for speed, Right stick X for
 		// turning, quick turn is auto-enabled at low speed
-		m_drivetrain.curvatureDrive(m_pilotController.getLeftStickY(), m_pilotController.getRightStickX());
+		// m_drivetrain.curvatureDrive(m_pilotController.getLeftStickY(), m_pilotController.getRightStickX());
 
 		// Zeros yaw if 'A' is pressed, and adds 180 degree offset if 'B' is pressed
-		if (m_pilotController.getAButtonReleased()) {
-			m_ahrs.zeroYaw();
-		}
-		if (m_pilotController.getBButtonReleased()) {
-			m_ahrs.flipOffset();
-		}
+		// if (m_pilotController.getAButtonReleased()) {
+		// 	m_ahrs.zeroYaw();
+		// }
+		// if (m_pilotController.getBButtonReleased()) {
+		// 	m_ahrs.flipOffset();
+		// }
 
 		// Prints yaw and if offset is applied to console
-		System.out.println(m_ahrs.getOffsetYaw() + "\t\t" + m_ahrs.getOffsetStatus());
+		//System.out.println(m_ahrs.getOffsetYaw() + "\t\t" + m_ahrs.getOffsetStatus());
 
 		// New Stuff
 		// Elevator controls, triggers are for testing as of 2/16
-		m_elevator.moveRaw(m_pilotController.getLeftTrigger() - m_pilotController.getRightTrigger());
+		//System.out.println(m_pilotController.getLeftTrigger() - m_pilotController.getRightTrigger());
+		//m_elevator.moveRaw(m_pilotController.getLeftTrigger() - m_pilotController.getRightTrigger());
+
+		// [NOTE] Negative power moves the elevator up, but the encoder will still tic
+		// positive. This is due to the way the string is wound on the winch
+		// Follow up: This is no longer quite true. So long as we call the elevator PID config, the motor will be inverted, thus positive should be up
+		if(m_pilotController.getAButton()) {
+			m_elevator.moveRaw(-.4);
+		}
+		else if (m_pilotController.getBButton()) {
+			m_elevator.moveRaw(.4);
+		}
+		else if (m_pilotController.getXButton()) {
+			m_elevator.elevatorPIDDrive(State.HATCH_L1);
+			//m_elevator.moveToPosition(m_pilotController.getXButton() , State.HATCH_L1);
+		}
+		else if (m_pilotController.getYButton()) {
+			m_elevator.elevatorPIDDrive(State.HATCH_L2);
+			//m_elevator.moveToPosition(m_pilotController.getYButton() , State.HATCH_L2);
+		}
+		else if (m_pilotController.getBumper(Hand.kRight)) {
+			m_elevator.elevatorPIDDrive(State.HATCH_L3);
+			//m_elevator.moveToPosition(m_pilotController.getBumper(Hand.kRight) , State.HATCH_L3);
+		}
+		else if (m_pilotController.getBumper(Hand.kLeft)) {
+			m_elevator.elevatorPIDDrive(State.LEVEL_ZERO);
+		}
+		else if (m_pilotController.getStartButton()) {
+			m_elevator.m_elevatorEncoder.setQuadraturePosition(0, 0);
+		}
+		else {
+			m_elevator.moveRaw(0);
+		}
+
+		if (m_copilotController.getAButton()) {
+			m_frontClimber.raiseClimber();
+		}
+		else if (m_copilotController.getBButton()) {
+			m_frontClimber.lowerClimber();
+		}
+		else {
+			m_frontClimber.setClimber(0.0);
+		}
+
+		if (m_copilotController.getXButton()) {
+			m_backClimber.raiseClimber();
+		}
+		else if (m_copilotController.getYButton()) {
+			m_backClimber.lowerClimber();
+		}
+		else {
+			m_backClimber.setClimber(0.0);
+		}
+		//System.out.println("Elevator Encoder: \t" + m_elevator.getPosition());
 		// Elevator move to position methods
-		m_elevator.moveToPosition(m_pilotController.getXButton() , State.HATCH_L1);
-		m_elevator.moveToPosition(m_pilotController.getYButton() , State.HATCH_L2);
-		m_elevator.moveToPosition(m_pilotController.getBumper(Hand.kLeft) , State.HATCH_L3);
-		m_elevator.moveToPosition(m_pilotController.getBumper(Hand.kRight), State.LEVEL_ZERO);
+		// m_elevator.moveToPosition(m_pilotController.getXButton() , State.HATCH_L1);
+		// m_elevator.moveToPosition(m_pilotController.getYButton() , State.HATCH_L2);
+		// m_elevator.moveToPosition(m_pilotController.getBumper(Hand.kLeft) , State.HATCH_L3);
+		// m_elevator.moveToPosition(m_pilotController.getBumper(Hand.kRight), State.LEVEL_ZERO);
 
 		// Hatch Mech
 
