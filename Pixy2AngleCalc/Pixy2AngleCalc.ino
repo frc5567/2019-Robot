@@ -89,6 +89,9 @@ const char GET_DIST_TO_TARGET = '1';
 const char GET_ANGLE_TO_CENTER = '3';
 const char GET_LOW_POSITION = '4';
 
+double block1Area;
+double block2Area;
+
 //  This is the return for the position according to the lowPixy, where 1 is left, 2 is center, and 3 is right. -1 is no blocks
 int lowPosition = -1;
 
@@ -187,6 +190,12 @@ void sendData(char command)
 	else if (command == GET_LOW_POSITION)
 	{
 		Serial.println(lowPosition);
+    
+    Serial.print("Block 1 Area: ");
+    Serial.print(block1Area);
+    Serial.print("\t");
+    Serial.print("Block 2 Area: ");
+    Serial.println(block2Area);
 	}
 }
 
@@ -242,6 +251,9 @@ void loop()
 	{
 		lowPosition = -1;
 	}
+
+  block1Area = lowPixy.ccc.blocks[0].m_width * lowPixy.ccc.blocks[0].m_height;
+  block2Area = lowPixy.ccc.blocks[1].m_width * lowPixy.ccc.blocks[1].m_height;
 
 	//  Runs the communication code if a command is available
 	if (Serial.available() > 0)
