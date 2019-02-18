@@ -56,9 +56,12 @@ public class RobotMap {
     // Elevator limit switches DIO port numbers
     public static final int ELEVATOR_LIMIT_TOP_PORT = 0;
     public static final int ELEVATOR_LIMIT_BOTTOM_PORT = 1;
-    // Climber limit switches DIO port numbers
-    public static final int FRONT_CLIMBER_LIMIT_TOP_PORT = 2;
-    public static final int BACK_CLIMBER_LIMIT_TOP_PORT = 3;
+    // Front Climber limit switches DIO port numbers
+    public static final int FRONT_CLIMBER_LIMIT_TOP_PORT = 5;
+    public static final int FRONT_CLIMBER_LIMIT_BOTTOM_PORT = 6;
+    // Back Climber limit switches DIO Port number
+    public static final int BACK_CLIMBER_LIMIT_TOP_PORT = 7;
+    public static final int BACK_CLIMBER_LIMIT_BOTTOM_PORT = 8;
     // Hatch mechanism limit switches
     public static final int HATCH_MECH_LIMIT_TOP_PORT = 4;
     public static final int HATCH_MECH_LIMIT_BOTTOM_PORT = 5;
@@ -90,8 +93,8 @@ public class RobotMap {
     public static final double HATCH_MECH_ARM_DOWN_MOTOR_SPEED = -0.5;  // Check Speed
     public static final double HATCH_MECH_STOP_MOTOR_SPEED = 0.0;
     // Climber motor speeds
-    public static final double CLIMBER_SPEED_UP = 0.3;      //UPDATE THIS VALUE
-    public static final double CLIMBER_SPEED_DOWN = -0.3;       //UPDATE THIS VALUE
+    public static final double CLIMBER_SPEED_UP = -0.3;      //UPDATE THIS VALUE
+    public static final double CLIMBER_SPEED_DOWN = 0.3;       //UPDATE THIS VALUE
     // Elevator Motor Speed
     public static final double ELEVATOR_MOTOR_SPEED_UP = -0.4;
     public static final double ELEVATOR_MOTOR_SPEED_DOWN = 0.4;

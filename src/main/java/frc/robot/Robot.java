@@ -18,6 +18,7 @@ import frc.robot.Climber;
 import frc.robot.NavX;
 import frc.robot.Elevator.State;
 import frc.robot.Elevator;
+import frc.robot.HatchMech;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -60,6 +61,8 @@ public class Robot extends TimedRobot {
 	DashboardData m_dataStream;
 	CustomDashboard m_roboDash;
 
+	HatchMech m_hatchMech;
+
 	// Declare our duino communication port
 	// private DuinoToRioComms m_duinoToRio;
 	// private DuinoCommStorage m_pkt;
@@ -69,8 +72,9 @@ public class Robot extends TimedRobot {
 		// Instanciates drivetrain, driver controllers, climbers, and elevator
 		m_drivetrain = new Drivetrain();
 		m_pilotController = new Controller(RobotMap.PILOT_CONTROLLER_PORT);
-		m_frontClimber = new Climber(RobotMap.FRONT_CLIMBER_MOTOR_PORT, RobotMap.FRONT_CLIMBER_LIMIT_TOP_PORT);
-		m_backClimber = new Climber(RobotMap.BACK_CLIMBER_MOTOR_PORT, RobotMap.BACK_CLIMBER_LIMIT_TOP_PORT);
+		m_copilotController = new Controller(RobotMap.COPILOT_CONTROLLER_PORT);
+		m_frontClimber = new Climber(RobotMap.FRONT_CLIMBER_MOTOR_PORT, RobotMap.FRONT_CLIMBER_LIMIT_TOP_PORT, RobotMap.FRONT_CLIMBER_LIMIT_BOTTOM_PORT);
+		m_backClimber = new Climber(RobotMap.BACK_CLIMBER_MOTOR_PORT, RobotMap.BACK_CLIMBER_LIMIT_TOP_PORT, RobotMap.BACK_CLIMBER_LIMIT_BOTTOM_PORT);
 		m_elevator = new Elevator();
 		m_elevator.elevatorPIDConfig();
 
@@ -276,6 +280,26 @@ public class Robot extends TimedRobot {
 		}
 		else {
 			m_elevator.moveRaw(0);
+		}
+
+		if (m_copilotController.getAButton()) {
+			m_frontClimber.raiseClimber();
+		}
+		else if (m_copilotController.getBButton()) {
+			m_frontClimber.lowerClimber();
+		}
+		else {
+			m_frontClimber.setClimber(0.0);
+		}
+
+		if (m_copilotController.getXButton()) {
+			m_backClimber.raiseClimber();
+		}
+		else if (m_copilotController.getYButton()) {
+			m_backClimber.lowerClimber();
+		}
+		else {
+			m_backClimber.setClimber(0.0);
 		}
 		//System.out.println("Elevator Encoder: \t" + m_elevator.getPosition());
 		// Elevator move to position methods
