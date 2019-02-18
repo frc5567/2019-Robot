@@ -5,41 +5,243 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.GenericHID.Hand;
+import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+
+import frc.robot.Drivetrain;
+import frc.robot.Controller;
+import frc.robot.Climber;
+import frc.robot.NavX;
+import frc.robot.Elevator.State;
+import frc.robot.Elevator;
 
 
 public class Robot extends TimedRobot {
+	// Test doubles for storing return from read classes
+	private Double m_degToTarget = Double.NaN;
+	private Double m_distToTarget = Double.NaN;
+	private Double m_angleToCenter = Double.NaN;
+	private Double m_lowPosition = Double.NaN;
 
-  Elevator m_elevator;
+	// Declare drivetrain
+	Drivetrain m_drivetrain;
 
- 
-  @Override
-  public void robotInit() {
-  
-  }
+	// Declare Pilot XBox Controller
+	Controller m_pilotController;
 
- 
-  @Override
-  public void robotPeriodic() {
-  }
+	// Declares xbox controller for co-pilot
+	// Used for testing, gamepad will be used in comp
+	Controller m_copilotController;
 
- 
-  @Override
-  public void autonomousInit() {
-   
-  }
+	// Declare climbing mechanisms for front and back climbers
+	Climber m_frontClimber;
+	Climber m_backClimber;
+
+	// Declare NavX
+	NavX m_ahrs;
+
+	// Declares Elevator
+	Elevator m_elevator;
+
+	// Declare Auto Commands class for auto and auto assist commands
+	AutoCommands autoCommands;
+
+	// Declare Dashboard and Dashboard data bus
+	DashboardData m_dataStream;
+	CustomDashboard m_roboDash;
+
+	// Declare our duino communication port
+	// private DuinoToRioComms m_duinoToRio;
+	// private DuinoCommStorage m_pkt;
+
+	Robot() {
+
+		// Instanciates drivetrain, driver controllers, climbers, and elevator
+		m_drivetrain = new Drivetrain();
+		m_pilotController = new Controller(RobotMap.PILOT_CONTROLLER_PORT);
+		m_frontClimber = new Climber(RobotMap.FRONT_CLIMBER_MOTOR_PORT, RobotMap.FRONT_CLIMBER_LIMIT_TOP_PORT);
+		m_backClimber = new Climber(RobotMap.BACK_CLIMBER_MOTOR_PORT, RobotMap.BACK_CLIMBER_LIMIT_TOP_PORT);
+		m_elevator = new Elevator();
+
+		// Instantiate our duino to rio communication port
+		// m_duinoToRio = new DuinoToRioComms();
+
+		try {
+			/*
+			 * navX-MXP: - Communication via RoboRIO MXP (SPI, I2C, TTL UART) --
+			 * 
+			 * and USB. - See
+			 * 
+			 * http://navx-mxp.kauailabs.com/guidance/selecting-an-interface.
+			 * 
+			 * navX-Micro: - Communication via I2C (RoboRIO MXP or Onboard) and --
+			 * 
+			 * USB. - See
+			 * 
+			 * http://navx-micro.kauailabs.com/guidance/selecting-an-interface.
+			 * 
+			 * Multiple navX-model devices on a single robot are supported. //
+			 ************************************************************************/
+			m_ahrs = new NavX(SPI.Port.kMXP);
+		} catch (RuntimeException ex) {
+			System.out.println("Error instantiating navX MXP");
+		}
+
+		// Instanciates auto commands class for using auto assist
+		autoCommands = new AutoCommands(m_drivetrain, m_ahrs, m_elevator, m_frontClimber, m_backClimber);
+	}
+
+	/**
+	 * This function is run when the robot is first started up and should be used
+	 * for any initialization code.
+	 */
+	@Override
+	public void robotInit() {
+
+	}
+
+	/**
+	 * This function is called every robot packet, no matter the mode. Use this for
+	 * items like diagnostics that you want ran during disabled, autonomous,
+	 * teleoperated and test.
+	 *
+	 * <p>
+	 * This runs after the mode specific periodic functions, but before LiveWindow
+	 * and SmartDashboard integrated updating.
+	 */
+	@Override
+	public void robotPeriodic() {
+	}
+
+	/**
+	 * This autonomous (along with the chooser code above) shows how to select
+	 * between different autonomous modes using the dashboard. The sendable chooser
+	 * code works with the Java SmartDashboard. If you prefer the LabVIEW Dashboard,
+	 * remove all of the chooser code and uncomment the getString line to get the
+	 * auto name from the text box below the Gyro
+	 *
+	 * <p>
+	 * You can add additional auto modes by adding additional comparisons to the
+	 * switch structure below with additional strings. If using the SendableChooser
+	 * make sure to add them to the chooser code above as well.
+	 */
+	@Override
+	public void autonomousInit() {
+
+	}
+
+	/**
+	 * This function is called periodically during autonomous.
+	 */
+	@Override
+	public void autonomousPeriodic() {
+
+	}
+
+	/**
+	 * This function is called once before the operator control period starts
+	 */
+	@Override
+	public void teleopInit() {
+	}
+
+	/**
+	 * This function is called periodically during operator control.
+	 */
+	@Override
+	public void teleopPeriodic() {
+
+		// Test drivetrain included, uses Left stick Y for speed, Right stick X for
+		// turning, quick turn is auto-enabled at low speed
+		m_drivetrain.curvatureDrive(m_pilotController.getLeftStickY(), m_pilotController.getRightStickX());
+
+		// Zeros yaw if 'A' is pressed, and adds 180 degree offset if 'B' is pressed
+		if (m_pilotController.getAButtonReleased()) {
+			m_ahrs.zeroYaw();
+		}
+		if (m_pilotController.getBButtonReleased()) {
+			m_ahrs.flipOffset();
+		}
+
+		// Prints yaw and if offset is applied to console
+		System.out.println(m_ahrs.getOffsetYaw() + "\t\t" + m_ahrs.getOffsetStatus());
+	}
+
+	/**
+	 * This function is called once before starting test mdoe
+	 */
+	@Override
+	public void testInit() {
+
+	}
+
+	/**
+	 * This function is called periodically during test mode.
+	 */
+	@Override
+	public void testPeriodic() {
+		/*
+		 * // Code for testing comms with arduino if
+		 * (m_pilotController.getAButtonReleased()) { // Assigns return value. Checking
+		 * NaN should occur here m_degToTarget = m_duinoToRio.getDegToTarget(); if
+		 * (m_degToTarget.isNaN()){ System.out.println("No number returned"); } else {
+		 * System.out.println("degToTarget: " + m_degToTarget); //m_pkt.degTargetHigh =
+		 * degToTarget; }
+		 * 
+		 * } else if (m_pilotController.getBButtonReleased()) { // Assigns return value.
+		 * Checking NaN should occur here m_distToTarget =
+		 * m_duinoToRio.getDistToTarget(); if (m_distToTarget.isNaN()){
+		 * System.out.println("No number returned"); } else {
+		 * System.out.println("distToTarget: " + m_distToTarget); //m_pkt.distTargetHigh
+		 * = distToTarget; }
+		 * 
+		 * 
+		 * } else if (m_pilotController.getXButtonReleased()) { // Assigns return value.
+		 * Checking NaN should occur here m_angleToCenter =
+		 * m_duinoToRio.getAngleToCenter(); if (m_distToTarget.isNaN()){
+		 * System.out.println("No number returned"); } else {
+		 * System.out.println("angleToCenter: " + m_angleToCenter);
+		 * //m_pkt.distTargetHigh = distToTarget; }
+		 * 
+		 * } else if (m_pilotController.getYButtonReleased()) { // Assigns return value.
+		 * Checking NaN should occur here m_lowPosition = m_duinoToRio.getLowPosition();
+		 * if (m_lowPosition.isNaN()){ System.out.println("No number returned"); } else
+		 * { System.out.println("lowPosition: " + m_lowPosition); //m_pkt.distTargetHigh
+		 * = distToTarget; }
+		 * 
+		 * }
+		 */
 
 
-  @Override
-  public void autonomousPeriodic() {
-    
-  }
+		// BIG TEST CODE
+		
+		// Stuff from Teleop
+		// Test drivetrain included, uses Left stick Y for speed, Right stick X for
+		// turning, quick turn is auto-enabled at low speed
+		m_drivetrain.curvatureDrive(m_pilotController.getLeftStickY(), m_pilotController.getRightStickX());
 
-  @Override
-  public void teleopPeriodic() {
-  }
+		// Zeros yaw if 'A' is pressed, and adds 180 degree offset if 'B' is pressed
+		if (m_pilotController.getAButtonReleased()) {
+			m_ahrs.zeroYaw();
+		}
+		if (m_pilotController.getBButtonReleased()) {
+			m_ahrs.flipOffset();
+		}
 
- 
-  @Override
-  public void testPeriodic() {
-  }
+		// Prints yaw and if offset is applied to console
+		System.out.println(m_ahrs.getOffsetYaw() + "\t\t" + m_ahrs.getOffsetStatus());
+
+		// New Stuff
+		// Elevator controls, triggers are for testing as of 2/16
+		m_elevator.moveRaw(m_pilotController.getLeftTrigger() - m_pilotController.getRightTrigger());
+		// Elevator move to position methods
+		m_elevator.moveToPosition(m_pilotController.getXButton() , State.HATCH_L1);
+		m_elevator.moveToPosition(m_pilotController.getYButton() , State.HATCH_L2);
+		m_elevator.moveToPosition(m_pilotController.getBumper(Hand.kLeft) , State.HATCH_L3);
+		m_elevator.moveToPosition(m_pilotController.getBumper(Hand.kRight), State.LEVEL_ZERO);
+
+		// Hatch Mech
+
+	}
 }
