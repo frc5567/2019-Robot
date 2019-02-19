@@ -3,21 +3,14 @@ package frc.robot;
 import edu.wpi.first.wpilibj.DigitalInput;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.SensorCollection;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
-/* TODO 
-Add method for setting elevator State using encoder position once we get proper
-values from the encoders. 
-*/
-
 /**
- * This class defines the mechanism that moves up and down for hatch covers and
- * cargo.
+ * This class defines the mechanism that moves up and down for hatch covers.
  */
 public class Elevator {
 	
@@ -31,13 +24,12 @@ public class Elevator {
 		state in String form.
 		*/
 		LEVEL_ZERO(0.0, 1.0, 1.0 , "Initial State"),
-		CARGO_L1(16.75, 0.80, 0.50 , "Cargo level 1"),
-		CARGO_L2(44.75, 0.60, 0.30 , "Cargo Level 2"),
-		CARGO_L3(72.75, 0.40, 0.20 , "Cargo Level 3"),
+		//	CARGO_L1(16.75, 0.80, 0.50 , "Cargo level 1"),
+		//	CARGO_L2(44.75, 0.60, 0.30 , "Cargo Level 2"),
+		//	CARGO_L3(72.75, 0.40, 0.20 , "Cargo Level 3"),
 		HATCH_L1(7.87, 0.90, 0.50 , "Hatch Level 1"),
 		HATCH_L2(40.65, 0.65, 0.30 , "Hatch Level 2"),
-		HATCH_L3(66.125, 0.45, 0.20 , "Hatch Level 3"),
-		TRANSITION(0.0, 0.40, 0.20, "Transitioning");
+		HATCH_L3(66.125, 0.45, 0.20 , "Hatch Level 3");
 
 		private double deltaInches;
 		private double maxSpeedPercent;
@@ -90,10 +82,6 @@ public class Elevator {
 		}
 	}
 
-	// Defining the limit switches at the op and bottom of the elevator.
-	DigitalInput m_limitTop;
-	DigitalInput m_limitBottom;
-
 	// Declaring the encoder for the elevator height.
 	SensorCollection m_elevatorEncoder;
 
@@ -116,10 +104,6 @@ public class Elevator {
 
 		// Instantiates Motor controller for elevator
 		m_elevatorMotor = new WPI_TalonSRX(RobotMap.ELEVATOR_MOTOR_PORT);
-
-		// Creating a new instance of DigitalInput with the assigned port number.
-		m_limitTop = new DigitalInput(RobotMap.ELEVATOR_LIMIT_TOP_PORT);
-		m_limitBottom = new DigitalInput(RobotMap.ELEVATOR_LIMIT_BOTTOM_PORT);
 
 		// Instantiating encoder for the elevator height
 		m_elevatorEncoder = new SensorCollection(m_elevatorMotor);
@@ -219,11 +203,10 @@ public class Elevator {
 	 * @return The elevator's current height
 	 */
 	public double getPosition(){
-		double position = 0.0;
-		double numRevolutions = (m_elevatorEncoder.getQuadraturePosition() * (RobotMap.DRUM_CIRCUMFERENCE / RobotMap.TICKS_PER_REVOLUTION));
+		double positionInches = (m_elevatorEncoder.getQuadraturePosition() * (RobotMap.DRUM_CIRCUMFERENCE / RobotMap.TICKS_PER_REVOLUTION));
 		//position = RobotMap.DRUM_CIRCUMFERENCE * numRevolutions;
-		currentState = getState(numRevolutions);
-		return numRevolutions;
+		currentState = getState(positionInches);
+		return positionInches;
 	}
 
 	/**
@@ -254,25 +237,25 @@ public class Elevator {
 	 * @return The state of the elevator based on it's height.
 	 */
 	private State getState(double position){
-		if(position < State.CARGO_L1.deltaInches + .7 && position > State.CARGO_L1.deltaInches - .7){
-			return State.CARGO_L1;
-		}
-		else if(position < State.CARGO_L2.deltaInches + 1 && position > State.CARGO_L2.deltaInches - 1){
-			return State.CARGO_L2;
-		}
-		else if(position < State.CARGO_L3.deltaInches + 1 && position > State.CARGO_L3.deltaInches - 1){
-			return State.CARGO_L3;
-		}
-		else if(position < State.HATCH_L1.deltaInches + .7 && position > State.HATCH_L1.deltaInches - .7){
+		// if(position < State.CARGO_L1.deltaInches + 0.7 && position > State.CARGO_L1.deltaInches - 0.7){
+		// 	return State.CARGO_L1;
+		// }
+		// else if(position < State.CARGO_L2.deltaInches + 0.7 && position > State.CARGO_L2.deltaInches - 0.7){
+		// 	return State.CARGO_L2;
+		// }
+		// else if(position < State.CARGO_L3.deltaInches + 0.7 && position > State.CARGO_L3.deltaInches - 0.7){
+		// 	return State.CARGO_L3;
+		// }
+		if(position < State.HATCH_L1.deltaInches + 0.7 && position > State.HATCH_L1.deltaInches - 0.7){
 			return State.HATCH_L1;
 		}
-		else if(position < State.HATCH_L2.deltaInches + .7 && position > State.HATCH_L2.deltaInches - .7){
+		else if(position < State.HATCH_L2.deltaInches + 0.7 && position > State.HATCH_L2.deltaInches - 0.7){
 			return State.HATCH_L2;
 		}
 		else if(position < State.HATCH_L3.deltaInches + 1.5 && position > State.HATCH_L3.deltaInches - 1.5){
 			return State.HATCH_L3;
 		}
-		else if(position < State.HATCH_L1.deltaInches - .7) {
+		else if(position < State.HATCH_L1.deltaInches - 0.7) {
 			return State.LEVEL_ZERO;
 		}
 		else{
