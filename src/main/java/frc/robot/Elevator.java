@@ -3,7 +3,11 @@ package frc.robot;
 import edu.wpi.first.wpilibj.DigitalInput;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.DemandType;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.SensorCollection;
+import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 /* TODO 
@@ -30,9 +34,9 @@ public class Elevator {
 		CARGO_L1(16.75, 0.80, 0.50 , "Cargo level 1"),
 		CARGO_L2(44.75, 0.60, 0.30 , "Cargo Level 2"),
 		CARGO_L3(72.75, 0.40, 0.20 , "Cargo Level 3"),
-		HATCH_L1(8.25, 0.90, 0.50 , "Hatch Level 1"),
-		HATCH_L2(36.25, 0.65, 0.30 , "Hatch Level 2"),
-		HATCH_L3(64.25, 0.45, 0.20 , "Hatch Level 3"),
+		HATCH_L1(7.87, 0.90, 0.50 , "Hatch Level 1"),
+		HATCH_L2(40.65, 0.65, 0.30 , "Hatch Level 2"),
+		HATCH_L3(66.125, 0.45, 0.20 , "Hatch Level 3"),
 		TRANSITION(0.0, 0.40, 0.20, "Transitioning");
 
 		private double deltaInches;
@@ -99,6 +103,12 @@ public class Elevator {
 	// Declaring the elevator state enum.
 	State currentState;
 
+	// Tracking Variables for Motion Magic
+	boolean m_firstCall;
+	double m_lockedDistance;
+	double m_targetAngle;
+	int m_smoothing;
+
 	// This constructor is initializing in creating a new instance of an elevator
 	// with limit port switch definitions.
 
@@ -119,6 +129,62 @@ public class Elevator {
 
 		// Sets the State enum to it's initial state
 		currentState = State.LEVEL_ZERO;
+
+		m_firstCall = false;
+		m_lockedDistance = 0;
+		m_targetAngle = 0;
+	}
+
+	public void elevatorPIDConfig() {
+		// Stops motor controllers
+		m_elevatorMotor.set(ControlMode.PercentOutput, 0);
+
+		// Set neutral mode
+		m_elevatorMotor.setNeutralMode(NeutralMode.Brake);
+
+		// Configures sensor as quadrature encoder
+		m_elevatorMotor.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, RobotMap.PID_PRIMARY, RobotMap.TIMEOUT_MS);
+
+		// Config sensor and motor direction
+		m_elevatorMotor.setInverted(true);
+		m_elevatorMotor.setSensorPhase(true);
+
+		// Set status frame period for data collection
+		m_elevatorMotor.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 5, RobotMap.TIMEOUT_MS);
+
+		// Config neutral deadband
+		m_elevatorMotor.configNeutralDeadband(RobotMap.NEUTRAL_DEADBAND, RobotMap.TIMEOUT_MS);
+
+		// Config peak output
+		m_elevatorMotor.configPeakOutputForward(+RobotMap.PID_PEAK_OUTPUT, RobotMap.TIMEOUT_MS);
+		m_elevatorMotor.configPeakOutputReverse(-RobotMap.PID_PEAK_OUTPUT, RobotMap.TIMEOUT_MS);
+
+		// Motion Magic Config
+		m_elevatorMotor.configMotionAcceleration(2000, RobotMap.TIMEOUT_MS);
+		m_elevatorMotor.configMotionCruiseVelocity(2000, RobotMap.TIMEOUT_MS);
+
+		// PID Config
+		m_elevatorMotor.config_kP(0, RobotMap.GAINS.kP, RobotMap.TIMEOUT_MS);
+		m_elevatorMotor.config_kI(0, RobotMap.GAINS.kI, RobotMap.TIMEOUT_MS);
+		m_elevatorMotor.config_kD(0, RobotMap.GAINS.kD, RobotMap.TIMEOUT_MS);
+		m_elevatorMotor.config_kF(0, RobotMap.GAINS.kF, RobotMap.TIMEOUT_MS);
+		m_elevatorMotor.config_IntegralZone(0, RobotMap.GAINS.kIzone, RobotMap.TIMEOUT_MS);
+		m_elevatorMotor.configClosedLoopPeakOutput(0, RobotMap.GAINS.kPeakOutput, RobotMap.TIMEOUT_MS);
+		m_elevatorMotor.configAllowableClosedloopError(0, 0, RobotMap.TIMEOUT_MS);
+
+		// PID closed loop config
+		m_elevatorMotor.configClosedLoopPeriod(0, 5, RobotMap.TIMEOUT_MS);
+
+		// Sets profile slot for PID
+		m_elevatorMotor.selectProfileSlot(0, RobotMap.PID_PRIMARY);
+	}
+
+	public void elevatorPIDDrive(State state) {
+		double target = (state.deltaInches) * (RobotMap.TICKS_PER_REVOLUTION / RobotMap.DRUM_CIRCUMFERENCE);
+		System.out.println("PIDTarget in tics: \t" + target);
+		System.out.println("Current Position in tics: \t" + m_elevatorMotor.getSelectedSensorPosition());
+		System.out.println("State: \t" + state);
+		m_elevatorMotor.set(ControlMode.MotionMagic, target);
 	}
 
 	/**
@@ -144,7 +210,7 @@ public class Elevator {
 	 * @param input Joystick/variable input.
 	 */
 	public void moveRaw(double input){
-			m_elevatorMotor.set(input * 0.4);
+			m_elevatorMotor.set(ControlMode.PercentOutput, (input /* 0.4*/));
 	}
 	
 	/**
@@ -154,10 +220,10 @@ public class Elevator {
 	 */
 	public double getPosition(){
 		double position = 0.0;
-		double numRevolutions = (m_elevatorEncoder.getQuadraturePosition() / RobotMap.TICKS_PER_REVOLUTION);
-		position = RobotMap.DRUM_CIRCUMFERENCE * numRevolutions;
-		currentState = getState(position);
-		return position;
+		double numRevolutions = (m_elevatorEncoder.getQuadraturePosition() * (RobotMap.DRUM_CIRCUMFERENCE / RobotMap.TICKS_PER_REVOLUTION));
+		//position = RobotMap.DRUM_CIRCUMFERENCE * numRevolutions;
+		currentState = getState(numRevolutions);
+		return numRevolutions;
 	}
 
 	/**
@@ -188,26 +254,29 @@ public class Elevator {
 	 * @return The state of the elevator based on it's height.
 	 */
 	private State getState(double position){
-		if(position < State.CARGO_L1.deltaInches + 0.5 && position > State.CARGO_L1.deltaInches - 0.5){
+		if(position < State.CARGO_L1.deltaInches + .7 && position > State.CARGO_L1.deltaInches - .7){
 			return State.CARGO_L1;
 		}
-		else if(position < State.CARGO_L2.deltaInches + 0.5 && position > State.CARGO_L2.deltaInches - 0.5){
+		else if(position < State.CARGO_L2.deltaInches + 1 && position > State.CARGO_L2.deltaInches - 1){
 			return State.CARGO_L2;
 		}
-		else if(position < State.CARGO_L3.deltaInches + 0.5 && position > State.CARGO_L3.deltaInches - 0.5){
+		else if(position < State.CARGO_L3.deltaInches + 1 && position > State.CARGO_L3.deltaInches - 1){
 			return State.CARGO_L3;
 		}
-		else if(position < State.HATCH_L1.deltaInches + 0.5 && position > State.HATCH_L1.deltaInches - 0.5){
+		else if(position < State.HATCH_L1.deltaInches + .7 && position > State.HATCH_L1.deltaInches - .7){
 			return State.HATCH_L1;
 		}
-		else if(position < State.HATCH_L2.deltaInches + 0.5 && position > State.HATCH_L2.deltaInches - 0.5){
+		else if(position < State.HATCH_L2.deltaInches + .7 && position > State.HATCH_L2.deltaInches - .7){
 			return State.HATCH_L2;
 		}
-		else if(position < State.HATCH_L3.deltaInches + 0.5 && position > State.HATCH_L3.deltaInches - 0.5){
+		else if(position < State.HATCH_L3.deltaInches + 1.5 && position > State.HATCH_L3.deltaInches - 1.5){
 			return State.HATCH_L3;
 		}
+		else if(position < State.HATCH_L1.deltaInches - .7) {
+			return State.LEVEL_ZERO;
+		}
 		else{
-			return State.TRANSITION;
+			return currentState;
 		}
 	}
 

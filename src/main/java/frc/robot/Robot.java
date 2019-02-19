@@ -9,7 +9,10 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.cscore.UsbCamera;
+import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 
 import frc.robot.Drivetrain;
@@ -18,6 +21,7 @@ import frc.robot.Climber;
 import frc.robot.NavX;
 import frc.robot.Elevator.State;
 import frc.robot.Elevator;
+import frc.robot.HatchMech;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -27,14 +31,9 @@ import frc.robot.Elevator;
  * project.
  */
 public class Robot extends TimedRobot {
-	// Test doubles for storing return from read classes
-	private Double m_degToTarget = Double.NaN;
-	private Double m_distToTarget = Double.NaN;
-	private Double m_angleToCenter = Double.NaN;
-	private Double m_lowPosition = Double.NaN;
-
 	// Declare drivetrain
 	Drivetrain m_drivetrain;
+	Pathing m_pather;
 
 	// Declare Pilot XBox Controller
 	Controller m_pilotController;
@@ -60,6 +59,10 @@ public class Robot extends TimedRobot {
 	DashboardData m_dataStream;
 	CustomDashboard m_roboDash;
 
+	// Declaring the USB Camera
+	UsbCamera camera;
+	HatchMech m_hatchMech;
+
 	// Declare our duino communication port
 	// private DuinoToRioComms m_duinoToRio;
 	// private DuinoCommStorage m_pkt;
@@ -67,38 +70,31 @@ public class Robot extends TimedRobot {
 	Robot() {
 
 		// Instanciates drivetrain, driver controllers, climbers, and elevator
-		m_drivetrain = new Drivetrain();
+		m_drivetrain = new Drivetrain(m_ahrs);
 		m_pilotController = new Controller(RobotMap.PILOT_CONTROLLER_PORT);
-		m_frontClimber = new Climber(RobotMap.FRONT_CLIMBER_MOTOR_PORT, RobotMap.FRONT_CLIMBER_LIMIT_TOP_PORT);
-		m_backClimber = new Climber(RobotMap.BACK_CLIMBER_MOTOR_PORT, RobotMap.BACK_CLIMBER_LIMIT_TOP_PORT);
+		//		m_frontClimber = new Climber(RobotMap.FRONT_CLIMBER_MOTOR_PORT, RobotMap.FRONT_CLIMBER_LIMIT_TOP_PORT);
+		//		m_backClimber = new Climber(RobotMap.BACK_CLIMBER_MOTOR_PORT, RobotMap.BACK_CLIMBER_LIMIT_TOP_PORT);
 		m_elevator = new Elevator();
+		
+		m_copilotController = new Controller(RobotMap.COPILOT_CONTROLLER_PORT);
+		m_frontClimber = new Climber(RobotMap.FRONT_CLIMBER_MOTOR_PORT, RobotMap.FRONT_CLIMBER_LIMIT_TOP_PORT, RobotMap.FRONT_CLIMBER_LIMIT_BOTTOM_PORT);
+		m_backClimber = new Climber(RobotMap.BACK_CLIMBER_MOTOR_PORT, RobotMap.BACK_CLIMBER_LIMIT_TOP_PORT, RobotMap.BACK_CLIMBER_LIMIT_BOTTOM_PORT);
+		m_elevator = new Elevator();
+		m_elevator.elevatorPIDConfig();
 
 		// Instantiate our duino to rio communication port
 		// m_duinoToRio = new DuinoToRioComms();
-
+		
 		try {
-			/*
-			 * navX-MXP: - Communication via RoboRIO MXP (SPI, I2C, TTL UART) --
-			 * 
-			 * and USB. - See
-			 * 
-			 * http://navx-mxp.kauailabs.com/guidance/selecting-an-interface.
-			 * 
-			 * navX-Micro: - Communication via I2C (RoboRIO MXP or Onboard) and --
-			 * 
-			 * USB. - See
-			 * 
-			 * http://navx-micro.kauailabs.com/guidance/selecting-an-interface.
-			 * 
-			 * Multiple navX-model devices on a single robot are supported. //
-			 ************************************************************************/
 			m_ahrs = new NavX(SPI.Port.kMXP);
 		} catch (RuntimeException ex) {
 			System.out.println("Error instantiating navX MXP");
 		}
+		
+		m_drivetrain = new Drivetrain(m_ahrs);
+		m_pather = new Pathing(m_drivetrain, m_ahrs);
+//		autoCommands = new AutoCommands(m_drivetrain, m_ahrs, m_elevator, m_frontClimber, m_backClimber);
 
-		// Instanciates auto commands class for using auto assist
-		autoCommands = new AutoCommands(m_drivetrain, m_ahrs, m_elevator, m_frontClimber, m_backClimber);
 	}
 
 	/**
@@ -107,7 +103,10 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void robotInit() {
-
+		//	Sets up the camera and inits the camera server
+//		camera = CameraServer.getInstance().startAutomaticCapture();
+//		camera.setResolution(160, 120);
+//		camera.setFPS(1);
 	}
 
 	/**
@@ -153,6 +152,8 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void teleopInit() {
+		m_drivetrain.talonDriveConfig();
+		m_pather.resetFlags();
 	}
 
 	/**
@@ -163,15 +164,34 @@ public class Robot extends TimedRobot {
 
 		// Test drivetrain included, uses Left stick Y for speed, Right stick X for
 		// turning, quick turn is auto-enabled at low speed
-		m_drivetrain.curvatureDrive(m_pilotController.getLeftStickY(), m_pilotController.getRightStickX());
 
-		// Zeros yaw if 'A' is pressed, and adds 180 degree offset if 'B' is pressed
+
+		// PID based sample talon arcade drive
+		// m_drivetrain.talonArcadeDrive(m_pilotController.getRightTrigger() - m_pilotController.getLeftTrigger(), m_pilotController.getLeftStickX());
+		if(m_pilotController.getYButton()) {
+			/*System.out.println*/m_pather.pathToTarget();
+//			System.out.println("Why are buttons?");
+//			System.out.println("LeftEnc\t" + m_drivetrain.getLeftDriveEncoderPosition());
+//			System.out.println("RightEnc\t" + m_drivetrain.getRightDriveEncoderPosition());
+		}
+		else if (m_pilotController.getXButton()) {
+			m_pather.secondHalfPath();
+		}
+		else {
+			m_drivetrain.talonArcadeDrive(m_pilotController.getLeftStickY(), m_pilotController.getRightStickX());
+		}
+		
 		if (m_pilotController.getAButtonReleased()) {
 			m_ahrs.zeroYaw();
 		}
 		if (m_pilotController.getBButtonReleased()) {
 			m_ahrs.flipOffset();
 		}
+		if (m_pilotController.getBumper(Hand.kRight)) {
+			m_pather.resetFlags();
+		}
+		m_pilotController.setRumble(RumbleType.kLeftRumble, 0);
+		m_pilotController.setRumble(RumbleType.kRightRumble, 0);
 
 		// Prints yaw and if offset is applied to console
 		System.out.println(m_ahrs.getOffsetYaw() + "\t\t" + m_ahrs.getOffsetStatus());
@@ -228,27 +248,80 @@ public class Robot extends TimedRobot {
 		// Stuff from Teleop
 		// Test drivetrain included, uses Left stick Y for speed, Right stick X for
 		// turning, quick turn is auto-enabled at low speed
-		m_drivetrain.curvatureDrive(m_pilotController.getLeftStickY(), m_pilotController.getRightStickX());
+		// m_drivetrain.curvatureDrive(m_pilotController.getLeftStickY(), m_pilotController.getRightStickX());
 
 		// Zeros yaw if 'A' is pressed, and adds 180 degree offset if 'B' is pressed
-		if (m_pilotController.getAButtonReleased()) {
-			m_ahrs.zeroYaw();
-		}
-		if (m_pilotController.getBButtonReleased()) {
-			m_ahrs.flipOffset();
-		}
+		// if (m_pilotController.getAButtonReleased()) {
+		// 	m_ahrs.zeroYaw();
+		// }
+		// if (m_pilotController.getBButtonReleased()) {
+		// 	m_ahrs.flipOffset();
+		// }
 
 		// Prints yaw and if offset is applied to console
-		System.out.println(m_ahrs.getOffsetYaw() + "\t\t" + m_ahrs.getOffsetStatus());
+		//System.out.println(m_ahrs.getOffsetYaw() + "\t\t" + m_ahrs.getOffsetStatus());
 
 		// New Stuff
 		// Elevator controls, triggers are for testing as of 2/16
-		m_elevator.moveRaw(m_pilotController.getLeftTrigger() - m_pilotController.getRightTrigger());
+		//System.out.println(m_pilotController.getLeftTrigger() - m_pilotController.getRightTrigger());
+		//m_elevator.moveRaw(m_pilotController.getLeftTrigger() - m_pilotController.getRightTrigger());
+
+		// [NOTE] Negative power moves the elevator up, but the encoder will still tic
+		// positive. This is due to the way the string is wound on the winch
+		// Follow up: This is no longer quite true. So long as we call the elevator PID config, the motor will be inverted, thus positive should be up
+		if(m_pilotController.getAButton()) {
+			m_elevator.moveRaw(-.4);
+		}
+		else if (m_pilotController.getBButton()) {
+			m_elevator.moveRaw(.4);
+		}
+		else if (m_pilotController.getXButton()) {
+			m_elevator.elevatorPIDDrive(State.HATCH_L1);
+			//m_elevator.moveToPosition(m_pilotController.getXButton() , State.HATCH_L1);
+		}
+		else if (m_pilotController.getYButton()) {
+			m_elevator.elevatorPIDDrive(State.HATCH_L2);
+			//m_elevator.moveToPosition(m_pilotController.getYButton() , State.HATCH_L2);
+		}
+		else if (m_pilotController.getBumper(Hand.kRight)) {
+			m_elevator.elevatorPIDDrive(State.HATCH_L3);
+			//m_elevator.moveToPosition(m_pilotController.getBumper(Hand.kRight) , State.HATCH_L3);
+		}
+		else if (m_pilotController.getBumper(Hand.kLeft)) {
+			m_elevator.elevatorPIDDrive(State.LEVEL_ZERO);
+		}
+		else if (m_pilotController.getStartButton()) {
+			m_elevator.m_elevatorEncoder.setQuadraturePosition(0, 0);
+		}
+		else {
+			m_elevator.moveRaw(0);
+		}
+
+		if (m_copilotController.getAButton()) {
+			m_frontClimber.raiseClimber();
+		}
+		else if (m_copilotController.getBButton()) {
+			m_frontClimber.lowerClimber();
+		}
+		else {
+			m_frontClimber.setClimber(0.0);
+		}
+
+		if (m_copilotController.getXButton()) {
+			m_backClimber.raiseClimber();
+		}
+		else if (m_copilotController.getYButton()) {
+			m_backClimber.lowerClimber();
+		}
+		else {
+			m_backClimber.setClimber(0.0);
+		}
+		//System.out.println("Elevator Encoder: \t" + m_elevator.getPosition());
 		// Elevator move to position methods
-		m_elevator.moveToPosition(m_pilotController.getXButton() , State.HATCH_L1);
-		m_elevator.moveToPosition(m_pilotController.getYButton() , State.HATCH_L2);
-		m_elevator.moveToPosition(m_pilotController.getBumper(Hand.kLeft) , State.HATCH_L3);
-		m_elevator.moveToPosition(m_pilotController.getBumper(Hand.kRight), State.LEVEL_ZERO);
+		// m_elevator.moveToPosition(m_pilotController.getXButton() , State.HATCH_L1);
+		// m_elevator.moveToPosition(m_pilotController.getYButton() , State.HATCH_L2);
+		// m_elevator.moveToPosition(m_pilotController.getBumper(Hand.kLeft) , State.HATCH_L3);
+		// m_elevator.moveToPosition(m_pilotController.getBumper(Hand.kRight), State.LEVEL_ZERO);
 
 		// Hatch Mech
 
