@@ -9,7 +9,10 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.cscore.UsbCamera;
+import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
@@ -30,14 +33,9 @@ import frc.robot.HatchMech;
  * project.
  */
 public class Robot extends TimedRobot {
-	// Test doubles for storing return from read classes
-	private Double m_degToTarget = Double.NaN;
-	private Double m_distToTarget = Double.NaN;
-	private Double m_angleToCenter = Double.NaN;
-	private Double m_lowPosition = Double.NaN;
-
 	// Declare drivetrain
 	Drivetrain m_drivetrain;
+	Pathing m_pather;
 
 	// Declare Pilot XBox Controller
 	Controller m_pilotController;
@@ -63,7 +61,8 @@ public class Robot extends TimedRobot {
 	DashboardData m_dataStream;
 	CustomDashboard m_roboDash;
 
-	// Declares the hatchmech class for the hatch arm and servo
+	// Declaring the USB Camera
+	UsbCamera camera;
 	HatchMech m_hatchMech;
 
 	WPI_VictorSPX liftDriveMotor;
@@ -74,10 +73,13 @@ public class Robot extends TimedRobot {
 
 	Robot() {
 
-		// Instantiates drivetrain
-		m_drivetrain = new Drivetrain();
-		// Instantiates pilot and copilot xbox controllers with their respective ports
+		// Instanciates drivetrain, driver controllers, climbers, and elevator
+		m_drivetrain = new Drivetrain(m_ahrs);
 		m_pilotController = new Controller(RobotMap.PILOT_CONTROLLER_PORT);
+		//		m_frontClimber = new Climber(RobotMap.FRONT_CLIMBER_MOTOR_PORT, RobotMap.FRONT_CLIMBER_LIMIT_TOP_PORT);
+		//		m_backClimber = new Climber(RobotMap.BACK_CLIMBER_MOTOR_PORT, RobotMap.BACK_CLIMBER_LIMIT_TOP_PORT);
+		m_elevator = new Elevator();
+		
 		m_copilotController = new Controller(RobotMap.COPILOT_CONTROLLER_PORT);
 		// Instantiates the front and back climbers with their respective motor and break beam ports
 		m_frontClimber = new Climber(RobotMap.FRONT_CLIMBER_MOTOR_PORT, RobotMap.FRONT_CLIMBER_LIMIT_TOP_PORT, RobotMap.FRONT_CLIMBER_LIMIT_BOTTOM_PORT);
@@ -93,30 +95,17 @@ public class Robot extends TimedRobot {
 
 		// Instantiate our duino to rio communication port
 		// m_duinoToRio = new DuinoToRioComms();
-
+		
 		try {
-			/*
-			 * navX-MXP: - Communication via RoboRIO MXP (SPI, I2C, TTL UART) --
-			 * 
-			 * and USB. - See
-			 * 
-			 * http://navx-mxp.kauailabs.com/guidance/selecting-an-interface.
-			 * 
-			 * navX-Micro: - Communication via I2C (RoboRIO MXP or Onboard) and --
-			 * 
-			 * USB. - See
-			 * 
-			 * http://navx-micro.kauailabs.com/guidance/selecting-an-interface.
-			 * 
-			 * Multiple navX-model devices on a single robot are supported. //
-			 ************************************************************************/
 			m_ahrs = new NavX(SPI.Port.kMXP);
 		} catch (RuntimeException ex) {
 			System.out.println("Error instantiating navX MXP");
 		}
+		
+		m_drivetrain = new Drivetrain(m_ahrs);
+		m_pather = new Pathing(m_drivetrain, m_ahrs);
+//		autoCommands = new AutoCommands(m_drivetrain, m_ahrs, m_elevator, m_frontClimber, m_backClimber);
 
-		// Instanciates auto commands class for using auto assist
-		autoCommands = new AutoCommands(m_drivetrain, m_ahrs, m_elevator, m_frontClimber, m_backClimber);
 	}
 
 	/**
@@ -125,7 +114,10 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void robotInit() {
-
+		//	Sets up the camera and inits the camera server
+//		camera = CameraServer.getInstance().startAutomaticCapture();
+//		camera.setResolution(160, 120);
+//		camera.setFPS(1);
 	}
 
 	/**
@@ -171,6 +163,8 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void teleopInit() {
+		m_drivetrain.talonDriveConfig();
+		m_pather.resetFlags();
 	}
 
 	/**
@@ -181,15 +175,34 @@ public class Robot extends TimedRobot {
 
 		// Test drivetrain included, uses Left stick Y for speed, Right stick X for
 		// turning, quick turn is auto-enabled at low speed
-		m_drivetrain.curvatureDrive(m_pilotController.getLeftStickY(), m_pilotController.getRightStickX());
 
-		// Zeros yaw if 'A' is pressed, and adds 180 degree offset if 'B' is pressed
+
+		// PID based sample talon arcade drive
+		// m_drivetrain.talonArcadeDrive(m_pilotController.getRightTrigger() - m_pilotController.getLeftTrigger(), m_pilotController.getLeftStickX());
+		if(m_pilotController.getYButton()) {
+			/*System.out.println*/m_pather.pathToTarget();
+//			System.out.println("Why are buttons?");
+//			System.out.println("LeftEnc\t" + m_drivetrain.getLeftDriveEncoderPosition());
+//			System.out.println("RightEnc\t" + m_drivetrain.getRightDriveEncoderPosition());
+		}
+		else if (m_pilotController.getXButton()) {
+			m_pather.secondHalfPath();
+		}
+		else {
+			m_drivetrain.talonArcadeDrive(m_pilotController.getLeftStickY(), m_pilotController.getRightStickX());
+		}
+		
 		if (m_pilotController.getAButtonReleased()) {
 			m_ahrs.zeroYaw();
 		}
 		if (m_pilotController.getBButtonReleased()) {
 			m_ahrs.flipOffset();
 		}
+		if (m_pilotController.getBumper(Hand.kRight)) {
+			m_pather.resetFlags();
+		}
+		m_pilotController.setRumble(RumbleType.kLeftRumble, 0);
+		m_pilotController.setRumble(RumbleType.kRightRumble, 0);
 
 		// Prints yaw and if offset is applied to console
 		System.out.println(m_ahrs.getOffsetYaw() + "\t\t" + m_ahrs.getOffsetStatus());
