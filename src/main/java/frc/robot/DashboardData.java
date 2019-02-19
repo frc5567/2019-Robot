@@ -22,7 +22,7 @@ public class DashboardData{
     double m_climberEncoder;
     boolean m_autonActive;
     boolean m_readingTarget;
-    boolean m_ballIntakeRunning;
+    //boolean m_ballIntakeRunning;
     String m_elevatorState;
 
 
@@ -39,14 +39,12 @@ public class DashboardData{
      * @param climberPosition The position of our climber based on it's encoder.
      * @param autonActivated True if auton is engaged, if disengaged it will read false.
      * @param autonReadingTarget True if the Pixy detects a line below the robot.
-     * @param ballIntakeRunning True if our ball intake system is currently running.
      * @param elevatorState Value read from getState() method of our elevator object.
      */
     
     public DashboardData(double elevatorEncoder , double encoderRateRight , double encoderRateLeft ,
     boolean driverAssistOn , double proximitySensorInches , boolean grabberOpen , double grabberAngle ,
-    double climberPosition , boolean autonActivated , boolean autonReadingTarget , boolean ballIntakeRunning , 
-    String elevatorState){
+    double climberPosition , boolean autonActivated , boolean autonReadingTarget , String elevatorState){
         m_rawElevatorHeight = elevatorEncoder;
         
         m_velocityRight = encoderRateRight;
@@ -79,7 +77,7 @@ public class DashboardData{
 
         m_readingTarget = autonReadingTarget;
 
-        m_ballIntakeRunning = ballIntakeRunning;
+        //m_ballIntakeRunning = ballIntakeRunning;
 
         m_elevatorState = elevatorState;
 

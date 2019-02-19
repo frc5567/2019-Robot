@@ -13,8 +13,8 @@
  */
 
 //  Declares the Pixys
-Pixy2SPI_SS highPixy;
-Pixy2I2C lowPixy;
+Pixy2I2C highPixy;
+Pixy2SPI_SS lowPixy;
 
 //  Declares variables for the low pixy
 int leftX;

@@ -20,7 +20,6 @@ public class RobotMap {
     public static final double CONTROLLER_STICK_DEADBAND = 0.05;
     public static final double CONTROLLER_TRIGGER_DEADBAND = 0.1;
     // Elevator drum measurements
-    public static final double DRUM_DIAMETER_INCHES = 2.2;     //UPDATE THIS VALUE
     public static final double DRUM_CIRCUMFERENCE = 8.1875;
     // PID timout constant
     public static final int TIMEOUT_MS = 30;
@@ -39,7 +38,6 @@ public class RobotMap {
     // CAN motor controller ID numbers
     // Drivetrain
     // NOTE: Test robot can IDs for drivetrain.
-    // TODO: Rename variables to reflect Victor or Talon. Front/back tags do not apply
     public static final int SLAVE_LEFT_DRIVE_MOTOR_PORT = 12;
     public static final int SLAVE_RIGHT_DRIVE_MOTOR_PORT = 11;
     public static final int MASTER_LEFT_DRIVE_MOTOR_PORT = 2;
@@ -53,18 +51,12 @@ public class RobotMap {
 	public static final int BACK_CLIMBER_MOTOR_PORT = 14;
 
     // Sensors
-    // Elevator limit switches DIO port numbers
-    public static final int ELEVATOR_LIMIT_TOP_PORT = 0;
-    public static final int ELEVATOR_LIMIT_BOTTOM_PORT = 1;
     // Front Climber limit switches DIO port numbers
     public static final int FRONT_CLIMBER_LIMIT_TOP_PORT = 5;
     public static final int FRONT_CLIMBER_LIMIT_BOTTOM_PORT = 6;
     // Back Climber limit switches DIO Port number
     public static final int BACK_CLIMBER_LIMIT_TOP_PORT = 7;
     public static final int BACK_CLIMBER_LIMIT_BOTTOM_PORT = 8;
-    // Hatch mechanism limit switches
-    public static final int HATCH_MECH_LIMIT_TOP_PORT = 4;
-    public static final int HATCH_MECH_LIMIT_BOTTOM_PORT = 5;
     // Hatch mech encoder
     public static final int HATCH_MECH_ENCODER_A = 6;
     public static final int HATCH_MECH_ENCODER_B = 7;
@@ -80,9 +72,9 @@ public class RobotMap {
     // HatchMech motor encoder limits
     public static final int HATCH_MECH_UP_MOTOR_POSITION = 0;
     public static final int HATCH_MECH_DOWN_MOTOR_POSITION = 60;
-
+    public static final int HATCH_MECH_MOTOR_PORT = 15;
     // Elevator height
-    public static final double MAX_ELEVATOR_HEIGHT = 5.0;
+    public static final double MAX_ELEVATOR_HEIGHT = 5.0;   //TODO: Update this?
 
     // Motor speed constants
     // Drivetrain
@@ -93,8 +85,8 @@ public class RobotMap {
     public static final double HATCH_MECH_ARM_DOWN_MOTOR_SPEED = -0.5;  // Check Speed
     public static final double HATCH_MECH_STOP_MOTOR_SPEED = 0.0;
     // Climber motor speeds
-    public static final double CLIMBER_SPEED_UP = -0.3;      //UPDATE THIS VALUE
-    public static final double CLIMBER_SPEED_DOWN = 0.3;       //UPDATE THIS VALUE
+    public static final double CLIMBER_SPEED_UP = -0.4;      //UPDATE THIS VALUE
+    public static final double CLIMBER_SPEED_DOWN = 0.6;       //UPDATE THIS VALUE
     // Elevator Motor Speed
     public static final double ELEVATOR_MOTOR_SPEED_UP = -0.4;
     public static final double ELEVATOR_MOTOR_SPEED_DOWN = 0.4;
@@ -144,10 +136,8 @@ public class RobotMap {
      * Not all set of Gains are used in this project and may be removed as desired.
      * kP kI kD kF Iz PeakOut
      */
-    public final static Gains GAINS_DISTANC = new Gains(0.1, 0.0, 0.0, 0.0, 100, 0.50);
     public final static Gains GAINS_TURNING = new Gains(2.0, 0.0, 4.0, 0.0, 200, 1.00);
     public final static Gains GAINS_VELOCIT = new Gains(0.1, 0.0, 20.0, 1023.0 / 6800.0, 300, 0.50);
-    public final static Gains GAINS_MOT_PROF = new Gains(1.0, 0.0, 0.0, 1023.0 / 6800.0, 400, 1.00);
 
     /** ---- Flat constants, you should not need to change these ---- */
 

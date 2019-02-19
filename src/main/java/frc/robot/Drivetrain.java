@@ -63,17 +63,19 @@ public class Drivetrain implements PIDOutput {
     private Ultrasonic ultraLeft;
     private Ultrasonic ultraRight;
 
+    // Declaration for tic tracking for drive to position
     private double m_leftInitTics;
     private double m_rightInitTics;
     private double m_leftTargetTics;
     private double m_rightTargetTics;
     private double m_ticsToTarget;
+
     // Constants for calculating drive distance
     public static final double DRIVE_TICS_PER_INCH = 4096 / (6*RobotMap.PI);
     private final double AUTO_SPEED = 0.3;
     private boolean m_firstCallTest = true;
 
-
+    // Counter for buying time for the PID
     int m_counter;
 
     /**
@@ -133,9 +135,9 @@ public class Drivetrain implements PIDOutput {
     }
 
     /**
-     * || Currently in place if access is needed to DifferentialDrive methods || ||
-     * Might be used for initSendable or other methods within class || Gets the
-     * drivetrain object to use DifferentialDrive methods
+     * || Currently in place if access is needed to DifferentialDrive methods || 
+     * || Might be used for initSendable or other methods within class        || 
+     * Gets the drivetrain object to use DifferentialDrive methods
      * 
      * @return The drivetrain object (DifferentialDrive)
      */
@@ -229,11 +231,11 @@ public class Drivetrain implements PIDOutput {
 
             m_counter = 0;
         }
-        System.out.println("In method PID check: \t" + m_rotController.get());
+
         // Sets our rotate speed to the return of the PID
         double returnedRotate = m_rotController.get();
         Timer.delay(0.05);
-        System.out.println("Returned Rotate: \t" + returnedRotate);
+        
         // Runs the drivetrain with 0 speed and the rotate speed set by the PID
         System.out.println("target angle: \t" + targetAngle);
         System.out.println("current angle: \t" + m_ahrs.getYaw());
@@ -444,7 +446,21 @@ public class Drivetrain implements PIDOutput {
      */
     private double inToTics(double inches) {
         return inches*DRIVE_TICS_PER_INCH;
-   }
+    }
+
+    /**
+     * 
+     */
+    public Ultrasonic getLeftUltra() {
+        return ultraLeft;
+    }
+
+    /**
+     * 
+     */
+    public Ultrasonic getRightUltra() {
+        return ultraRight;
+    }
 
     /**
      * Returns the encoder position of the drivetrain left side encoder
