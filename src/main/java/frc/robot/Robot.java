@@ -389,14 +389,14 @@ public class Robot extends TimedRobot {
 			m_hatchMech.CloseServo();
 		}
 		
-		// Sys prints for sensors bound to start pilot
-		if (m_copilotController.getStartButton()) {
-			System.out.println("Left Ultrasonics: \t" + m_drivetrain.getLeftUltra().getRangeInches());
-			System.out.println("Right Ultrasonics: \t" + m_drivetrain.getRightUltra().getRangeInches());
-			System.out.println("Drivetrain Enc Velocity \t" + m_drivetrain.getLeftDriveEncoderVelocity() + "\t\t" + m_drivetrain.getRightDriveEncoderVelocity());
-			System.out.println("Drivetrain Enc Pos \t"+ m_drivetrain.getLeftDriveEncoderPosition() + "\t\t" + m_drivetrain.getRightDriveEncoderPosition());	
-			System.out.println("Front Break Beams: \t  Top: " + m_frontClimber.getTopLimitSwitch() + "\t Bottom: " + m_frontClimber.getBottomLimitSwitch());
-			System.out.println("Back Break Beams: \t  Top: " + m_backClimber.getTopLimitSwitch() + "\t Bottom: " + m_backClimber.getBottomLimitSwitch());
-		}
+		System.out.print("Left Ultrasonics: \t" + m_drivetrain.getLeftUltra().getRangeInches());
+		System.out.print("Right Ultrasonics: \t" + m_drivetrain.getRightUltra().getRangeInches());
+		System.out.print("Drivetrain Enc Velocity: \t" + m_drivetrain.getLeftDriveEncoderVelocity() + "\t\t" + m_drivetrain.getRightDriveEncoderVelocity());
+		System.out.print("Drivetrain Enc Pos: \t"+ m_drivetrain.getLeftDriveEncoderPosition() + "\t\t" + m_drivetrain.getRightDriveEncoderPosition());	
+		System.out.print("Elevator Enc Velocity: \t" + m_elevator.m_elevatorMotor.getSelectedSensorVelocity());
+		System.out.print("Elevator Enc Pos: \t"+ m_elevator.m_elevatorMotor.getSelectedSensorPosition());
+		System.out.print("Front Break Beams: \t  Top: " + m_frontClimber.getTopLimitSwitch() + "\t Bottom: " + m_frontClimber.getBottomLimitSwitch());
+		System.out.println("Back Break Beams: \t  Top: " + m_backClimber.getTopLimitSwitch() + "\t Bottom: " + m_backClimber.getBottomLimitSwitch());
+		
 	}
 }
