@@ -1,14 +1,8 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 
 public class CustomDashboard{
-    
-    SendableChooser<String> m_gamePieceSelector = new SendableChooser<>();
-    String m_gamePieceSelected;
-    Boolean m_hatchSelected;
-    Boolean m_cargoSelected;
     
     
     
@@ -44,7 +38,7 @@ public class CustomDashboard{
         // Misc Values
         SmartDashboard.putString("Proximity to Nearest Wall" , dataStream.m_proximity);
         SmartDashboard.putNumber("Climber Position" , dataStream.m_climberEncoder);
-        SmartDashboard.putBoolean("Ball Intake Running" , dataStream.m_ballIntakeRunning);
+        //SmartDashboard.putBoolean("Ball Intake Running" , dataStream.m_ballIntakeRunning);
         
         
 
