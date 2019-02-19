@@ -35,7 +35,7 @@ public class HatchMech{
     /**
      * Creates method for opening servo, and sets relative posisition.
      */
-    public void OpenServo(){
+    public void openServo(){
         //Double check on degrees and see if servo is the right type.
         m_servo.setPosition(RobotMap.HATCH_MECH_OPEN_SERVO_POSITION);
     }
@@ -43,7 +43,7 @@ public class HatchMech{
     /**
      * Creates method for closing servo and sets relative position.
      *  */
-    public void CloseServo(){
+    public void closeServo(){
         m_servo.setPosition(RobotMap.HATCH_MECH_CLOSE_SERVO_POSITION);
     }
  
@@ -51,13 +51,13 @@ public class HatchMech{
      * Creates method for switching between closed and opened servo. To do this a boolean is used to make a toggle button.
      * @param button
      */
-    public void SwitchServo(boolean button){
+    public void switchServo(boolean button){
         if (button){
             if (m_servo.getAngle()==RobotMap.HATCH_MECH_OPEN_SERVO_POSITION){   
-                CloseServo();
+                closeServo();
             }
             else{
-                OpenServo();
+                openServo();
             }
         }
     }
@@ -65,7 +65,7 @@ public class HatchMech{
     /**
      * Raises the Hatch Mech arm to its high position when called
      */
-    public void ArmUp(){
+    public void armUp(){
         if (m_hatchMechEncoder.get() >= RobotMap.HATCH_MECH_UP_MOTOR_POSITION) {
             m_hatchArmMotor.set(RobotMap.HATCH_MECH_ARM_UP_MOTOR_SPEED);
         }
@@ -78,12 +78,16 @@ public class HatchMech{
     /**
      * Lowers the Hatch Mech arm to its low arm when called
      */
-    public void ArmDown(){
+    public void armDown(){
         if (m_hatchMechEncoder.get() <= RobotMap.HATCH_MECH_DOWN_MOTOR_POSITION) {
             m_hatchArmMotor.set(RobotMap.HATCH_MECH_ARM_DOWN_MOTOR_SPEED);                            
         }
         else {
             m_hatchArmMotor.set(RobotMap.HATCH_MECH_STOP_MOTOR_SPEED);
         }
+    }
+
+    public void setArm(double input) {
+        m_hatchArmMotor.set(input);
     }
 }

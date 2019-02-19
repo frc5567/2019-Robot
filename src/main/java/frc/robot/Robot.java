@@ -22,6 +22,9 @@ import frc.robot.NavX;
 import frc.robot.Elevator.State;
 import frc.robot.Elevator;
 import frc.robot.HatchMech;
+import frc.robot.AutoCommands;
+import frc.robot.TeleopCommands;
+import frc.robot.GamePad;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -42,6 +45,8 @@ public class Robot extends TimedRobot {
 	// Used for testing, gamepad will be used in comp
 	Controller m_copilotController;
 
+	GamePad m_copilotGamepad;
+
 	// Declare climbing mechanisms for front and back climbers
 	Climber m_frontClimber;
 	Climber m_backClimber;
@@ -54,6 +59,8 @@ public class Robot extends TimedRobot {
 
 	// Declare Auto Commands class for auto and auto assist commands
 	AutoCommands autoCommands;
+	// Declare Teleop commands for pilot controller methods
+	TeleopCommands teleopCommands;
 
 	// Declare Dashboard and Dashboard data bus
 	DashboardData m_dataStream;
@@ -72,11 +79,12 @@ public class Robot extends TimedRobot {
 		// Instanciates drivetrain, driver controllers, climbers, and elevator
 		m_drivetrain = new Drivetrain(m_ahrs);
 		m_pilotController = new Controller(RobotMap.PILOT_CONTROLLER_PORT);
-		//		m_frontClimber = new Climber(RobotMap.FRONT_CLIMBER_MOTOR_PORT, RobotMap.FRONT_CLIMBER_LIMIT_TOP_PORT);
-		//		m_backClimber = new Climber(RobotMap.BACK_CLIMBER_MOTOR_PORT, RobotMap.BACK_CLIMBER_LIMIT_TOP_PORT);
+
 		m_elevator = new Elevator();
 		
 		m_copilotController = new Controller(RobotMap.COPILOT_CONTROLLER_PORT);
+		m_copilotGamepad = new GamePad(RobotMap.COPILOT_CONTROLLER_PORT);
+
 		m_frontClimber = new Climber(RobotMap.FRONT_CLIMBER_MOTOR_PORT, RobotMap.FRONT_CLIMBER_LIMIT_TOP_PORT, RobotMap.FRONT_CLIMBER_LIMIT_BOTTOM_PORT);
 		m_backClimber = new Climber(RobotMap.BACK_CLIMBER_MOTOR_PORT, RobotMap.BACK_CLIMBER_LIMIT_TOP_PORT, RobotMap.BACK_CLIMBER_LIMIT_BOTTOM_PORT);
 		m_elevator = new Elevator();
@@ -90,11 +98,13 @@ public class Robot extends TimedRobot {
 		} catch (RuntimeException ex) {
 			System.out.println("Error instantiating navX MXP");
 		}
-		
-		m_drivetrain = new Drivetrain(m_ahrs);
-		m_pather = new Pathing(m_drivetrain, m_ahrs);
-//		autoCommands = new AutoCommands(m_drivetrain, m_ahrs, m_elevator, m_frontClimber, m_backClimber);
 
+		m_drivetrain = new Drivetrain(m_ahrs);
+
+		m_pather = new Pathing(m_drivetrain, m_ahrs);
+
+		autoCommands = new AutoCommands(m_drivetrain, m_ahrs, m_elevator, m_frontClimber, m_backClimber);
+		teleopCommands = new TeleopCommands(m_pilotController, m_copilotGamepad, m_drivetrain, m_elevator, m_frontClimber, m_backClimber, m_hatchMech);
 	}
 
 	/**
