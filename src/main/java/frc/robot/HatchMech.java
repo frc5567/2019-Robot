@@ -25,11 +25,11 @@ public class HatchMech{
         m_servo = new Servo(RobotMap.HATCH_MECH_SERVO_PORT);
 
         //This defines the limit switches as new digital inputs.
-        m_limitSwitchTop = new DigitalInput(RobotMap.HATCH_MECH_LIMIT_TOP_PORT);
-        m_limitSwitchBottom = new DigitalInput(RobotMap.HATCH_MECH_LIMIT_BOTTOM_PORT);
-
-        m_hatchMechEncoder = new Encoder(RobotMap.HATCH_MECH_ENCODER_A, RobotMap.HATCH_MECH_ENCODER_B, false, Encoder.EncodingType.k4X);
-        m_hatchMechEncoder.reset();
+        //m_limitSwitchTop = new DigitalInput(RobotMap.HATCH_MECH_LIMIT_TOP_PORT);
+        //m_limitSwitchBottom = new DigitalInput(RobotMap.HATCH_MECH_LIMIT_BOTTOM_PORT);
+        m_hatchArmMotor = new WPI_VictorSPX(RobotMap.HATCH_MECH_MOTOR_PORT);
+//        m_hatchMechEncoder = new Encoder(RobotMap.HATCH_MECH_ENCODER_A, RobotMap.HATCH_MECH_ENCODER_B, false, Encoder.EncodingType.k4X);
+//        m_hatchMechEncoder.reset();
     }
 
     /**
@@ -66,24 +66,37 @@ public class HatchMech{
      * Raises the Hatch Mech arm to its high position when called
      */
     public void ArmUp(){
-        if (m_hatchMechEncoder.get() >= RobotMap.HATCH_MECH_UP_MOTOR_POSITION) {
+       /* 
+       if (m_hatchMechEncoder.get() >= RobotMap.HATCH_MECH_UP_MOTOR_POSITION) {
             m_hatchArmMotor.set(RobotMap.HATCH_MECH_ARM_UP_MOTOR_SPEED);
         }
         else {
             m_hatchArmMotor.set(RobotMap.HATCH_MECH_STOP_MOTOR_SPEED);
         }
-                               
+        */
+        m_hatchArmMotor.set(RobotMap.HATCH_MECH_ARM_UP_MOTOR_SPEED);                       
     }
    
     /**
      * Lowers the Hatch Mech arm to its low arm when called
      */
     public void ArmDown(){
-        if (m_hatchMechEncoder.get() <= RobotMap.HATCH_MECH_DOWN_MOTOR_POSITION) {
+       /*
+       if (m_hatchMechEncoder.get() <= RobotMap.HATCH_MECH_DOWN_MOTOR_POSITION) {
             m_hatchArmMotor.set(RobotMap.HATCH_MECH_ARM_DOWN_MOTOR_SPEED);                            
         }
         else {
             m_hatchArmMotor.set(RobotMap.HATCH_MECH_STOP_MOTOR_SPEED);
         }
+        */
+        m_hatchArmMotor.set(RobotMap.HATCH_MECH_ARM_DOWN_MOTOR_SPEED);
+    }
+
+    /**
+     * Sets the hatch arm motor to the passed in speed
+     * @param input The desired speed output [1.0 ~ 1.0]
+     */
+    public void setArm(double input) {
+        m_hatchArmMotor.set(input);
     }
 }
