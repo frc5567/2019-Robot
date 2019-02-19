@@ -378,7 +378,7 @@ public class Robot extends TimedRobot {
 		else {
 			m_hatchMech.setArm(0.0);
 		}
-		
+
 		//*/
 
 		// On copilot controller
@@ -450,6 +450,8 @@ public class Robot extends TimedRobot {
 			System.out.println("Right Ultrasonics: \t" + m_drivetrain.getRightUltra().getRangeInches());
 			System.out.println("Drivetrain Enc Velocity \t" + m_drivetrain.getLeftDriveEncoderVelocity() + "\t\t" + m_drivetrain.getRightDriveEncoderVelocity());
 			System.out.println("Drivetrain Enc Pos \t"+ m_drivetrain.getLeftDriveEncoderPosition() + "\t\t" + m_drivetrain.getRightDriveEncoderPosition());	
+			System.out.println("Front Break Beams: \t  Top: " + m_frontClimber.getTopLimitSwitch() + "\t Bottom: " + m_frontClimber.getBottomLimitSwitch());
+			System.out.println("Back Break Beams: \t  Top: " + m_backClimber.getTopLimitSwitch() + "\t Bottom: " + m_backClimber.getBottomLimitSwitch());
 		}
 
 		
