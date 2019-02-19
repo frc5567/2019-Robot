@@ -103,6 +103,9 @@ public class Robot extends TimedRobot {
 			System.out.println("Pather failed to instantiate");
 		}
 
+		// Runs config for the PID system on the drivetrain
+		m_drivetrain.talonDriveConfig();
+
 		autoCommands = new AutoCommands(m_drivetrain, m_ahrs, m_elevator, m_frontClimber, m_backClimber);
 
 	}
@@ -122,7 +125,6 @@ public class Robot extends TimedRobot {
 		} catch (Exception e) {
 			System.out.println("Camera failed to instantiate");
 		}
-
 	}
 
 	/**
@@ -168,9 +170,6 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void teleopInit() {
-		// Runs config for the PID system on the drivetrain
-		m_drivetrain.talonDriveConfig();
-
 		// Resets flags on the pather
 		if (m_pather != null) {
 			m_pather.resetFlags();
@@ -312,17 +311,6 @@ public class Robot extends TimedRobot {
 			m_elevator.moveRaw(0);
 		}
 		
-		//*/
-		//*/
-		// Resets elevator encoder to 0
-		// Start button
-		/*
-		if (m_pilotController.getStartButton()) {
-			m_elevator.m_elevatorEncoder.setQuadraturePosition(0, 0);
-		}
-		*/
-
-		
 		// Hatch arm controller bound to the copilot controller
 		// Raise the arm on Y button
 		// Lower the arm on X button
@@ -410,7 +398,5 @@ public class Robot extends TimedRobot {
 			System.out.println("Front Break Beams: \t  Top: " + m_frontClimber.getTopLimitSwitch() + "\t Bottom: " + m_frontClimber.getBottomLimitSwitch());
 			System.out.println("Back Break Beams: \t  Top: " + m_backClimber.getTopLimitSwitch() + "\t Bottom: " + m_backClimber.getBottomLimitSwitch());
 		}
-
-		
 	}
 }
