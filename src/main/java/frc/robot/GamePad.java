@@ -160,26 +160,50 @@ public class GamePad extends GenericHID {
 		return getGamePadButtonReleased(GamePadControls.DROP_HATCH_ARM);
 	}
 
+	/**
+	 * Gets the current state of the pickup hatch button
+	 * @return Returns the current status of the button (held)
+	 */
 	public boolean getPickupHatchCargo() {
 		return getGamePadButton(GamePadControls.PICKUP_HATCH_CARGO);
 	}
 
+	/**
+	 * Gets the current state of the low hatch button
+	 * @return Returns the current status of the button (held)
+	 */
 	public boolean getLowHatchCargo() {
 		return getGamePadButton(GamePadControls.LOW_HATCH_CARGO);
 	}
 
+	/**
+	 * Gets the current state of the medium hatch button
+	 * @return Returns the current status of the button (held)
+	 */
 	public boolean getMediumHatchCargo() {
 		return getGamePadButton(GamePadControls.MEDIUM_HATCH_CARGO);
 	}
 
+	/**
+	 * Gets the current state of the high hatch button
+	 * @return Returns the current status of the button (held)
+	 */
 	public boolean getHighHatchCargo() {
 		return getGamePadButton(GamePadControls.HIGH_HATCH_CARGO);
 	}
 
+	/**
+	 * Gets the current state of the lift hatch arm button
+	 * @return Returns the current status of the button (held)
+	 */
 	public boolean getLiftHatchArm() {
 		return getGamePadButton(GamePadControls.LIFT_HATCH_ARM);
 	}
 
+	/**
+	 * Gets the current state of the drop hatch arm button
+	 * @return Returns the current status of the button (held)
+	 */
 	public boolean getDropHatchArm() {
 		return getGamePadButton(GamePadControls.DROP_HATCH_ARM);
 	}

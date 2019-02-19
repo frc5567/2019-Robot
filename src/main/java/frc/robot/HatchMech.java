@@ -49,7 +49,7 @@ public class HatchMech{
  
     /**
      * Creates method for switching between closed and opened servo. To do this a boolean is used to make a toggle button.
-     * @param button
+     * @param button 
      */
     public void switchServo(boolean button){
         if (button){
@@ -87,6 +87,10 @@ public class HatchMech{
         }
     }
 
+    /**
+     * Sets the arm to a passed in input
+     * @param input The analog input for the hatch arm [-1.0 ~ 1.0]
+     */
     public void setArm(double input) {
         m_hatchArmMotor.set(input);
     }

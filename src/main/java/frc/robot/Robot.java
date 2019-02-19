@@ -58,9 +58,9 @@ public class Robot extends TimedRobot {
 	Elevator m_elevator;
 
 	// Declare Auto Commands class for auto and auto assist commands
-	AutoCommands autoCommands;
+	AutoCommands m_autoCommands;
 	// Declare Teleop commands for pilot controller methods
-	TeleopCommands teleopCommands;
+	TeleopCommands m_teleopCommands;
 
 	// Declare Dashboard and Dashboard data bus
 	DashboardData m_dataStream;
@@ -103,8 +103,8 @@ public class Robot extends TimedRobot {
 
 		m_pather = new Pathing(m_drivetrain, m_ahrs);
 
-		autoCommands = new AutoCommands(m_drivetrain, m_ahrs, m_elevator, m_frontClimber, m_backClimber);
-		teleopCommands = new TeleopCommands(m_pilotController, m_copilotGamepad, m_drivetrain, m_elevator, m_frontClimber, m_backClimber, m_hatchMech);
+		m_autoCommands = new AutoCommands(m_drivetrain, m_ahrs, m_elevator, m_frontClimber, m_backClimber);
+		m_teleopCommands = new TeleopCommands(m_pilotController, m_copilotGamepad, m_drivetrain, m_elevator, m_frontClimber, m_backClimber, m_hatchMech);
 	}
 
 	/**
@@ -171,6 +171,8 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
+
+		m_teleopCommands.teleopModeCommands();
 
 		// Test drivetrain included, uses Left stick Y for speed, Right stick X for
 		// turning, quick turn is auto-enabled at low speed
