@@ -452,7 +452,21 @@ public class Drivetrain implements PIDOutput {
      */
     private double inToTics(double inches) {
         return inches*DRIVE_TICS_PER_INCH;
-   }
+    }
+
+    /**
+     * 
+     */
+    public Ultrasonic getLeftUltra() {
+        return ultraLeft;
+    }
+
+    /**
+     * 
+     */
+    public Ultrasonic getRightUltra() {
+        return ultraRight;
+    }
 
     /**
      * Returns the encoder position of the drivetrain left side encoder

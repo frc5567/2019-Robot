@@ -247,10 +247,8 @@ public class Robot extends TimedRobot {
 			m_backClimber.setClimber(0.0);
 		}
 		*/
-		// m_drivetrain.curvatureDrive(m_pilotController.getLeftStickY(), m_pilotController.getLeftStickX());
-		m_drivetrain.getDrivetrain().arcadeDrive(m_pilotController.getLeftStickY(), m_pilotController.getLeftStickX());
-		System.out.println("Drivetrain Enc Velocity \t" + m_drivetrain.getLeftDriveEncoderVelocity() + "\t\t" + m_drivetrain.getRightDriveEncoderVelocity());
-		System.out.println("Drivetrain Enc Pos \t"+ m_drivetrain.getLeftDriveEncoderPosition() + "\t\t" + m_drivetrain.getRightDriveEncoderPosition());	
+		m_drivetrain.talonArcadeDrive(m_pilotController.getRightTrigger() - m_pilotController.getRightTrigger(), m_pilotController.getLeftStickX());
+		
 		/*
 		 * // Code for testing comms with arduino if
 		 * (m_pilotController.getAButtonReleased()) { // Assigns return value. Checking
@@ -368,22 +366,19 @@ public class Robot extends TimedRobot {
 		*/
 
 		
-		// Copilot controller
-		// Raises the hatch arm up
-		// Left stick button
+		// Hatch arm controller bound to the copilot controller
+		// Raise the arm on Y button
+		// Lower the arm on X button
 		if (m_copilotController.getYButton()) {
 			m_hatchMech.ArmUp();
 		}
-		// Lowers the hatch arm down
-		// Right stick button
 		else if (m_copilotController.getXButton()) {
 			 m_hatchMech.ArmDown();
 		}
-		// Sets the hatch arm speed to 0
-		// No buttons
 		else {
 			m_hatchMech.setArm(0.0);
 		}
+		
 		//*/
 
 		// On copilot controller
@@ -439,6 +434,9 @@ public class Robot extends TimedRobot {
 		}
 		//*/
 		
+		// Arm servo controls bound to copilot controller
+		// On A button released, open
+		// On B button released, close
 		if (m_copilotController.getAButtonReleased()){
 			m_hatchMech.OpenServo();
 		}
@@ -446,16 +444,14 @@ public class Robot extends TimedRobot {
 			m_hatchMech.CloseServo();
 		}
 		
-		// System.out.println("Elevator Encoder: \t" + m_elevator.getPosition());
-		// Elevator move to position methods
-		// m_elevator.moveToPosition(m_pilotController.getXButton() , State.HATCH_L1);
-		// m_elevator.moveToPosition(m_pilotController.getYButton() , State.HATCH_L2);
-		// m_elevator.moveToPosition(m_pilotController.getBumper(Hand.kLeft) ,
-		// State.HATCH_L3);
-		// m_elevator.moveToPosition(m_pilotController.getBumper(Hand.kRight),
-		// State.LEVEL_ZERO);
+		// Sys prints for sensors bound to start pilot
+		if (m_copilotController.getStartButton()) {
+			System.out.println("Left Ultrasonics: \t" + m_drivetrain.getLeftUltra().getRangeInches());
+			System.out.println("Right Ultrasonics: \t" + m_drivetrain.getRightUltra().getRangeInches());
+			System.out.println("Drivetrain Enc Velocity \t" + m_drivetrain.getLeftDriveEncoderVelocity() + "\t\t" + m_drivetrain.getRightDriveEncoderVelocity());
+			System.out.println("Drivetrain Enc Pos \t"+ m_drivetrain.getLeftDriveEncoderPosition() + "\t\t" + m_drivetrain.getRightDriveEncoderPosition());	
+		}
 
-		// Hatch Mech
-
+		
 	}
 }
