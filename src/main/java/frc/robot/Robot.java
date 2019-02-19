@@ -125,6 +125,8 @@ public class Robot extends TimedRobot {
 		} catch (Exception e) {
 			System.out.println("Camera failed to instantiate");
 		}
+
+		m_hatchMech.OpenServo();
 	}
 
 	/**
