@@ -85,8 +85,12 @@ public class RobotMap {
     public static final double HATCH_MECH_ARM_DOWN_MOTOR_SPEED = -0.5;  // Check Speed
     public static final double HATCH_MECH_STOP_MOTOR_SPEED = 0.0;
     // Climber motor speeds
-    public static final double CLIMBER_SPEED_UP = -0.4;      //UPDATE THIS VALUE
-    public static final double CLIMBER_SPEED_DOWN = 0.6;       //UPDATE THIS VALUE
+    public static final double FRONT_CLIMBER_SPEED_UP = -0.3;      //UPDATE THIS VALUE
+    public static final double FRONT_CLIMBER_SPEED_DOWN = 0.8;       //UPDATE THIS VALUE
+    
+    public static final double BACK_CLIMBER_SPEED_UP = -0.3;      //UPDATE THIS VALUE
+    public static final double BACK_CLIMBER_SPEED_DOWN = 0.6;
+
     // Elevator Motor Speed
     public static final double ELEVATOR_MOTOR_SPEED_UP = -0.4;
     public static final double ELEVATOR_MOTOR_SPEED_DOWN = 0.4;

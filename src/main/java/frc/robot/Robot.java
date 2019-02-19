@@ -24,6 +24,7 @@ import frc.robot.NavX;
 import frc.robot.Elevator.State;
 import frc.robot.Elevator;
 import frc.robot.HatchMech;
+import frc.robot.GamePad;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -42,7 +43,7 @@ public class Robot extends TimedRobot {
 
 	// Declares xbox controller for co-pilot
 	// Used for testing, gamepad will be used in comp
-	Controller m_copilotController;
+	GamePad m_copilotController;
 
 	// Declare climbing mechanisms for front and back climbers
 	Climber m_frontClimber;
@@ -71,7 +72,7 @@ public class Robot extends TimedRobot {
 
 		// Instanciates drivetrain, driver controllers, climbers, and elevator
 		m_pilotController = new Controller(RobotMap.PILOT_CONTROLLER_PORT);
-		m_copilotController = new Controller(RobotMap.COPILOT_CONTROLLER_PORT);
+		m_copilotController = new GamePad(RobotMap.COPILOT_CONTROLLER_PORT);
 
 		// Instantiates the front and back climbers with their respective motor and break beam ports
 		m_frontClimber = new Climber(RobotMap.FRONT_CLIMBER_MOTOR_PORT, RobotMap.FRONT_CLIMBER_LIMIT_TOP_PORT, RobotMap.FRONT_CLIMBER_LIMIT_BOTTOM_PORT);
@@ -272,39 +273,28 @@ public class Robot extends TimedRobot {
 		// Follow up: This is no longer quite true. So long as we call the elevator PID
 		// config, the motor will be inverted, thus positive should be up
 
-		// On pilot controlller
-		// Lowers Elevator
-		// A button		
-		if (m_pilotController.getAButton()) {
-			m_elevator.moveRaw(-.4);
-		}
-		// Raises elevator
-		// B button
-		else if (m_pilotController.getBButton()) {
-			m_elevator.moveRaw(.4);
-		}
 		// Sets elevator to hatch level 1 state
 		//X button
-		else if (m_pilotController.getXButton()) {
+		if (m_copilotController.getRawButton(1)) {
 			m_elevator.elevatorPIDDrive(State.HATCH_L1);
 			// m_elevator.moveToPosition(m_pilotController.getXButton() , State.HATCH_L1);
 		}
 		// Sets elevator to hatch level 2 state
 		// Y button
-		else if (m_pilotController.getYButton()) {
+		else if (m_copilotController.getRawButton(2)) {
 			m_elevator.elevatorPIDDrive(State.HATCH_L2);
 			// m_elevator.moveToPosition(m_pilotController.getYButton() , State.HATCH_L2);
 		}
 		// Sets elevator to hatch level 3 state
 		// Right bumper
-		else if (m_pilotController.getBumper(Hand.kRight)) {
+		else if (m_copilotController.getRawButton(3)) {
 			m_elevator.elevatorPIDDrive(State.HATCH_L3);
 			// m_elevator.moveToPosition(m_pilotController.getBumper(Hand.kRight) ,
 			// State.HATCH_L3);
 		}
 		// Sets elevator to level 0 state (starting position / bottom)
 		// Left bumper
-		else if (m_pilotController.getBumper(Hand.kLeft)) {
+		else if (m_copilotController.getRawButton(4)) {
 			m_elevator.elevatorPIDDrive(State.LEVEL_ZERO);
 		}
 		// Sets elevator speed to 0
@@ -316,45 +306,42 @@ public class Robot extends TimedRobot {
 		// Hatch arm controller bound to the copilot controller
 		// Raise the arm on Y button
 		// Lower the arm on X button
-		if (m_copilotController.getYButton()) {
+		if (m_copilotController.getRawButton(9)) {
 			m_hatchMech.ArmUp();
 		}
-		else if (m_copilotController.getXButton()) {
+		else if (m_copilotController.getRawButton(10)) {
 			 m_hatchMech.ArmDown();
 		}
 		else {
 			m_hatchMech.setArm(0.0);
 		}
 
-		//*/
 
 		// On copilot controller
-		/*
+		
 		// Raises both climbers at once
 		// Back button
-		if (m_copilotController.getBackButton()) {
-			m_frontClimber.raiseClimber();
-			m_backClimber.raiseClimber();
+		if (m_pilotController.getBButton()) {
+			m_frontClimber.raiseClimber(RobotMap.FRONT_CLIMBER_SPEED_UP);
+			m_backClimber.raiseClimber(RobotMap.BACK_CLIMBER_SPEED_UP);
 		}
 		// Lowers both climbers at once
 		// Start button
-		else if (m_copilotController.getStartButton()) {
-			m_frontClimber.lowerClimber();
-			m_backClimber.lowerClimber();
+		else if (m_pilotController.getAButton()) {
+			m_frontClimber.lowerClimber(RobotMap.FRONT_CLIMBER_SPEED_DOWN);
+			m_backClimber.lowerClimber(RobotMap.BACK_CLIMBER_SPEED_DOWN);
 		}
 		// Otherwise takes commands for seperate control
 		else {
-		*/
-		/*
 			// Raises the front climber
-			// A button
-			if (m_copilotController.getAButton()) {
-				m_frontClimber.setClimber(-0.4);
+			// X button
+			if (m_pilotController.getXButton()) {
+				m_frontClimber.setClimber(-0.3);
 			}
 			// Lowers front climber
-			// B button
-			else if (m_copilotController.getBButton()) {
-				m_frontClimber.setClimber(1.0);
+			// Y button
+			else if (m_pilotController.getYButton()) {
+				m_frontClimber.setClimber(0.8);
 			}
 			// Sets front climber speed to 0
 			// No buttons
@@ -363,31 +350,31 @@ public class Robot extends TimedRobot {
 			}
 
 			// Raises back climber
-			// X button
-			if (m_copilotController.getXButton()) {
-				m_backClimber.setClimber(-0.4);
+			// LBump button
+			if (m_pilotController.getBumper(Hand.kLeft)) {
+				m_backClimber.setClimber(-0.3);
 			}
 			// Lowers back climber
-			// Y button
-			else if (m_copilotController.getYButton()) {
-				m_backClimber.setClimber(0.9);
+			// RBump button
+			else if (m_pilotController.getBumper(Hand.kRight)) {
+				m_backClimber.setClimber(0.6);
 			}
 			// Sets back climber speed to 0
 			// Not buttons
 			else {
 				m_backClimber.setClimber(0.0);
 			}
-		/*
+		
 		}
-		//*/
+		
 		
 		// Arm servo controls bound to copilot controller
 		// On A button released, open
 		// On B button released, close
-		if (m_copilotController.getAButtonReleased()){
+		if (m_copilotController.getOpenHatchReleased()){
 			m_hatchMech.OpenServo();
 		}
-		else if(m_copilotController.getBButtonReleased()){
+		else if(m_copilotController.getCloseHatchReleased()){
 			m_hatchMech.CloseServo();
 		}
 		
