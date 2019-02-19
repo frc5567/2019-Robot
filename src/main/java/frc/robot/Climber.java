@@ -50,4 +50,22 @@ public class Climber {
     public void setClimber(double input) {
         m_climberMotor.set(input);
     }
+
+    /**
+     * Used to get the status of the top break beam.
+     * 
+     * @return True if the top break beam is closed.
+     */
+    public boolean getTopLimitSwitch(){
+        return m_topLimitSwitch.get();
+    }
+
+    /**
+     * Used to get the status of the bottom break beam.
+     * 
+     * @return True if the bottim break beam is closed.
+     */
+    public boolean getBottomLimitSwitch(){
+        return m_bottomLimitSwitch.get();
+    }
 }
