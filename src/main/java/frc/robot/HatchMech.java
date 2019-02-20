@@ -35,7 +35,7 @@ public class HatchMech{
     /**
      * Creates method for opening servo, and sets relative posisition.
      */
-    public void OpenServo(){
+    public void openServo(){
         //Double check on degrees and see if servo is the right type.
         m_servo.setPosition(RobotMap.HATCH_MECH_OPEN_SERVO_POSITION);
     }
@@ -43,21 +43,21 @@ public class HatchMech{
     /**
      * Creates method for closing servo and sets relative position.
      *  */
-    public void CloseServo(){
+    public void closeServo(){
         m_servo.setPosition(RobotMap.HATCH_MECH_CLOSE_SERVO_POSITION);
     }
  
     /**
      * Creates method for switching between closed and opened servo. To do this a boolean is used to make a toggle button.
-     * @param button
+     * @param button 
      */
-    public void SwitchServo(boolean button){
+    public void switchServo(boolean button){
         if (button){
             if (m_servo.getAngle()==RobotMap.HATCH_MECH_OPEN_SERVO_POSITION){   
-                CloseServo();
+                closeServo();
             }
             else{
-                OpenServo();
+                openServo();
             }
         }
     }
@@ -65,7 +65,7 @@ public class HatchMech{
     /**
      * Raises the Hatch Mech arm to its high position when called
      */
-    public void ArmUp(){
+    public void armUp(){
        /* 
        if (m_hatchMechEncoder.get() >= RobotMap.HATCH_MECH_UP_MOTOR_POSITION) {
             m_hatchArmMotor.set(RobotMap.HATCH_MECH_ARM_UP_MOTOR_SPEED);
@@ -80,9 +80,9 @@ public class HatchMech{
     /**
      * Lowers the Hatch Mech arm to its low arm when called
      */
-    public void ArmDown(){
-       /*
-       if (m_hatchMechEncoder.get() <= RobotMap.HATCH_MECH_DOWN_MOTOR_POSITION) {
+    public void armDown(){
+        /*
+        if (m_hatchMechEncoder.get() <= RobotMap.HATCH_MECH_DOWN_MOTOR_POSITION) {
             m_hatchArmMotor.set(RobotMap.HATCH_MECH_ARM_DOWN_MOTOR_SPEED);                            
         }
         else {
@@ -93,8 +93,8 @@ public class HatchMech{
     }
 
     /**
-     * Sets the hatch arm motor to the passed in speed
-     * @param input The desired speed output [1.0 ~ 1.0]
+     * Sets the arm to a passed in input
+     * @param input The analog input for the hatch arm [-1.0 ~ 1.0]
      */
     public void setArm(double input) {
         m_hatchArmMotor.set(input);

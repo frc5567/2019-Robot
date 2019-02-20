@@ -1,5 +1,6 @@
 package frc.robot;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import edu.wpi.first.wpilibj.DigitalInput;
 
@@ -48,7 +49,7 @@ public class Climber {
     }
 
     public void setClimber(double input) {
-        m_climberMotor.set(input);
+        m_climberMotor.set(ControlMode.PercentOutput, input);
     }
 
     /**
