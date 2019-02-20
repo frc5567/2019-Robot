@@ -27,9 +27,9 @@ public class Climber {
      * Raises climber at a constant speed while button is pressed and the limit switch is not reached
      * (Button to be determined later).
      */
-    public void raiseClimber() {
+    public void raiseClimber(double speed) {
         if(!m_bottomLimitSwitch.get()) {
-            m_climberMotor.set(RobotMap.CLIMBER_SPEED_UP);
+            m_climberMotor.set(speed);
         }
         else{
             m_climberMotor.set(0.0);
@@ -39,9 +39,9 @@ public class Climber {
     /**
      * Lowers climber at a constant speed when button is pressed (Button to be determined later).
      */
-    public void lowerClimber(){
+    public void lowerClimber(double speed){
         if(!m_topLimitSwitch.get()){
-            m_climberMotor.set(RobotMap.CLIMBER_SPEED_DOWN);
+            m_climberMotor.set(speed);
         }
         else{
             m_climberMotor.set(0.0);
