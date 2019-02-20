@@ -240,45 +240,8 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void testPeriodic() {
-		/*
-		if (m_pilotController.getBButton()) {
-			liftDriveMotor.set(0.4);
-		}
-		else {
-			liftDriveMotor.set(0.0);
-		}
-		*/
-		/*
-		if (m_pilotController.getYButton()) {
-			m_frontClimber.setClimber(-0.6);
-			//m_frontClimber.raiseClimber();
-			m_backClimber.raiseClimber();
-		}
-		// Lowers both climbers at once
-		// Start button
-		else if (m_pilotController.getAButton()) {
-			m_frontClimber.setClimber(0.2);
-			//m_frontClimber.lowerClimber();
-			m_backClimber.lowerClimber();
-		}
-		else {
-			m_frontClimber.setClimber(0.0);
-			m_backClimber.setClimber(0.0);
-		}
-		*/
-		m_drivetrain.talonArcadeDrive(m_pilotController.getRightTrigger() - m_pilotController.getRightTrigger(), m_pilotController.getLeftStickX());
-		
-		// Zeros yaw if 'A' is pressed, and adds 180 degree offset if 'B' is pressed
-		// if (m_pilotController.getAButtonReleased()) {
-		// m_ahrs.zeroYaw();
-		// }
-		// if (m_pilotController.getBButtonReleased()) {
-		// m_ahrs.flipOffset();
-		// }
 
-		// Prints yaw and if offset is applied to console
-		// System.out.println(m_ahrs.getOffsetYaw() + "\t\t" +
-		// m_ahrs.getOffsetStatus());
+		m_drivetrain.talonArcadeDrive(m_pilotController.getRightTrigger() - m_pilotController.getRightTrigger(), m_pilotController.getLeftStickX());
 
 		// [NOTE] Negative power moves the elevator up, but the encoder will still tic
 		// positive. This is due to the way the string is wound on the winch
@@ -348,12 +311,12 @@ public class Robot extends TimedRobot {
 			// Raises the front climber
 			// X button
 			if (m_pilotController.getXButton()) {
-				m_frontClimber.setClimber(-0.3);
+				m_frontClimber.raiseClimber(RobotMap.FRONT_CLIMBER_SPEED_UP);
 			}
 			// Lowers front climber
 			// Y button
 			else if (m_pilotController.getYButton()) {
-				m_frontClimber.setClimber(0.8);
+				m_frontClimber.lowerClimber(RobotMap.FRONT_CLIMBER_SPEED_DOWN);
 			}
 			// Sets front climber speed to 0
 			// No buttons
@@ -364,12 +327,12 @@ public class Robot extends TimedRobot {
 			// Raises back climber
 			// LBump button
 			if (m_pilotController.getBumper(Hand.kLeft)) {
-				m_backClimber.setClimber(-0.3);
+				m_backClimber.raiseClimber(RobotMap.BACK_CLIMBER_SPEED_UP);
 			}
 			// Lowers back climber
 			// RBump button
 			else if (m_pilotController.getBumper(Hand.kRight)) {
-				m_backClimber.setClimber(0.6);
+				m_backClimber.lowerClimber(RobotMap.BACK_CLIMBER_SPEED_DOWN);
 			}
 			// Sets back climber speed to 0
 			// Not buttons
