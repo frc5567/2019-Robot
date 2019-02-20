@@ -24,6 +24,8 @@ import frc.robot.NavX;
 import frc.robot.Elevator.State;
 import frc.robot.Elevator;
 import frc.robot.HatchMech;
+import frc.robot.AutoCommands;
+import frc.robot.TeleopCommands;
 import frc.robot.GamePad;
 
 /**
@@ -41,9 +43,7 @@ public class Robot extends TimedRobot {
 	// Declare Pilot XBox Controller
 	Controller m_pilotController;
 
-	// Declares xbox controller for co-pilot
-	// Used for testing, gamepad will be used in comp
-	GamePad m_copilotController;
+	GamePad m_copilotGamepad;
 
 	// Declare climbing mechanisms for front and back climbers
 	Climber m_frontClimber;
@@ -56,7 +56,9 @@ public class Robot extends TimedRobot {
 	Elevator m_elevator;
 
 	// Declare Auto Commands class for auto and auto assist commands
-	AutoCommands autoCommands;
+	AutoCommands m_autoCommands;
+	// Declare Teleop commands for pilot controller methods
+	TeleopCommands m_teleopCommands;
 
 	// Declare Dashboard and Dashboard data bus
 	DashboardData m_dataStream;
@@ -72,7 +74,10 @@ public class Robot extends TimedRobot {
 
 		// Instanciates drivetrain, driver controllers, climbers, and elevator
 		m_pilotController = new Controller(RobotMap.PILOT_CONTROLLER_PORT);
-		m_copilotController = new GamePad(RobotMap.COPILOT_CONTROLLER_PORT);
+
+		m_elevator = new Elevator();
+		
+		m_copilotGamepad = new GamePad(RobotMap.COPILOT_CONTROLLER_PORT);
 
 		// Instantiates the front and back climbers with their respective motor and break beam ports
 		m_frontClimber = new Climber(RobotMap.FRONT_CLIMBER_MOTOR_PORT, RobotMap.FRONT_CLIMBER_LIMIT_TOP_PORT, RobotMap.FRONT_CLIMBER_LIMIT_BOTTOM_PORT);
@@ -94,7 +99,7 @@ public class Robot extends TimedRobot {
 		} catch (RuntimeException ex) {
 			System.out.println("Error instantiating navX MXP");
 		}
-		
+
 		m_drivetrain = new Drivetrain(m_ahrs);
 
 		// This requires the arduino to be plugged in, otherwise, it will fail
@@ -107,8 +112,8 @@ public class Robot extends TimedRobot {
 		// Runs config for the PID system on the drivetrain
 		m_drivetrain.talonDriveConfig();
 
-		autoCommands = new AutoCommands(m_drivetrain, m_ahrs, m_elevator, m_frontClimber, m_backClimber);
-
+		m_autoCommands = new AutoCommands(m_drivetrain, m_ahrs, m_elevator, m_frontClimber, m_backClimber);
+		m_teleopCommands = new TeleopCommands(m_pilotController, m_copilotGamepad, m_drivetrain, m_elevator, m_frontClimber, m_backClimber, m_hatchMech);
 	}
 
 	/**
@@ -127,7 +132,7 @@ public class Robot extends TimedRobot {
 			System.out.println("Camera failed to instantiate");
 		}
 
-		m_hatchMech.OpenServo();
+		m_hatchMech.openServo();
 	}
 
 	/**
@@ -184,6 +189,13 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
+
+		m_teleopCommands.teleopModeCommands();
+
+		// Test drivetrain included, uses Left stick Y for speed, Right stick X for
+		// turning, quick turn is auto-enabled at low speed
+
+
 		// PID based sample talon arcade drive
 		m_drivetrain.talonArcadeDrive(m_pilotController.getRightTrigger() - m_pilotController.getLeftTrigger(), m_pilotController.getLeftStickX());
 
@@ -275,26 +287,26 @@ public class Robot extends TimedRobot {
 
 		// Sets elevator to hatch level 1 state
 		//X button
-		if (m_copilotController.getRawButton(1)) {
+		if (m_copilotGamepad.getLowHatchCargo()) {
 			m_elevator.elevatorPIDDrive(State.HATCH_L1);
 			// m_elevator.moveToPosition(m_pilotController.getXButton() , State.HATCH_L1);
 		}
 		// Sets elevator to hatch level 2 state
 		// Y button
-		else if (m_copilotController.getRawButton(2)) {
+		else if (m_copilotGamepad.getMediumHatchCargo()) {
 			m_elevator.elevatorPIDDrive(State.HATCH_L2);
 			// m_elevator.moveToPosition(m_pilotController.getYButton() , State.HATCH_L2);
 		}
 		// Sets elevator to hatch level 3 state
 		// Right bumper
-		else if (m_copilotController.getRawButton(3)) {
+		else if (m_copilotGamepad.getHighHatchCargo()) {
 			m_elevator.elevatorPIDDrive(State.HATCH_L3);
 			// m_elevator.moveToPosition(m_pilotController.getBumper(Hand.kRight) ,
 			// State.HATCH_L3);
 		}
 		// Sets elevator to level 0 state (starting position / bottom)
 		// Left bumper
-		else if (m_copilotController.getRawButton(4)) {
+		else if (m_copilotGamepad.getPickupHatchCargo()) {
 			m_elevator.elevatorPIDDrive(State.LEVEL_ZERO);
 		}
 		// Sets elevator speed to 0
@@ -306,11 +318,11 @@ public class Robot extends TimedRobot {
 		// Hatch arm controller bound to the copilot controller
 		// Raise the arm on Y button
 		// Lower the arm on X button
-		if (m_copilotController.getRawButton(9)) {
-			m_hatchMech.ArmUp();
+		if (m_copilotGamepad.getLiftHatchArm()) {
+			m_hatchMech.armUp();
 		}
-		else if (m_copilotController.getRawButton(10)) {
-			 m_hatchMech.ArmDown();
+		else if (m_copilotGamepad.getDropHatchArm()) {
+			 m_hatchMech.armDown();
 		}
 		else {
 			m_hatchMech.setArm(0.0);
@@ -371,11 +383,11 @@ public class Robot extends TimedRobot {
 		// Arm servo controls bound to copilot controller
 		// On A button released, open
 		// On B button released, close
-		if (m_copilotController.getOpenHatchReleased()){
-			m_hatchMech.OpenServo();
+		if (m_copilotGamepad.getOpenHatchReleased()){
+			m_hatchMech.openServo();
 		}
-		else if(m_copilotController.getCloseHatchReleased()){
-			m_hatchMech.CloseServo();
+		else if(m_copilotGamepad.getCloseHatchReleased()){
+			m_hatchMech.closeServo();
 		}
 		
 		System.out.print("Left Ultrasonics: \t" + m_drivetrain.getLeftUltra().getRangeInches());
