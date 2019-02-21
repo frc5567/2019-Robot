@@ -191,11 +191,11 @@ void sendData(char command)
 	{
 		Serial.println(lowPosition);
     
-    Serial.print("Block 1 Area: ");
-    Serial.print(block1Area);
-    Serial.print("\t");
-    Serial.print("Block 2 Area: ");
-    Serial.println(block2Area);
+//    Serial.print("Block 1 Area: ");
+//    Serial.print(block1Area);
+//    Serial.print("\t");
+//    Serial.print("Block 2 Area: ");
+//    Serial.println(block2Area);
 	}
 }
 
