@@ -50,7 +50,7 @@ public class Robot extends TimedRobot {
 	Climber m_backClimber;
 
 	// Declare NavX
-	NavX m_ahrs;
+	NavX m_gyro;
 
 	// Declares Elevator
 	Elevator m_elevator;
@@ -91,16 +91,16 @@ public class Robot extends TimedRobot {
 		m_hatchMech = new HatchMech();
 
 		try {
-			m_ahrs = new NavX(SPI.Port.kMXP);
+			m_gyro = new NavX(SPI.Port.kMXP);
 		} catch (RuntimeException ex) {
 			System.out.println("Error instantiating navX MXP");
 		}
 
-		m_drivetrain = new Drivetrain(m_ahrs);
+		m_drivetrain = new Drivetrain(m_gyro);
 
 		// This requires the arduino to be plugged in, otherwise, it will fail
 		try {
-			m_pather = new Pathing(m_drivetrain, m_ahrs);
+			m_pather = new Pathing(m_drivetrain, m_gyro);
 		} catch (Exception e) {
 			System.out.println("Pather failed to instantiate");
 		}
@@ -108,7 +108,7 @@ public class Robot extends TimedRobot {
 		// Runs config for the PID system on the drivetrain
 		m_drivetrain.talonDriveConfig();
 
-		m_autoCommands = new AutoCommands(m_drivetrain, m_ahrs, m_elevator, m_frontClimber, m_backClimber);
+		m_autoCommands = new AutoCommands(m_drivetrain, m_gyro, m_elevator, m_frontClimber, m_backClimber);
 		m_teleopCommands = new TeleopCommands(m_pilotController, m_copilotGamepad, m_drivetrain, m_elevator, m_frontClimber, m_backClimber, m_hatchMech);
 	}
 
@@ -208,10 +208,10 @@ public class Robot extends TimedRobot {
 		}
 		
 		if (m_pilotController.getAButtonReleased()) {
-			m_ahrs.zeroYaw();
+			m_gyro.zeroYaw();
 		}
 		if (m_pilotController.getBButtonReleased()) {
-			m_ahrs.flipOffset();
+			m_gyro.flipOffset();
 		}
 		if (m_pilotController.getBumper(Hand.kRight)) {
 			m_pather.resetFlags();
@@ -220,7 +220,7 @@ public class Robot extends TimedRobot {
 		m_pilotController.setRumble(RumbleType.kRightRumble, 0);
 
 		// Prints yaw and if offset is applied to console
-		System.out.println(m_ahrs.getOffsetYaw() + "\t\t" + m_ahrs.getOffsetStatus());
+		System.out.println(m_gyro.getOffsetYaw() + "\t\t" + m_gyro.getOffsetStatus());
 	}
 
 	/**

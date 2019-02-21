@@ -30,7 +30,7 @@ import edu.wpi.first.wpilibj.Ultrasonic.Unit;
  */
 public class Drivetrain implements PIDOutput {
     // Declares NavX for rotation control
-    private NavX m_ahrs;
+    private NavX m_gyro;
 
     // Declares turn control PID
     PIDController m_rotController;
@@ -110,7 +110,7 @@ public class Drivetrain implements PIDOutput {
         m_currentRotate = 0;
 
         // Instantiates the NavX
-        m_ahrs = ahrs;
+        m_gyro = ahrs;
 
         // Instantiates the Ultrasonics
         ultraLeft = new Ultrasonic(1, 0);
@@ -123,7 +123,7 @@ public class Drivetrain implements PIDOutput {
         ultraRight.setDistanceUnits(Unit.kInches);
         
         // Initializes rotate PID controller with the PIDF constants, the ahrs, the PID output, and the loop time (s)
-        m_rotController = new PIDController(RobotMap.P_ROTATE_CONTROLLER, RobotMap.I_ROTATE_CONTROLLER, RobotMap.D_ROTATE_CONTROLLER, RobotMap.F_ROTATE_CONTROLLER, m_ahrs, this, 0.02);
+        m_rotController = new PIDController(RobotMap.P_ROTATE_CONTROLLER, RobotMap.I_ROTATE_CONTROLLER, RobotMap.D_ROTATE_CONTROLLER, RobotMap.F_ROTATE_CONTROLLER, m_gyro, this, 0.02);
         m_rotController.setInputRange(-180.00f, 180.00f);
         // These values are temporary and need to be changed based on testing
         m_rotController.setOutputRange(-0.5, 0.5);
@@ -235,10 +235,10 @@ public class Drivetrain implements PIDOutput {
         // Sets our rotate speed to the return of the PID
         double returnedRotate = m_rotController.get();
         Timer.delay(0.05);
-        
+
         // Runs the drivetrain with 0 speed and the rotate speed set by the PID
         System.out.println("target angle: \t" + targetAngle);
-        System.out.println("current angle: \t" + m_ahrs.getYaw());
+        System.out.println("current angle: \t" + m_gyro.getYaw());
         talonArcadeDrive(0, returnedRotate);
 
         // Checks to see if the the PID is finished or close enough

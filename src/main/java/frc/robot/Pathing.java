@@ -43,7 +43,7 @@ public class Pathing {
     private final double AUTO_SPEED = 0.3;
 
     // Declare NavX
-    NavX m_ahrs;
+    NavX m_gyro;
     
     // Declares a drivetrain to use in the auto movement
     Drivetrain m_drivetrain;
@@ -61,7 +61,7 @@ public class Pathing {
         // Instantiates the drivetrain with the drivetrain passed in
         m_drivetrain = drivetrain;
         // Instantiates the navx with the passed in ahrs
-        m_ahrs = ahrs;
+        m_gyro = ahrs;
 
         // Configs the talon PIDs
         m_drivetrain.talonDriveConfig();
@@ -160,7 +160,7 @@ public class Pathing {
                 System.out.println("No target found");
             }
             else if (!m_degToTarget.isNaN()) {
-                m_startingDegrees = m_ahrs.getYaw();
+                m_startingDegrees = m_gyro.getYaw();
                 m_absoluteDegToTarget = m_startingDegrees + m_degToTarget;
                 m_foundTarget = true;
             }
@@ -168,7 +168,7 @@ public class Pathing {
         }
         else {
             // Returns true if the drive is finished
-            System.out.println("Current Angle : \t" + m_ahrs.getYaw());
+            System.out.println("Current Angle : \t" + m_gyro.getYaw());
             System.out.println("Target Angle: \t" + m_absoluteDegToTarget);
             System.out.println("PIDOutput: \t" + m_drivetrain.m_rotController.get());
             m_drivetrain.rotateToAngle(m_absoluteDegToTarget);
@@ -246,7 +246,7 @@ public class Pathing {
      */
     private boolean rotLowTarget() {
         System.out.println("target angle: \t" + m_absoluteDegToTarget);
-        System.out.println("current angle: \t" + m_ahrs.getYaw());
+        System.out.println("current angle: \t" + m_gyro.getYaw());
         if(!m_foundLowTarget) {
             // Assigns the target if there is no previous valid target
             m_degToTarget = m_duinoToRio.getAngleToCenter();
@@ -254,7 +254,7 @@ public class Pathing {
             // If the target is a valid number, assigns necesary target variables
             if(!m_degToTarget.isNaN()) {
                 System.out.println("Found Target");
-                m_startingDegrees = m_ahrs.getYaw();
+                m_startingDegrees = m_gyro.getYaw();
                 m_absoluteDegToTarget = m_startingDegrees - m_degToTarget;
                 m_foundLowTarget = true;
             }
