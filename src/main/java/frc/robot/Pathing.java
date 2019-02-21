@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Timer;
 
 /**
- * This class is what will drive the robot 
+ * This class is what will drive the robot in automated pathing calls
  * @author Josh Overbeek
  * @version Week 6 Pre-comp
  */
