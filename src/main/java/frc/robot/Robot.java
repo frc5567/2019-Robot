@@ -68,8 +68,6 @@ public class Robot extends TimedRobot {
 	UsbCamera camera;
 	HatchMech m_hatchMech;
 
-	WPI_VictorSPX liftDriveMotor;
-
 	Robot() {
 
 		// Instanciates drivetrain, driver controllers, climbers, and elevator
@@ -92,8 +90,6 @@ public class Robot extends TimedRobot {
 		// Instantiates hatch arm class 
 		m_hatchMech = new HatchMech();
 
-		liftDriveMotor = new WPI_VictorSPX(16);
-		
 		try {
 			m_ahrs = new NavX(SPI.Port.kMXP);
 		} catch (RuntimeException ex) {
