@@ -104,6 +104,9 @@ public class RobotMap {
     public static final double TOLERANCE_ROTATE_CONTROLLER = 2;
     public static final double FINISHED_PID_THRESHOLD = 0.15;
 
+    // Constants for calculating drive distance
+    public static final double DRIVE_TICS_PER_INCH = 4096 / (6*RobotMap.PI);
+
     // Stolen constants for sample code
 
     /**

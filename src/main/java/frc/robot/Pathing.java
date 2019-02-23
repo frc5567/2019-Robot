@@ -39,7 +39,6 @@ public class Pathing {
     private DuinoCommStorage m_pkt;
     
     // Constants for calculating drive distance
-    public static final double DRIVE_TICS_PER_INCH = 4096 / (6*RobotMap.PI);
     private final double AUTO_SPEED = 0.3;
 
     // Declare NavX
@@ -141,7 +140,7 @@ public class Pathing {
      * @return Returns the resultant tips
      */
     private double inToTics(double inches) {
-         return inches*DRIVE_TICS_PER_INCH;
+         return inches*RobotMap.DRIVE_TICS_PER_INCH;
     }
 
     /**
@@ -224,7 +223,7 @@ public class Pathing {
     /**
      * Helper method that checks if the robot can see the low target
      * @return Returns whether the method is finished (True if it is)
-     */
+     */  
     private boolean checkForLowTarget() {
         if(m_duinoToRio.getLowPosition() == -1) {
             // Returns false if the value returned is the known "No Target" value
