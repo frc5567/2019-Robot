@@ -68,6 +68,9 @@ public class Robot extends TimedRobot {
 	UsbCamera camera;
 	HatchMech m_hatchMech;
 
+	// Declare the continuous command sequence
+	ContinuousCommand testContinuousCommand;
+
 	Robot() {
 
 		// Instanciates drivetrain, driver controllers, climbers, and elevator
@@ -110,6 +113,7 @@ public class Robot extends TimedRobot {
 
 		m_autoCommands = new AutoCommands(m_drivetrain, m_gyro, m_elevator, m_frontClimber, m_backClimber);
 		m_teleopCommands = new TeleopCommands(m_pilotController, m_copilotGamepad, m_drivetrain, m_elevator, m_frontClimber, m_backClimber, m_hatchMech);
+		testContinuousCommand = new ContinuousCommand(m_drivetrain, m_gyro);
 	}
 
 	/**
@@ -236,7 +240,8 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void testPeriodic() {
-
+		testContinuousCommand.loop(m_pilotController.getStartButtonReleased());
+		
 		m_drivetrain.talonArcadeDrive(m_pilotController.getRightTrigger() - m_pilotController.getRightTrigger(), m_pilotController.getLeftStickX());
 
 		// [NOTE] Negative power moves the elevator up, but the encoder will still tic
