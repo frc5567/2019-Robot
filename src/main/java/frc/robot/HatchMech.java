@@ -25,17 +25,17 @@ public class HatchMech{
         m_servo = new Servo(RobotMap.HATCH_MECH_SERVO_PORT);
 
         //This defines the limit switches as new digital inputs.
-        m_limitSwitchTop = new DigitalInput(RobotMap.HATCH_MECH_LIMIT_TOP_PORT);
-        m_limitSwitchBottom = new DigitalInput(RobotMap.HATCH_MECH_LIMIT_BOTTOM_PORT);
-
-        m_hatchMechEncoder = new Encoder(RobotMap.HATCH_MECH_ENCODER_A, RobotMap.HATCH_MECH_ENCODER_B, false, Encoder.EncodingType.k4X);
-        m_hatchMechEncoder.reset();
+        //m_limitSwitchTop = new DigitalInput(RobotMap.HATCH_MECH_LIMIT_TOP_PORT);
+        //m_limitSwitchBottom = new DigitalInput(RobotMap.HATCH_MECH_LIMIT_BOTTOM_PORT);
+        m_hatchArmMotor = new WPI_VictorSPX(RobotMap.HATCH_MECH_MOTOR_PORT);
+//        m_hatchMechEncoder = new Encoder(RobotMap.HATCH_MECH_ENCODER_A, RobotMap.HATCH_MECH_ENCODER_B, false, Encoder.EncodingType.k4X);
+//        m_hatchMechEncoder.reset();
     }
 
     /**
      * Creates method for opening servo, and sets relative posisition.
      */
-    public void OpenServo(){
+    public void openServo(){
         //Double check on degrees and see if servo is the right type.
         m_servo.setPosition(RobotMap.HATCH_MECH_OPEN_SERVO_POSITION);
     }
@@ -43,21 +43,21 @@ public class HatchMech{
     /**
      * Creates method for closing servo and sets relative position.
      *  */
-    public void CloseServo(){
+    public void closeServo(){
         m_servo.setPosition(RobotMap.HATCH_MECH_CLOSE_SERVO_POSITION);
     }
  
     /**
      * Creates method for switching between closed and opened servo. To do this a boolean is used to make a toggle button.
-     * @param button
+     * @param button 
      */
-    public void SwitchServo(boolean button){
+    public void switchServo(boolean button){
         if (button){
             if (m_servo.getAngle()==RobotMap.HATCH_MECH_OPEN_SERVO_POSITION){   
-                CloseServo();
+                closeServo();
             }
             else{
-                OpenServo();
+                openServo();
             }
         }
     }
@@ -65,25 +65,38 @@ public class HatchMech{
     /**
      * Raises the Hatch Mech arm to its high position when called
      */
-    public void ArmUp(){
-        if (m_hatchMechEncoder.get() >= RobotMap.HATCH_MECH_UP_MOTOR_POSITION) {
+    public void armUp(){
+       /* 
+       if (m_hatchMechEncoder.get() >= RobotMap.HATCH_MECH_UP_MOTOR_POSITION) {
             m_hatchArmMotor.set(RobotMap.HATCH_MECH_ARM_UP_MOTOR_SPEED);
         }
         else {
             m_hatchArmMotor.set(RobotMap.HATCH_MECH_STOP_MOTOR_SPEED);
         }
-                               
+        */
+        m_hatchArmMotor.set(RobotMap.HATCH_MECH_ARM_UP_MOTOR_SPEED);                       
     }
    
     /**
      * Lowers the Hatch Mech arm to its low arm when called
      */
-    public void ArmDown(){
+    public void armDown(){
+        /*
         if (m_hatchMechEncoder.get() <= RobotMap.HATCH_MECH_DOWN_MOTOR_POSITION) {
             m_hatchArmMotor.set(RobotMap.HATCH_MECH_ARM_DOWN_MOTOR_SPEED);                            
         }
         else {
             m_hatchArmMotor.set(RobotMap.HATCH_MECH_STOP_MOTOR_SPEED);
         }
+        */
+        m_hatchArmMotor.set(RobotMap.HATCH_MECH_ARM_DOWN_MOTOR_SPEED);
+    }
+
+    /**
+     * Sets the arm to a passed in input
+     * @param input The analog input for the hatch arm [-1.0 ~ 1.0]
+     */
+    public void setArm(double input) {
+        m_hatchArmMotor.set(input);
     }
 }
