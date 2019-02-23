@@ -44,6 +44,8 @@ public class RobotMap {
     public static final int MASTER_RIGHT_DRIVE_MOTOR_PORT = 1;
     // Elevator
     public static final int ELEVATOR_MOTOR_PORT = 3;
+    //Climber back motor
+    public static final int CLIMBER_DRIVE_MOTOR_PORT = 16;
 
 	// PWM motor controller port numbers
 	// Climber
@@ -94,6 +96,9 @@ public class RobotMap {
     // Elevator Motor Speed
     public static final double ELEVATOR_MOTOR_SPEED_UP = -0.4;
     public static final double ELEVATOR_MOTOR_SPEED_DOWN = 0.4;
+    // Climber back motor speed settings
+    public static final double CLIMBER_DRIVE_SPEED_FOREWARD = 0.4;
+    public static final double CLIMBER_DRIVE_SPEED_BACKWARD = -0.4;
 
     // PID Controller
     // Rotate Controller
