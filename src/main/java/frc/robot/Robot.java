@@ -201,7 +201,7 @@ public class Robot extends TimedRobot {
 			}
 		}
 		else if (m_pilotController.getXButton()) {
-			m_pather.secondHalfPath();
+			m_drivetrain.rotateDriveAngle(10, Double.MAX_VALUE);
 		}
 		else {
 			// PID based sample talon arcade drive
@@ -221,7 +221,7 @@ public class Robot extends TimedRobot {
 		m_pilotController.setRumble(RumbleType.kRightRumble, 0);
 
 		// Prints yaw and if offset is applied to console
-		System.out.println(m_gyro.getOffsetYaw() + "\t\t" + m_gyro.getOffsetStatus());
+		// System.out.println(m_gyro.getOffsetYaw() + "\t\t" + m_gyro.getOffsetStatus());
 	}
 
 	/**

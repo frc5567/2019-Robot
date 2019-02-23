@@ -66,7 +66,9 @@ public class DuinoToRioComms {
 
         //  Calls pixyRead with the command 3 to get angle to center and assign it to return variable
         angleToCenter = pixyRead(GET_ANGLE_TO_CENTER);
-
+        if (angleToCenter == -460.82) {
+            angleToCenter = Double.NaN;
+        }
         return angleToCenter;
     }
 

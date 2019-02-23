@@ -36,7 +36,7 @@ public class Pathing {
     private boolean breakFlag = true;
 
 	// Declare our duino communication port
-	private DuinoToRioComms m_duinoToRio;
+	DuinoToRioComms m_duinoToRio;
     private DuinoCommStorage m_pkt;
     
     // Constants for calculating drive distance
@@ -110,7 +110,7 @@ public class Pathing {
         }
     }
 
-    public boolean secondHalfPath () {
+    public boolean secondHalfPath() {
         if (!m_lowTargetFound) {
             System.out.println("low target found");
             m_lowTargetFound = checkForLowTarget();
@@ -247,23 +247,32 @@ public class Pathing {
     private boolean rotLowTarget() {
         System.out.println("target angle: \t" + m_absoluteDegToTarget);
         System.out.println("current angle: \t" + m_gyro.getYaw());
-        if(!m_foundLowTarget) {
-            // Assigns the target if there is no previous valid target
-            m_degToTarget = m_duinoToRio.getAngleToCenter();
-            System.out.println("Looking for target");
-            // If the target is a valid number, assigns necesary target variables
-            if(!m_degToTarget.isNaN()) {
-                System.out.println("Found Target");
-                m_startingDegrees = m_gyro.getYaw();
-                m_absoluteDegToTarget = m_startingDegrees - m_degToTarget;
-                m_foundLowTarget = true;
-            }
-            return false;
+        // Assigns the target if there is no previous valid target
+        m_angleToCenter = m_duinoToRio.getAngleToCenter();
+        System.out.println("Looking for target");
+        // If the target is a valid number, assigns necesary target variables
+        if(!m_angleToCenter.isNaN()) {
+            System.out.println("Found Target");
+            m_startingDegrees = m_gyro.getYaw();
+            m_absoluteDegToTarget = m_startingDegrees - m_angleToCenter;
         }
-        else {
-//            Timer.delay(0.1);
+        
+        // if (!m_angleToCenter.isNaN() && Math.abs(m_angleToCenter) > 30){
+        //     // Timer.delay(0.1);
+        //     // Rotates until the method says that its done
+        //     if ((m_drivetrain.rotateToAngle(m_absoluteDegToTarget))) {
+        //         System.out.println("Done Rotating");
+        //         return true;
+        //     }
+        //     else {
+        //         System.out.println("Rotating");
+        //         return false;
+        //     }
+        // }
+        if (!m_angleToCenter.isNaN()) {
+            // Timer.delay(0.1);
             // Rotates until the method says that its done
-            if ((m_drivetrain.rotateToAngle(m_absoluteDegToTarget))) {
+            if (m_drivetrain.rotateDriveAngle(m_absoluteDegToTarget, m_duinoToRio.getAverageArea())) {
                 System.out.println("Done Rotating");
                 return true;
             }
@@ -271,6 +280,10 @@ public class Pathing {
                 System.out.println("Rotating");
                 return false;
             }
+        }
+        else {
+            m_drivetrain.talonArcadeDrive(0, 0);
+            return false;
         }
     }
 
