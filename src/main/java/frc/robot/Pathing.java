@@ -33,6 +33,7 @@ public class Pathing {
     private boolean m_lowTargetFound = false;
     private boolean m_rotLowTargetFinished = false;
     private boolean m_lowDriveFinished = false;
+    private boolean breakFlag = true;
 
 	// Declare our duino communication port
 	private DuinoToRioComms m_duinoToRio;
@@ -262,13 +263,11 @@ public class Pathing {
         else {
 //            Timer.delay(0.1);
             // Rotates until the method says that its done
-            if ((m_counter > 25) && (m_drivetrain.rotateToAngle(m_absoluteDegToTarget))) {
-                m_counter = 0;
+            if ((m_drivetrain.rotateToAngle(m_absoluteDegToTarget))) {
                 System.out.println("Done Rotating");
                 return true;
             }
             else {
-                m_counter++;
                 System.out.println("Rotating");
                 return false;
             }

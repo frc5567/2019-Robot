@@ -16,7 +16,8 @@ public class DuinoToRioComms {
 	private final char GET_DEG_TO_TARGET = '2';
 	private final char GET_DIST_TO_TARGET = '1';
 	private final char GET_ANGLE_TO_CENTER = '3';
-	private final char GET_LOW_POSITION = '4';
+    private final char GET_LOW_POSITION = '4';
+    private final char GET_AVG_AREA = '5';
 
     /**
      *  Constructor for the commuication class object
@@ -83,6 +84,14 @@ public class DuinoToRioComms {
         return lowPosition;
     }
 
+    public double getAverageArea() {
+        Double averageArea = Double.NaN;
+
+        averageArea = pixyRead(GET_AVG_AREA);
+
+        return averageArea;
+    }
+
     /**
      * Method containing both communication methods
      * @param command The value of the command requested, where 0 requests degreesToTarget, 1 requests dist to target
@@ -130,7 +139,7 @@ public class DuinoToRioComms {
         String sPixyOut = m_duinoPort.readString(6);
 
         //  Checks to see if the passed in command is valid
-        if ( (command != GET_ANGLE_TO_CENTER && command != GET_DEG_TO_TARGET) && (command != GET_DIST_TO_TARGET && command != GET_LOW_POSITION) ){
+        if (command != GET_AVG_AREA && ((command != GET_ANGLE_TO_CENTER && command != GET_DEG_TO_TARGET) && (command != GET_DIST_TO_TARGET && command != GET_LOW_POSITION)) ){
             System.out.println("Invalid Command");
 		}
         else {

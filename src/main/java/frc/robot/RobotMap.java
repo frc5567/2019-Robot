@@ -105,7 +105,7 @@ public class RobotMap {
     public static final double FINISHED_PID_THRESHOLD = 0.15;
 
     // Constants for calculating drive distance
-    public static final double DRIVE_TICS_PER_INCH = 4096 / (6*RobotMap.PI);
+    public static final double DRIVE_TICS_PER_INCH = (4096 / (6*RobotMap.PI));
 
     // Stolen constants for sample code
 
@@ -131,7 +131,7 @@ public class RobotMap {
      * Josh's note: This is referring to the actual robot, which means we need to test with said robot.
      * This cannot be used without that testing
      */
-    public final static int ENCODER_UNITS_PER_ROTATION = 51711;
+    public final static int ENCODER_UNITS_PER_ROTATION = 36224;
 
     /**
      * PID Gains may have to be adjusted based on the responsiveness of control

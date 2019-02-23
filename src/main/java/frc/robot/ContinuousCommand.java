@@ -3,8 +3,8 @@ package frc.robot;
 public class ContinuousCommand {
 
     // Flags for keeping track of position in sequence
-    private boolean m_driveFlag = true;
-    private boolean m_rotateFlag = false;
+    private boolean m_driveFlag = false;
+    private boolean m_rotateFlag = true;
     private boolean m_breakFlag = true;
     
     // Declare NavX
@@ -30,6 +30,10 @@ public class ContinuousCommand {
     public void loop(boolean toggle) {
         if (toggle) {
             m_breakFlag = !m_breakFlag;
+            m_drivetrain.talonArcadeDrive(0, 0);
+            m_driveFlag = false;
+            m_rotateFlag = true;
+            System.out.println("Toggled");
         }
 
         if (m_breakFlag) {
@@ -37,14 +41,18 @@ public class ContinuousCommand {
         }
 
         if (!m_rotateFlag) {
-            m_rotateFlag = m_drivetrain.rotateToAngle(180);
+            m_rotateFlag = m_drivetrain.driveToPosition(-8);
+            //System.out.println("Rotating");
             if(m_rotateFlag) {
+                //System.out.println("Done Rotating");
                 m_driveFlag = false;
             }
         }
         else if (!m_driveFlag) {
             m_driveFlag = m_drivetrain.driveToPosition(8);
+            //System.out.println("Driving");
             if(m_driveFlag) {
+                //System.out.println("Done Driving");
                 m_rotateFlag = false;
             }
         }

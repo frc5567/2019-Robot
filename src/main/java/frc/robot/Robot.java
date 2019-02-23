@@ -195,10 +195,6 @@ public class Robot extends TimedRobot {
 		// Test drivetrain included, uses Left stick Y for speed, Right stick X for
 		// turning, quick turn is auto-enabled at low speed
 
-
-		// PID based sample talon arcade drive
-		m_drivetrain.talonArcadeDrive(m_pilotController.getRightTrigger() - m_pilotController.getLeftTrigger(), m_pilotController.getLeftStickX());
-
 		if(m_pilotController.getYButton()) {
 			if (m_pather != null) {
 				m_pather.pathToTarget();
@@ -208,7 +204,8 @@ public class Robot extends TimedRobot {
 			m_pather.secondHalfPath();
 		}
 		else {
-			m_drivetrain.talonArcadeDrive(m_pilotController.getLeftStickY(), m_pilotController.getRightStickX());
+			// PID based sample talon arcade drive
+			m_drivetrain.talonArcadeDrive(m_pilotController.getRightTrigger() - m_pilotController.getLeftTrigger(), m_pilotController.getLeftStickX());
 		}
 		
 		if (m_pilotController.getAButtonReleased()) {
@@ -241,8 +238,15 @@ public class Robot extends TimedRobot {
 	@Override
 	public void testPeriodic() {
 		testContinuousCommand.loop(m_pilotController.getStartButtonReleased());
-		
-		m_drivetrain.talonArcadeDrive(m_pilotController.getRightTrigger() - m_pilotController.getRightTrigger(), m_pilotController.getLeftStickX());
+		if (m_pilotController.getStickButton(Hand.kLeft)) {
+			m_drivetrain.m_slaveLeftMotor.set(.3);
+		}
+
+		if (m_pilotController.getStickButton(Hand.kRight)) {
+			m_drivetrain.m_slaveRightMotor.set(.3);
+		}
+
+//		m_drivetrain.talonArcadeDrive(m_pilotController.getRightTrigger() - m_pilotController.getLeftTrigger(), m_pilotController.getLeftStickX());
 
 		// [NOTE] Negative power moves the elevator up, but the encoder will still tic
 		// positive. This is due to the way the string is wound on the winch
@@ -354,14 +358,14 @@ public class Robot extends TimedRobot {
 			m_hatchMech.closeServo();
 		}
 		
-		System.out.print("Left Ultrasonics: \t" + m_drivetrain.getLeftUltra().getRangeInches());
-		System.out.print("Right Ultrasonics: \t" + m_drivetrain.getRightUltra().getRangeInches());
-		System.out.print("Drivetrain Enc Velocity: \t" + m_drivetrain.getLeftDriveEncoderVelocity() + "\t\t" + m_drivetrain.getRightDriveEncoderVelocity());
-		System.out.print("Drivetrain Enc Pos: \t"+ m_drivetrain.getLeftDriveEncoderPosition() + "\t\t" + m_drivetrain.getRightDriveEncoderPosition());	
-		System.out.print("Elevator Enc Velocity: \t" + m_elevator.m_elevatorMotor.getSelectedSensorVelocity());
-		System.out.print("Elevator Enc Pos: \t"+ m_elevator.m_elevatorMotor.getSelectedSensorPosition());
-		System.out.print("Front Break Beams: \t  Top: " + m_frontClimber.getTopLimitSwitch() + "\t Bottom: " + m_frontClimber.getBottomLimitSwitch());
-		System.out.println("Back Break Beams: \t  Top: " + m_backClimber.getTopLimitSwitch() + "\t Bottom: " + m_backClimber.getBottomLimitSwitch());
+		// System.out.print("Left Ultrasonics: \t" + m_drivetrain.getLeftUltra().getRangeInches());
+		// System.out.print("Right Ultrasonics: \t" + m_drivetrain.getRightUltra().getRangeInches());
+		// System.out.print("Drivetrain Enc Velocity: \t" + m_drivetrain.getLeftDriveEncoderVelocity() + "\t\t" + m_drivetrain.getRightDriveEncoderVelocity());
+		System.out.println("Drivetrain Enc Pos: \t"+ m_drivetrain.getLeftDriveEncoderPosition() + "\t\t" + m_drivetrain.getRightDriveEncoderPosition());	
+		// System.out.print("Elevator Enc Velocity: \t" + m_elevator.m_elevatorMotor.getSelectedSensorVelocity());
+		// System.out.print("Elevator Enc Pos: \t"+ m_elevator.m_elevatorMotor.getSelectedSensorPosition());
+		// System.out.print("Front Break Beams: \t  Top: " + m_frontClimber.getTopLimitSwitch() + "\t Bottom: " + m_frontClimber.getBottomLimitSwitch());
+		// System.out.println("Back Break Beams: \t  Top: " + m_backClimber.getTopLimitSwitch() + "\t Bottom: " + m_backClimber.getBottomLimitSwitch());
 		
 	}
 }

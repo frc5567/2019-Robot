@@ -47,10 +47,10 @@ public class Drivetrain implements PIDOutput {
     boolean m_quickTurnEnabled;
 
     // Declarations for the motor controllers
-    private WPI_VictorSPX m_slaveLeftMotor;
-    private WPI_VictorSPX m_slaveRightMotor;
-    private WPI_TalonSRX m_masterLeftMotor;
-    private WPI_TalonSRX m_masterRightMotor;
+     WPI_VictorSPX m_slaveLeftMotor;
+     WPI_VictorSPX m_slaveRightMotor;
+     WPI_TalonSRX m_masterLeftMotor;
+     WPI_TalonSRX m_masterRightMotor;
 
     // Declaration for encoders connected to TalonSRXs
     private SensorCollection m_leftDriveEncoder;
@@ -247,10 +247,10 @@ public class Drivetrain implements PIDOutput {
             m_firstCall = true;
         }
         
-        if (m_counter > 10) {
-            isFinished = true;
-            m_firstCall = true;
-        }
+        // if (m_counter > 10) {
+        //     isFinished = true;
+        //     m_firstCall = true;
+        // }
 
         if (isFinished) {
             m_counter = 0;
@@ -421,23 +421,49 @@ public class Drivetrain implements PIDOutput {
             m_rightInitTics = getRightDriveEncoderPosition();
             m_leftTargetTics = m_leftInitTics - m_ticsToTarget;
             m_rightTargetTics = m_rightInitTics - m_ticsToTarget;
+            
             m_firstCallTest = false;
             System.out.println("Finished First Call");
             return false;
         }
         else {
-            // Drives straight if we have not reached our target
-            if (m_leftTargetTics < getLeftDriveEncoderPosition() && m_rightTargetTics < getLeftDriveEncoderPosition()) {
-                talonArcadeDrive(AUTO_SPEED, 0);
-                System.out.println("Driving");
-                return false;
+            System.out.println("Target Tics \t" + m_leftTargetTics);
+            System.out.println("Current Tics \t" + getLeftDriveEncoderPosition());
+            if (m_leftTargetTics <= m_leftInitTics) {
+                System.out.println("Forward");
+                // Drives straight if we have not reached our target
+                if (m_leftTargetTics < getLeftDriveEncoderPosition()/* && m_rightTargetTics < getLeftDriveEncoderPosition() */) {
+                    talonArcadeDrive(AUTO_SPEED, 0);
+                    System.out.println("Driving Forward");
+                    return false;
+                }
+                else {
+                    // Stops the arcade drive otherwise
+                    //System.out.println("Stopped");
+                    m_firstCallTest = true;
+                    talonArcadeDrive(0, 0);
+                    return true;
+                }
+            }
+            else if (m_leftTargetTics > m_leftInitTics) {
+                // Drives straight if we have not reached our target
+                System.out.println("Back");
+                if (m_leftTargetTics > getLeftDriveEncoderPosition()/* && m_rightTargetTics > getLeftDriveEncoderPosition() */) {
+                    talonArcadeDrive(-AUTO_SPEED, 0);
+                    System.out.println("Driving Back");
+                    return false;
+                }
+                else {
+                    // Stops the arcade drive otherwise
+                    //System.out.println("Stopped");
+                    m_firstCallTest = true;
+                    talonArcadeDrive(0, 0);
+                    return true;
+                }
             }
             else {
-                // Stops the arcade drive otherwise
-                System.out.println("Stopped");
-                m_firstCallTest = true;
-                talonArcadeDrive(0, 0);
-                return true;
+                System.out.println("Fail to math, [HELP]");
+                return false;
             }
         }
     }
