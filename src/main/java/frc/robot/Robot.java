@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
