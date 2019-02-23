@@ -1,4 +1,4 @@
-#include <PIDLoop.h>
+
 #include <Pixy2.h>
 #include <Pixy2Line.h>
 #include <Pixy2UART.h>
@@ -13,7 +13,7 @@
  */
 
 //  Declares the Pixys
-Pixy2I2C highPixy;
+//Pixy2I2C highPixy;
 Pixy2SPI_SS lowPixy;
 
 //  Declares variables for the low pixy
@@ -21,12 +21,21 @@ int leftX;
 int rightX;
 int leftWidth;
 int rightWidth;
+float aL;
+float aR;
+float arrL[3] = {0,0,0};
+float arrR[3] = {0,0,0};
+float avgL;
+float avgR;
+float dA;
+float maxDa = 0.15;
 int xLOne;
 int xROne;
 int xLTwo;
 int xRTwo;
 int centerPoint;
 int absoluteCenter = 158;
+int adjAbsCenter;
 int distToCenter;
 double angleToCenter;
 double tempDistCenter;
@@ -88,9 +97,7 @@ const char GET_DEG_TO_TARGET = '2';
 const char GET_DIST_TO_TARGET = '1';
 const char GET_ANGLE_TO_CENTER = '3';
 const char GET_LOW_POSITION = '4';
-
-double block1Area;
-double block2Area;
+const char GET_AVG_AREA = '5';
 
 //  This is the return for the position according to the lowPixy, where 1 is left, 2 is center, and 3 is right. -1 is no blocks
 int lowPosition = -1;
@@ -122,6 +129,8 @@ void calcDistToCenterLow()
 		rightX = lowPixy.ccc.blocks[1].m_x;
 		leftWidth = lowPixy.ccc.blocks[0].m_width;
 		rightWidth = lowPixy.ccc.blocks[1].m_width;
+    aL = lowPixy.ccc.blocks[0].m_width * lowPixy.ccc.blocks[0].m_height;
+    aR = lowPixy.ccc.blocks[1].m_width * lowPixy.ccc.blocks[1].m_height;
 	}
 	else if (lowPixy.ccc.blocks[0].m_x > lowPixy.ccc.blocks[1].m_x)
 	{
@@ -129,14 +138,46 @@ void calcDistToCenterLow()
 		rightX = lowPixy.ccc.blocks[0].m_x;
 		leftWidth = lowPixy.ccc.blocks[1].m_width;
 		rightWidth = lowPixy.ccc.blocks[0].m_width;
+    aL = lowPixy.ccc.blocks[1].m_width * lowPixy.ccc.blocks[1].m_height;
+    aR = lowPixy.ccc.blocks[0].m_width * lowPixy.ccc.blocks[0].m_height;
 	}
+  arrL[2] = arrL[1];
+  arrL[1] = arrL[0];
+  arrL[0] = aL;
+  int iL;
+  float lSum = 0;
+  for(iL = 0; iL < 3; iL++) {
+    lSum += arrL[iL];
+  }
+  avgL = lSum / 3;
+  
+  arrR[2] = arrR[1];
+  arrR[1] = arrR[0];
+  arrR[0] = aR;
+  int iR;
+  float rSum = 0;
+  for(iR = 0; iR < 3; iR++) {
+    rSum += arrR[iR];
+  }
+  avgR = rSum / 3;
+  
+  dA = ( 1 - ( avgR / avgL ) );
+
+  if ((abs(dA)) > maxDa)
+  {
+    adjAbsCenter = (int)(10 * dA) + absoluteCenter;
+  }
+  else
+  {
+    adjAbsCenter = absoluteCenter;
+  }
 
 	xLOne = leftX - (leftWidth / 2);
 	xROne = rightX + (leftWidth / 2);
 	xLTwo = leftX - (rightWidth / 2);
 	xRTwo = rightX + (rightWidth / 2);
 	centerPoint = ((xLTwo - xROne) / 2) + xROne;
-	distToCenter = absoluteCenter - centerPoint;
+	distToCenter = adjAbsCenter - centerPoint;
 	angleToCenter = distToCenter * 0.189873;
 }
 
@@ -190,17 +231,23 @@ void sendData(char command)
 	else if (command == GET_LOW_POSITION)
 	{
 		Serial.println(lowPosition);
-    
-//    Serial.print("Block 1 Area: ");
-//    Serial.print(block1Area);
-//    Serial.print("\t");
-//    Serial.print("Block 2 Area: ");
-//    Serial.println(block2Area);
+    //Serial.println(adjAbsCenter);
+   // Serial.print("Left Block Area: ");
+    //Serial.print(aL);
+    //Serial.print("\t");
+    //Serial.print("Right Block Area: ");
+    //Serial.println(aR);
 	}
+ else if (command == GET_AVG_AREA) {
+  double avgArea = (avgL + avgR) / 2;
+  Serial.println(avgArea);
+ }
 }
 
 void loop()
 {
+//    Serial.print("dA\t");
+  //  Serial.println(dA);
 //  int indexindex = 0;
 //  targetIndex = -500;
 //	//  Gets data from the highPixy
@@ -252,9 +299,6 @@ void loop()
 		lowPosition = -1;
 	}
 
-  block1Area = lowPixy.ccc.blocks[0].m_width * lowPixy.ccc.blocks[0].m_height;
-  block2Area = lowPixy.ccc.blocks[1].m_width * lowPixy.ccc.blocks[1].m_height;
-
 	//  Runs the communication code if a command is available
 	if (Serial.available() > 0)
 	{
@@ -265,5 +309,3 @@ void loop()
 		incCommand = 0;
 	}
 }
-
-
