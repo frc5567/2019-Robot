@@ -259,6 +259,54 @@ public class Drivetrain implements PIDOutput {
         return isFinished;
     }
 
+    public boolean rotateDriveAngle(double targetAngle) {
+        // Flag for checking if the method is finished
+        boolean isFinished = false;
+
+        // Resets the PID only on first entry
+        if (m_firstCall) {
+            // Resets the error
+            m_rotController.reset();
+
+            // Enables the PID
+            m_rotController.enable();
+
+            // Sets the target to our target angle
+            m_rotController.setSetpoint(targetAngle);
+
+            // Prevents us from repeating the reset until we run the method again seperately
+            m_firstCall = false;
+
+            m_counter = 0;
+        }
+
+        // Sets our rotate speed to the return of the PID
+        double returnedRotate = m_rotController.get();
+        Timer.delay(0.05);
+
+        // Runs the drivetrain with 0 speed and the rotate speed set by the PID
+        System.out.println("target angle: \t" + targetAngle);
+        System.out.println("current angle: \t" + m_gyro.getYaw());
+        talonArcadeDrive(AUTO_SPEED, returnedRotate);
+
+        // Checks to see if the the PID is finished or close enough
+        if ( (returnedRotate < RobotMap.FINISHED_PID_THRESHOLD) && (returnedRotate > -RobotMap.FINISHED_PID_THRESHOLD) ) {
+            isFinished = true;
+            m_firstCall = true;
+        }
+        
+        if (m_counter > 10) {
+            isFinished = true;
+            m_firstCall = true;
+        }
+
+        if (isFinished) {
+            m_counter = 0;
+        }
+
+        return isFinished;
+    }
+
     /**
      * Method for driving a specific distance in auton
      * @param stopDistance Inches away from the target we want to stop

@@ -246,29 +246,36 @@ public class Pathing {
     private boolean rotLowTarget() {
         System.out.println("target angle: \t" + m_absoluteDegToTarget);
         System.out.println("current angle: \t" + m_gyro.getYaw());
-        if(!m_foundLowTarget) {
-            // Assigns the target if there is no previous valid target
-            m_degToTarget = m_duinoToRio.getAngleToCenter();
-            System.out.println("Looking for target");
-            // If the target is a valid number, assigns necesary target variables
-            if(!m_degToTarget.isNaN()) {
-                System.out.println("Found Target");
-                m_startingDegrees = m_gyro.getYaw();
-                m_absoluteDegToTarget = m_startingDegrees - m_degToTarget;
-                m_foundLowTarget = true;
-            }
-            return false;
+        // Assigns the target if there is no previous valid target
+        m_degToTarget = m_duinoToRio.getAngleToCenter();
+        System.out.println("Looking for target");
+        // If the target is a valid number, assigns necesary target variables
+        if(!m_degToTarget.isNaN()) {
+            System.out.println("Found Target");
+            m_startingDegrees = m_gyro.getYaw();
+            m_absoluteDegToTarget = m_startingDegrees - m_degToTarget;
         }
-        else {
-//            Timer.delay(0.1);
+        
+        if (!m_degToTarget.isNaN() && Math.abs(m_degToTarget) > 30){
+            // Timer.delay(0.1);
             // Rotates until the method says that its done
-            if ((m_counter > 25) && (m_drivetrain.rotateToAngle(m_absoluteDegToTarget))) {
-                m_counter = 0;
+            if ((m_drivetrain.rotateToAngle(m_absoluteDegToTarget))) {
                 System.out.println("Done Rotating");
                 return true;
             }
             else {
-                m_counter++;
+                System.out.println("Rotating");
+                return false;
+            }
+        }
+        else {
+            // Timer.delay(0.1);
+            // Rotates until the method says that its done
+            if ((m_drivetrain.rotateDriveAngle(m_absoluteDegToTarget))) {
+                System.out.println("Done Rotating");
+                return true;
+            }
+            else {
                 System.out.println("Rotating");
                 return false;
             }
