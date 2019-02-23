@@ -413,7 +413,7 @@ public class Drivetrain implements PIDOutput {
         m_masterRightMotor.set(ControlMode.PercentOutput, turn, DemandType.ArbitraryFeedForward, -forward);
     }
 
-    public void driveToPosition(double distToTarget) {
+    public boolean driveToPosition(double distToTarget) {
         // If the return value is valid, run needed calculation
         if (m_firstCallTest) {
             m_ticsToTarget = inToTics(distToTarget);
@@ -423,18 +423,21 @@ public class Drivetrain implements PIDOutput {
             m_rightTargetTics = m_rightInitTics - m_ticsToTarget;
             m_firstCallTest = false;
             System.out.println("Finished First Call");
+            return false;
         }
         else {
             // Drives straight if we have not reached our target
             if (m_leftTargetTics < getLeftDriveEncoderPosition() && m_rightTargetTics < getLeftDriveEncoderPosition()) {
                 talonArcadeDrive(AUTO_SPEED, 0);
                 System.out.println("Driving");
+                return false;
             }
             else {
                 // Stops the arcade drive otherwise
                 System.out.println("Stopped");
                 m_firstCallTest = true;
                 talonArcadeDrive(0, 0);
+                return true;
             }
         }
     }
