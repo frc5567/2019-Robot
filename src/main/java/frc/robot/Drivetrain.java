@@ -30,7 +30,7 @@ import edu.wpi.first.wpilibj.Ultrasonic.Unit;
  */
 public class Drivetrain implements PIDOutput {
     // Declares NavX for rotation control
-    private NavX m_ahrs;
+    private NavX m_gyro;
 
     // Declares turn control PID
     PIDController m_rotController;
@@ -47,10 +47,10 @@ public class Drivetrain implements PIDOutput {
     boolean m_quickTurnEnabled;
 
     // Declarations for the motor controllers
-    private WPI_VictorSPX m_slaveLeftMotor;
-    private WPI_VictorSPX m_slaveRightMotor;
-    private WPI_TalonSRX m_masterLeftMotor;
-    private WPI_TalonSRX m_masterRightMotor;
+     WPI_VictorSPX m_slaveLeftMotor;
+     WPI_VictorSPX m_slaveRightMotor;
+     WPI_TalonSRX m_masterLeftMotor;
+     WPI_TalonSRX m_masterRightMotor;
 
     // Declaration for encoders connected to TalonSRXs
     private SensorCollection m_leftDriveEncoder;
@@ -72,7 +72,7 @@ public class Drivetrain implements PIDOutput {
 
     // Constants for calculating drive distance
     public static final double DRIVE_TICS_PER_INCH = 4096 / (6*RobotMap.PI);
-    private final double AUTO_SPEED = 0.3;
+    private final double AUTO_SPEED = 0.2;
     private boolean m_firstCallTest = true;
 
     // Counter for buying time for the PID
@@ -110,7 +110,7 @@ public class Drivetrain implements PIDOutput {
         m_currentRotate = 0;
 
         // Instantiates the NavX
-        m_ahrs = ahrs;
+        m_gyro = ahrs;
 
         // Instantiates the Ultrasonics
         ultraLeft = new Ultrasonic(1, 0);
@@ -123,7 +123,7 @@ public class Drivetrain implements PIDOutput {
         ultraRight.setDistanceUnits(Unit.kInches);
         
         // Initializes rotate PID controller with the PIDF constants, the ahrs, the PID output, and the loop time (s)
-        m_rotController = new PIDController(RobotMap.P_ROTATE_CONTROLLER, RobotMap.I_ROTATE_CONTROLLER, RobotMap.D_ROTATE_CONTROLLER, RobotMap.F_ROTATE_CONTROLLER, m_ahrs, this, 0.02);
+        m_rotController = new PIDController(RobotMap.P_ROTATE_CONTROLLER, RobotMap.I_ROTATE_CONTROLLER, RobotMap.D_ROTATE_CONTROLLER, RobotMap.F_ROTATE_CONTROLLER, m_gyro, this, 0.02);
         m_rotController.setInputRange(-180.00f, 180.00f);
         // These values are temporary and need to be changed based on testing
         m_rotController.setOutputRange(-0.5, 0.5);
@@ -234,27 +234,72 @@ public class Drivetrain implements PIDOutput {
 
         // Sets our rotate speed to the return of the PID
         double returnedRotate = m_rotController.get();
-        Timer.delay(0.05);
-        
+
         // Runs the drivetrain with 0 speed and the rotate speed set by the PID
-        System.out.println("target angle: \t" + targetAngle);
-        System.out.println("current angle: \t" + m_ahrs.getYaw());
+        System.out.println("RETURN PID: \t" + returnedRotate);
+        System.out.println("Counter: \t" + m_counter);
         talonArcadeDrive(0, returnedRotate);
 
         // Checks to see if the the PID is finished or close enough
-        if ( (returnedRotate < RobotMap.FINISHED_PID_THRESHOLD) && (returnedRotate > -RobotMap.FINISHED_PID_THRESHOLD) ) {
+        if ( ((returnedRotate < RobotMap.FINISHED_PID_THRESHOLD) && (returnedRotate > -RobotMap.FINISHED_PID_THRESHOLD)) && (m_counter > 10)) {
             isFinished = true;
             m_firstCall = true;
+            System.out.println("FINISHED");
         }
         
-        if (m_counter > 10) {
-            isFinished = true;
-            m_firstCall = true;
-        }
+        // if (m_counter > 10) {
+        //     isFinished = true;
+        //     m_firstCall = true;
+        // }
 
         if (isFinished) {
             m_counter = 0;
         }
+        else {
+            m_counter++;
+        }
+
+        return isFinished;
+    }
+
+    public boolean rotateDriveAngle(double targetAngle, double area) {
+        // Flag for checking if the method is finished
+        boolean isFinished = false;
+
+        // Resets the PID only on first entry
+        if (m_firstCall) {
+            // Resets the error
+            m_rotController.reset();
+
+            // Enables the PID
+            m_rotController.enable();
+
+            // Sets the target to our target angle
+            m_rotController.setSetpoint(targetAngle);
+
+            // Prevents us from repeating the reset until we run the method again seperately
+            m_firstCall = false;
+
+            m_counter = 0;
+        }
+
+        // Sets our rotate speed to the return of the PID
+        double returnedRotate = m_rotController.get();
+
+        // Runs the drivetrain with 0 speed and the rotate speed set by the PID
+        System.out.println("target angle: \t" + targetAngle);
+        System.out.println("current angle: \t" + m_gyro.getYaw());
+        talonArcadeDrive(AUTO_SPEED, returnedRotate);
+        // System.out.println("Area \t" + area);
+        // Checks to see if the the PID is finished or close enough
+        // if (area > 3000) {
+        //     isFinished = true;
+        //     m_firstCall = true;
+        // }
+
+        // if (isFinished) {
+        //     m_counter = 0;
+        // }
 
         return isFinished;
     }
@@ -413,7 +458,7 @@ public class Drivetrain implements PIDOutput {
         m_masterRightMotor.set(ControlMode.PercentOutput, turn, DemandType.ArbitraryFeedForward, -forward);
     }
 
-    public void driveToPosition(double distToTarget) {
+    public boolean driveToPosition(double distToTarget) {
         // If the return value is valid, run needed calculation
         if (m_firstCallTest) {
             m_ticsToTarget = inToTics(distToTarget);
@@ -421,20 +466,49 @@ public class Drivetrain implements PIDOutput {
             m_rightInitTics = getRightDriveEncoderPosition();
             m_leftTargetTics = m_leftInitTics - m_ticsToTarget;
             m_rightTargetTics = m_rightInitTics - m_ticsToTarget;
+            
             m_firstCallTest = false;
             System.out.println("Finished First Call");
+            return false;
         }
         else {
-            // Drives straight if we have not reached our target
-            if (m_leftTargetTics < getLeftDriveEncoderPosition() && m_rightTargetTics < getLeftDriveEncoderPosition()) {
-                talonArcadeDrive(AUTO_SPEED, 0);
-                System.out.println("Driving");
+            System.out.println("Target Tics \t" + m_leftTargetTics);
+            System.out.println("Current Tics \t" + getLeftDriveEncoderPosition());
+            if (m_leftTargetTics <= m_leftInitTics) {
+                System.out.println("Forward");
+                // Drives straight if we have not reached our target
+                if (m_leftTargetTics < getLeftDriveEncoderPosition()/* && m_rightTargetTics < getLeftDriveEncoderPosition() */) {
+                    talonArcadeDrive(AUTO_SPEED, 0);
+                    System.out.println("Driving Forward");
+                    return false;
+                }
+                else {
+                    // Stops the arcade drive otherwise
+                    //System.out.println("Stopped");
+                    m_firstCallTest = true;
+                    talonArcadeDrive(0, 0);
+                    return true;
+                }
+            }
+            else if (m_leftTargetTics > m_leftInitTics) {
+                // Drives straight if we have not reached our target
+                System.out.println("Back");
+                if (m_leftTargetTics > getLeftDriveEncoderPosition()/* && m_rightTargetTics > getLeftDriveEncoderPosition() */) {
+                    talonArcadeDrive(-AUTO_SPEED, 0);
+                    System.out.println("Driving Back");
+                    return false;
+                }
+                else {
+                    // Stops the arcade drive otherwise
+                    //System.out.println("Stopped");
+                    m_firstCallTest = true;
+                    talonArcadeDrive(0, 0);
+                    return true;
+                }
             }
             else {
-                // Stops the arcade drive otherwise
-                System.out.println("Stopped");
-                m_firstCallTest = true;
-                talonArcadeDrive(0, 0);
+                System.out.println("Fail to math, [HELP]");
+                return false;
             }
         }
     }

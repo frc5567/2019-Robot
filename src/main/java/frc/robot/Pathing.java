@@ -33,17 +33,17 @@ public class Pathing {
     private boolean m_lowTargetFound = false;
     private boolean m_rotLowTargetFinished = false;
     private boolean m_lowDriveFinished = false;
+    private boolean breakFlag = true;
 
 	// Declare our duino communication port
-	private DuinoToRioComms m_duinoToRio;
+	DuinoToRioComms m_duinoToRio;
     private DuinoCommStorage m_pkt;
     
     // Constants for calculating drive distance
-    public static final double DRIVE_TICS_PER_INCH = 4096 / (6*RobotMap.PI);
     private final double AUTO_SPEED = 0.3;
 
     // Declare NavX
-    NavX m_ahrs;
+    NavX m_gyro;
     
     // Declares a drivetrain to use in the auto movement
     Drivetrain m_drivetrain;
@@ -61,7 +61,7 @@ public class Pathing {
         // Instantiates the drivetrain with the drivetrain passed in
         m_drivetrain = drivetrain;
         // Instantiates the navx with the passed in ahrs
-        m_ahrs = ahrs;
+        m_gyro = ahrs;
 
         // Configs the talon PIDs
         m_drivetrain.talonDriveConfig();
@@ -110,10 +110,10 @@ public class Pathing {
         }
     }
 
-    public boolean secondHalfPath () {
+    public boolean secondHalfPath() {
         if (!m_lowTargetFound) {
-            System.out.println("low target found");
             m_lowTargetFound = checkForLowTarget();
+            System.out.println("low target: \t" + m_lowTargetFound);
             return false;
         }
         // Runs the rotLowTarget method after all previous are finished and only if we see a target
@@ -141,7 +141,7 @@ public class Pathing {
      * @return Returns the resultant tips
      */
     private double inToTics(double inches) {
-         return inches*DRIVE_TICS_PER_INCH;
+         return inches*RobotMap.DRIVE_TICS_PER_INCH;
     }
 
     /**
@@ -160,7 +160,7 @@ public class Pathing {
                 System.out.println("No target found");
             }
             else if (!m_degToTarget.isNaN()) {
-                m_startingDegrees = m_ahrs.getYaw();
+                m_startingDegrees = m_gyro.getYaw();
                 m_absoluteDegToTarget = m_startingDegrees + m_degToTarget;
                 m_foundTarget = true;
             }
@@ -168,7 +168,7 @@ public class Pathing {
         }
         else {
             // Returns true if the drive is finished
-            System.out.println("Current Angle : \t" + m_ahrs.getYaw());
+            System.out.println("Current Angle : \t" + m_gyro.getYaw());
             System.out.println("Target Angle: \t" + m_absoluteDegToTarget);
             System.out.println("PIDOutput: \t" + m_drivetrain.m_rotController.get());
             m_drivetrain.rotateToAngle(m_absoluteDegToTarget);
@@ -224,7 +224,7 @@ public class Pathing {
     /**
      * Helper method that checks if the robot can see the low target
      * @return Returns whether the method is finished (True if it is)
-     */
+     */  
     private boolean checkForLowTarget() {
         if(m_duinoToRio.getLowPosition() == -1) {
             // Returns false if the value returned is the known "No Target" value
@@ -246,33 +246,44 @@ public class Pathing {
      */
     private boolean rotLowTarget() {
         System.out.println("target angle: \t" + m_absoluteDegToTarget);
-        System.out.println("current angle: \t" + m_ahrs.getYaw());
-        if(!m_foundLowTarget) {
-            // Assigns the target if there is no previous valid target
-            m_degToTarget = m_duinoToRio.getAngleToCenter();
-            System.out.println("Looking for target");
-            // If the target is a valid number, assigns necesary target variables
-            if(!m_degToTarget.isNaN()) {
-                System.out.println("Found Target");
-                m_startingDegrees = m_ahrs.getYaw();
-                m_absoluteDegToTarget = m_startingDegrees - m_degToTarget;
-                m_foundLowTarget = true;
-            }
-            return false;
+        System.out.println("current angle: \t" + m_gyro.getYaw());
+        // Assigns the target if there is no previous valid target
+        m_angleToCenter = m_duinoToRio.getAngleToCenter();
+        System.out.println("Looking for target");
+        // If the target is a valid number, assigns necesary target variables
+        if(!m_angleToCenter.isNaN()) {
+            System.out.println("Found Target");
+            m_startingDegrees = m_gyro.getYaw();
+            m_absoluteDegToTarget = m_startingDegrees + m_angleToCenter;
         }
-        else {
-//            Timer.delay(0.1);
+        
+        // if (!m_angleToCenter.isNaN() && Math.abs(m_angleToCenter) > 30){
+        //     // Timer.delay(0.1);
+        //     // Rotates until the method says that its done
+        //     if ((m_drivetrain.rotateToAngle(m_absoluteDegToTarget))) {
+        //         System.out.println("Done Rotating");
+        //         return true;
+        //     }
+        //     else {
+        //         System.out.println("Rotating");
+        //         return false;
+        //     }
+        // }
+        if (!m_angleToCenter.isNaN()) {
+            // Timer.delay(0.1);
             // Rotates until the method says that its done
-            if ((m_counter > 25) && (m_drivetrain.rotateToAngle(m_absoluteDegToTarget))) {
-                m_counter = 0;
+            if (m_drivetrain.rotateDriveAngle(m_absoluteDegToTarget, m_duinoToRio.getAverageArea())) {
                 System.out.println("Done Rotating");
                 return true;
             }
             else {
-                m_counter++;
                 System.out.println("Rotating");
                 return false;
             }
+        }
+        else {
+            m_drivetrain.talonArcadeDrive(0, 0);
+            return false;
         }
     }
 
