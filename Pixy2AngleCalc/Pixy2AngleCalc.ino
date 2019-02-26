@@ -1,48 +1,71 @@
 #include <PIDLoop.h>
+#include <Pixy2.h>
+#include <Pixy2Line.h>
+#include <Pixy2UART.h>
+
 #include <Pixy2I2C.h>
 #include <Pixy2SPI_SS.h>
-
 
 /**
  * Communication code from the pixys to the arduino and from the duino to the rio
  * The highPixy is the pixy placed high on the robot, which will be used for pathing to the white line
  * The lowPixy is the pixy placed low on the robot used for shorter range tracking of the reflective tape
  */
- 
-//  Declares the Pixy
-Pixy2SPI_SS highPixy;
-// Pixy2I2C lowPixy;
+
+//  Declares the Pixys
+Pixy2I2C highPixy;
+Pixy2SPI_SS lowPixy;
+
+//  Declares variables for the low pixy
+int leftX;
+int rightX;
+int leftWidth;
+int rightWidth;
+int xLOne;
+int xROne;
+int xLTwo;
+int xRTwo;
+int centerPoint;
+int absoluteCenter = 158;
+int distToCenter;
+double angleToCenter;
+double tempDistCenter;
+double selectedDistCenter = 39;
+double targetIndex;
 
 //  Value of pi for calculations
 double pi = 3.1415926535;
 
-//  Height and angle of the pixy
-double cameraHeight = 46;
-double cameraAngle = 25;
+//  Height and angle of the pixy (in)
+double cameraHeight = 47.375;
+double cameraAngle = 30;
 
-//  Coordinates of the origin point
+//  Coordinates of the origin point (p)
 double originX = 39;
 double originY = 51;
 
 //  Constants for the pixy
-double thirtyDegInRad = ((pi/180)*30);
-double degPerVertPix = (40/51);
+double thirtyDegInRad = ((pi / 180) * 30);
+double degPerVertPix = (40.0 / 51.0);
+double degPerHorizPix = (60.0 / 78.0);
 
 //  Values for calculating position later [RECOMMENT]
 //  Degrees from vertical to the end of the blindspot
 double blindspotDeg = (cameraAngle - 20);
 
 //  Pixel distance from the base to the target point
-double xDist; double yDist;
-
-//  Total degrees to the point from the camera relative to zero
+double xDist;
+double yDist;
 
 //  Diagonal distance from the camera to the target point
 double hypToCamera;
 double yDistDeg;
+double xDistDeg;
 
 //  Y Distance in inches from the robot to the target
 double distRobotToTarget;
+
+double xDistRobotToTarget;
 
 //  Width of the projection at the given y value
 double xWidth;
@@ -50,96 +73,197 @@ double xWidth;
 //  Inches per pixel in the x direction
 double xInPerPix;
 
+//  Distance from midline to the target on the floor in Inches
+double xDistIn;
+
 //  Degrees from the base of the robot to the target point
 double degToTarget;
+double distToTarget;
 
-//  Command int recieved from the rio, where 2 is degToTarget, 1 is inToTarget,
-int incCommand = -1;
+//  Command char recieved from the rio, where 2 is degToTarget, 1 is distToTarget, 3 is angleToCenter, and 4 is lowPosition
+char incCommand = '0';
 
-//  Comment
-byte buf[4];
+//	Commands we are comparing incCommand to
+const char GET_DEG_TO_TARGET = '2';
+const char GET_DIST_TO_TARGET = '1';
+const char GET_ANGLE_TO_CENTER = '3';
+const char GET_LOW_POSITION = '4';
 
-//  Temp Lock flag to prevent repeated command reading
-bool tempLock = true;
+double block1Area;
+double block2Area;
+
+//  This is the return for the position according to the lowPixy, where 1 is left, 2 is center, and 3 is right. -1 is no blocks
+int lowPosition = -1;
 
 //  Convert degrees to radians
-double degToRad (double degInput) {
-  double radOutput = degInput * (pi/180);
-  return radOutput;
+double degToRad(double degInput)
+{
+	double radOutput = degInput * (pi / 180);
+	return radOutput;
 }
 
-//  Calculate the inches per x pixel on a given y value in order to calulate angle to the robot
-void calcInPerPix (double height, double angle, double tailX, double tailY) {
-  xDist = (tailX - originX);
-  yDist = (originY - tailY);
-  yDistDeg = (blindspotDeg + (yDist * degPerVertPix));
-  distRobotToTarget = height * tan(degToRad(yDistDeg));
-  hypToCamera = sqrt( sq(height) + sq(distRobotToTarget) );
-  xWidth = 2 * (hypToCamera * tan(thirtyDegInRad));
-  xInPerPix = xWidth/78;
+////  Calculate the inches per x pixel on a given y value in order to calulate angle to the robot
+//void calcInPerPix(double height, double angle, double tailX, double tailY)
+//{
+//	xDist = (tailX - originX);
+//	yDist = (originY - tailY);
+//	yDistDeg = (blindspotDeg + (yDist * degPerVertPix));
+//	distRobotToTarget = 11+(height * tan(degToRad(yDistDeg)));
+//	hypToCamera = sqrt(sq(height) + sq(distRobotToTarget));
+//  xDistDeg = (xDist * degPerHorizPix);
+//  xDistRobotToTarget = hypToCamera * tan(degToRad(abs(xDistDeg)));
+//}
+
+void calcDistToCenterLow()
+{
+	if (lowPixy.ccc.blocks[0].m_x < lowPixy.ccc.blocks[1].m_x)
+	{
+		leftX = lowPixy.ccc.blocks[0].m_x;
+		rightX = lowPixy.ccc.blocks[1].m_x;
+		leftWidth = lowPixy.ccc.blocks[0].m_width;
+		rightWidth = lowPixy.ccc.blocks[1].m_width;
+	}
+	else if (lowPixy.ccc.blocks[0].m_x > lowPixy.ccc.blocks[1].m_x)
+	{
+		leftX = lowPixy.ccc.blocks[1].m_x;
+		rightX = lowPixy.ccc.blocks[0].m_x;
+		leftWidth = lowPixy.ccc.blocks[1].m_width;
+		rightWidth = lowPixy.ccc.blocks[0].m_width;
+	}
+
+	xLOne = leftX - (leftWidth / 2);
+	xROne = rightX + (leftWidth / 2);
+	xLTwo = leftX - (rightWidth / 2);
+	xRTwo = rightX + (rightWidth / 2);
+	centerPoint = ((xLTwo - xROne) / 2) + xROne;
+	distToCenter = absoluteCenter - centerPoint;
+	angleToCenter = distToCenter * 0.189873;
 }
 
-void setup() {
-  // put your setup code here, to run once:
-  Serial.begin(9600);
-  //Serial.print("Starting");
+void setup()
+{
+	// put your setup code here, to run once:
+	Serial.begin(9600);
 
-  //  Initializes the Pixy
-  //  Hexadecimal values passed in correspond to address set on the pixy 
-  highPixy.init(0x54);
-//  lowPixy.init(0x53);
-  highPixy.changeProg("line");
+	//  Initializes the Pixy
+	//  Hexadecimal values passed in correspond to address set on the pixy
+//	highPixy.init(0x54);
+	lowPixy.init(0x53);
+//	highPixy.changeProg("line");
+//  highPixy.line.setMode(LINE_MODE_MANUAL_SELECT_VECTOR);
 }
 
-void receiveCommand () {
-  if(tempLock){
-    incCommand = (int)Serial.readBytes(buf, 4);
-    tempLock = false;
-  }
+//  Reads command off of the wire and converts it to a usable char
+void receiveCommand()
+{
+	incCommand = (char)Serial.read();
 }
 
-void sendData (int command) {
-  if (command == 2){
-    Serial.print(/**degToTarget*/incCommand);
-  }
-  else if (command == 1) {
-    //  5.5 is a temp value, this needs to be updated in the future editions
-    Serial.print(/**5.5*/incCommand);
-  }
-  else {
-    Serial.print(-1);
-  }
-  incCommand = -2;
+//  Flushes excess data off after we read the command
+void serialFlush()
+{
+	while (Serial.available() > 0)
+	{
+		char t = Serial.read();
+	}
 }
 
-void loop() {
-  // put your main code here, to run repeatedly:
-  highPixy.line.getMainFeatures();
-  calcInPerPix(cameraHeight, cameraAngle, highPixy.line.vectors->m_x0, highPixy.line.vectors->m_y0);
-  degToTarget = atan((xDist*xInPerPix)/distRobotToTarget) * (180/pi);
+//  Writes data down the wire based on command passed in
+void sendData(char command)
+{
+//	if (command == GET_DEG_TO_TARGET)
+//	{
+//		if (String(degToTarget) == ("-34.36"))
+//		{
+//			degToTarget = -180;
+//		}
+//		Serial.println(degToTarget);
+//	}
+//	else if (command == GET_DIST_TO_TARGET)
+//	{
+//		Serial.println(distToTarget);
+//	}
+	if (command == GET_ANGLE_TO_CENTER)
+	{
+		Serial.println(angleToCenter);
+	}
+	else if (command == GET_LOW_POSITION)
+	{
+		Serial.println(lowPosition);
+    
+    Serial.print("Block 1 Area: ");
+    Serial.print(block1Area);
+    Serial.print("\t");
+    Serial.print("Block 2 Area: ");
+    Serial.println(block2Area);
+	}
+}
 
-  if ((Serial.available() > 0) && (incCommand != -2)) {
-    receiveCommand();
-    sendData(incCommand);
-  }
-
-//  lowPixy.ccc.getBlocks();
-//  Serial.print("enter");
-//  If there are detect blocks, print them!
-//  if (lowPixy.ccc.numBlocks){
-//    Serial.print("Detected ");
-//    Serial.println(lowPixy.ccc.numBlocks);
-//    for (i=0; i<lowPixy.ccc.numBlocks; i++) {
-//      Serial.print("  block ");
-//      Serial.print(i);
-//      Serial.print(": ");
-//      lowPixy.ccc.blocks[i].print();
+void loop()
+{
+//  int indexindex = 0;
+//  targetIndex = -500;
+//	//  Gets data from the highPixy
+//	highPixy.line.getAllFeatures(1, false);
+// 
+//  selectedDistCenter = 39;
+//  tempDistCenter = 39;
+//  
+//  for(indexindex = 0; indexindex < highPixy.line.numVectors; indexindex++) 
+//  {
+//    tempDistCenter = abs(originX - highPixy.line.vectors[indexindex].m_x0);
+//    if (tempDistCenter < selectedDistCenter)
+//    {
+//      selectedDistCenter = tempDistCenter;
+//      targetIndex = highPixy.line.vectors[indexindex].m_index;
 //    }
 //  }
-//
-//  else {
-//    Serial.println("No Blocks");
-//  }
-//  
-//  Serial.print("exit");
+//  highPixy.line.setVector(targetIndex);
+//  highPixy.line.getMainFeatures();
+
+	//  Calculates return values for the highPixy
+//	calcInPerPix(cameraHeight, cameraAngle, highPixy.line.vectors->m_x0, highPixy.line.vectors->m_y0);
+//	degToTarget = (atan(xDistRobotToTarget / distRobotToTarget) * (180 / pi)) * (abs(xDist)/xDist);
+//	distToTarget = sqrt(sq(distRobotToTarget) + sq(xDistRobotToTarget));
+
+	//  Gets data from the lowPixy
+	lowPixy.ccc.getBlocks(true, 255, 2);
+
+	//  Calculates return values for the lowPixy
+	if (lowPixy.ccc.numBlocks)
+	{
+		calcDistToCenterLow();
+
+		if (absoluteCenter - centerPoint < 2)
+		{
+			lowPosition = 1;
+		}
+		else if (absoluteCenter - centerPoint > 2)
+		{
+			lowPosition = 3;
+		}
+		else
+		{
+			lowPosition = 2;
+		}
+	}
+	else
+	{
+		lowPosition = -1;
+	}
+
+  block1Area = lowPixy.ccc.blocks[0].m_width * lowPixy.ccc.blocks[0].m_height;
+  block2Area = lowPixy.ccc.blocks[1].m_width * lowPixy.ccc.blocks[1].m_height;
+
+	//  Runs the communication code if a command is available
+	if (Serial.available() > 0)
+	{
+		receiveCommand();
+		serialFlush();
+		sendData(incCommand);
+		Serial.flush();
+		incCommand = 0;
+	}
 }
+
+

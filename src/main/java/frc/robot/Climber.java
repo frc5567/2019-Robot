@@ -1,32 +1,72 @@
 package frc.robot;
 
-import edu.wpi.first.wpilibj.Spark;
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import edu.wpi.first.wpilibj.DigitalInput;
 
 public class Climber {
 
-    private Spark m_climberMotor;
+    private WPI_VictorSPX m_climberMotor;
     private DigitalInput m_topLimitSwitch;
+    private DigitalInput m_bottomLimitSwitch;
 
     /**
      * Constructor for the climber mechanism motor controllers and sensors.
-     * @param motorPort Port of the motor controller
+     * 
+     * @param motorPort          Port of the motor controller
      * @param topLimitSwitchPort The port of the top limit switch on the climber
+     * @param bottomLimitSwitchPort The port of the bottom limit switch on the climber
      */
-    Climber(int motorPort, int topLimitSwitchPort) {
-        m_climberMotor = new Spark(motorPort);
+    public Climber(int motorPort, int topLimitSwitchPort, int bottomLimitSwitchPort) {
+        m_climberMotor = new WPI_VictorSPX(motorPort);
         m_topLimitSwitch = new DigitalInput(topLimitSwitchPort);
+        m_bottomLimitSwitch = new DigitalInput(bottomLimitSwitchPort);
     }
 
     /**
-     * Moves the climber based on the input recieved from controller
-     * @param controllerInput Input from the controller to move climber (positive is up, negative is down)
+     * Raises climber at a constant speed while button is pressed and the limit switch is not reached
+     * (Button to be determined later).
      */
-    public void moveClimber(double controllerInput) {
-        double input = controllerInput;
-        if ((input > 0) && m_topLimitSwitch.get()) {
-            input = 0;
+    public void raiseClimber(double speed) {
+        if(!m_bottomLimitSwitch.get()) {
+            m_climberMotor.set(speed);
         }
-        m_climberMotor.set(input);
+        else{
+            m_climberMotor.set(0.0);
+        }
+    }
+
+    /**
+     * Lowers climber at a constant speed when button is pressed (Button to be determined later).
+     */
+    public void lowerClimber(double speed){
+        if(!m_topLimitSwitch.get()){
+            m_climberMotor.set(speed);
+        }
+        else{
+            m_climberMotor.set(0.0);
+        }
+    }
+
+    public void setClimber(double input) {
+        m_climberMotor.set(ControlMode.PercentOutput, input);
+    }
+
+    /**
+     * Used to get the status of the top break beam.
+     * 
+     * @return True if the top break beam is closed.
+     */
+    public boolean getTopLimitSwitch(){
+        return m_topLimitSwitch.get();
+    }
+
+    /**
+     * Used to get the status of the bottom break beam.
+     * 
+     * @return True if the bottim break beam is closed.
+     */
+    public boolean getBottomLimitSwitch(){
+        return m_bottomLimitSwitch.get();
     }
 }

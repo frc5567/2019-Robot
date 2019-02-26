@@ -1,70 +1,14 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 
 public class CustomDashboard{
-    
-    SendableChooser<String> m_gamePieceSelector = new SendableChooser<>();
-    String m_gamePieceSelected;
-    Boolean m_hatchSelected;
-    Boolean m_cargoSelected;
     
     
     
     // Put any numbers / booleans we need to change in here
     public CustomDashboard(){
-
-
-
-    }
-
-    public enum HatchElevatorState {
-        kInitial(0),
-        kTransition(1),
-        kLowPosition(2),
-        kMidPosition(3),
-        kHighPosition(4),
-        kMaxHeight(5);
-
-        private int hatchElevatorState;
-
-        HatchElevatorState(int hatchElevatorState) {
-            this.setHatchElevatorState(hatchElevatorState);
-        }
-
-        public int getHatchElevatorState(){
-            return hatchElevatorState;
-        }
-
-        public void setHatchElevatorState(double elevatorHeight){
-            
-            // PLACEHOLDER VALUES
-            double lowThreshhold = 0;
-            double midThreshhold = 1;
-            double highThreshhold = 2;
-            final double MAX_ELEVATOR_HEIGHT = 5.0;
-
-            if(elevatorHeight < lowThreshhold + 2 && elevatorHeight > lowThreshhold - 2){
-                this.hatchElevatorState = 2;
-            }
-            else if(elevatorHeight < midThreshhold + 2 && elevatorHeight > midThreshhold - 2){
-                this.hatchElevatorState = 3;
-            }
-            else if(elevatorHeight < highThreshhold + 2 && elevatorHeight > highThreshhold - 2){
-                this.hatchElevatorState = 4;
-            }
-            else if(elevatorHeight == MAX_ELEVATOR_HEIGHT){
-                this.hatchElevatorState = 5;
-            }
-            else{
-                this.hatchElevatorState = 1;
-            }
-            
-
-        }
-
-
+    
     }
 
     /**
@@ -94,7 +38,7 @@ public class CustomDashboard{
         // Misc Values
         SmartDashboard.putString("Proximity to Nearest Wall" , dataStream.m_proximity);
         SmartDashboard.putNumber("Climber Position" , dataStream.m_climberEncoder);
-        SmartDashboard.putBoolean("Ball Intake Running" , dataStream.m_ballIntakeRunning);
+        //SmartDashboard.putBoolean("Ball Intake Running" , dataStream.m_ballIntakeRunning);
         
         
 

@@ -1,9 +1,13 @@
 package frc.robot;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-
-
+/**
+ * The DashboardData class is used to move the data we need to display on our dashboard from our
+ * Robot.java to our CustomDashboard.java. We use this class so that we don't have a huge
+ * constructor in the CustomDashboard file and can instead use DashboardData as a parameter for
+ * CustomDashboard.
+ * 
+ * @author Patrick Philbin, Issac Liimatta
+ */
 
 public class DashboardData{
 
@@ -18,13 +22,14 @@ public class DashboardData{
     double m_climberEncoder;
     boolean m_autonActive;
     boolean m_readingTarget;
-    boolean m_ballIntakeRunning;
+    //boolean m_ballIntakeRunning;
+    String m_elevatorState;
 
 
     /**
      * Constructor used as a data bridge between the sensors and the CustomDashboard class.
      * 
-     * @param elevatorEncoder The value read by the encoder on our elevator.
+     * @param elevatorEncoder The value read by calcPosition() of our elevator object.
      * @param encoderRateRight Value read by .getRate() of our right encoder.
      * @param encoderRateLeft Value read by .getRate() of our left encoder.
      * @param driverAssistOn Boolean that tests whether or not Driver Assist is being used.
@@ -34,12 +39,12 @@ public class DashboardData{
      * @param climberPosition The position of our climber based on it's encoder.
      * @param autonActivated True if auton is engaged, if disengaged it will read false.
      * @param autonReadingTarget True if the Pixy detects a line below the robot.
-     * @param ballIntakeRunning True if our ball intake system is currently running.
+     * @param elevatorState Value read from getState() method of our elevator object.
      */
     
     public DashboardData(double elevatorEncoder , double encoderRateRight , double encoderRateLeft ,
     boolean driverAssistOn , double proximitySensorInches , boolean grabberOpen , double grabberAngle ,
-    double climberPosition , boolean autonActivated , boolean autonReadingTarget , boolean ballIntakeRunning ){
+    double climberPosition , boolean autonActivated , boolean autonReadingTarget , String elevatorState){
         m_rawElevatorHeight = elevatorEncoder;
         
         m_velocityRight = encoderRateRight;
@@ -47,6 +52,9 @@ public class DashboardData{
         
         m_driverAssist = driverAssistOn;
         
+        /* Statement used to format the output of our proximity sensor, rounding it to 4 decimal
+         * points and adding the unit.
+         */ 
         if(proximitySensorInches < 12.0){
             proximityFormat = Double.toString(proximitySensorInches);
             proximityFormat = proximityFormat.substring(0 , proximityFormat.indexOf(".") + 4);
@@ -69,7 +77,9 @@ public class DashboardData{
 
         m_readingTarget = autonReadingTarget;
 
-        m_ballIntakeRunning = ballIntakeRunning;
+        //m_ballIntakeRunning = ballIntakeRunning;
+
+        m_elevatorState = elevatorState;
 
         
     }
