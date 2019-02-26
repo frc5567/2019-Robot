@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
@@ -27,6 +26,7 @@ import frc.robot.HatchMech;
 import frc.robot.AutoCommands;
 import frc.robot.TeleopCommands;
 import frc.robot.GamePad;
+import frc.robot.DriveClimber;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -47,7 +47,7 @@ public class Robot extends TimedRobot {
 
 	// Declare climbing mechanisms for front and back climbers
 	Climber m_frontClimber;
-	Climber m_backClimber;
+	DriveClimber m_backClimber;
 
 	// Declare NavX
 	NavX m_gyro;
@@ -82,7 +82,7 @@ public class Robot extends TimedRobot {
 
 		// Instantiates the front and back climbers with their respective motor and break beam ports
 		m_frontClimber = new Climber(RobotMap.FRONT_CLIMBER_MOTOR_PORT, RobotMap.FRONT_CLIMBER_LIMIT_TOP_PORT, RobotMap.FRONT_CLIMBER_LIMIT_BOTTOM_PORT);
-		m_backClimber = new Climber(RobotMap.BACK_CLIMBER_MOTOR_PORT, RobotMap.BACK_CLIMBER_LIMIT_TOP_PORT, RobotMap.BACK_CLIMBER_LIMIT_BOTTOM_PORT);
+		m_backClimber = new DriveClimber(RobotMap.BACK_CLIMBER_MOTOR_PORT, RobotMap.BACK_CLIMBER_LIMIT_TOP_PORT, RobotMap.BACK_CLIMBER_LIMIT_BOTTOM_PORT, RobotMap.CLIMBER_DRIVE_MOTOR_PORT);
 		
 		// Instantiates elevator
 		m_elevator = new Elevator();
