@@ -28,7 +28,7 @@ public class Climber {
         m_bottomLimitSwitch = new DigitalInput(bottomLimitSwitchPort);
     }
 
-    public void elevatorPIDConfig() {
+    public void climberPIDConfig() {
 		// Stops motor controllers
 		m_climberMotor.set(ControlMode.PercentOutput, 0);
 
@@ -72,7 +72,7 @@ public class Climber {
 		m_climberMotor.selectProfileSlot(0, RobotMap.PID_PRIMARY);
     }
 
-    public void elevatorPIDDrive(int target) {
+    public void climberPIDDrive(int target) {
 		System.out.println("PIDTarget in tics: \t" + target);
 		System.out.println("Current Position in tics: \t" + m_climberMotor.getSelectedSensorPosition());
 		m_climberMotor.set(ControlMode.MotionMagic, target);
