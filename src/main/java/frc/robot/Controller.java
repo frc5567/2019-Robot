@@ -27,117 +27,58 @@ public class Controller extends XboxController {
      * Gets the value of the left stick X axis
      * @return The X value of the left stick
      */
-    public double getLeftStickX() {
-        double leftStickXValue;
+    public double getX(Hand hand) {
+        double stickXValue;
         // Checks if stick is within deadband
-        if ((m_myController.getX(Hand.kLeft) < RobotMap.CONTROLLER_STICK_DEADBAND) && (m_myController.getX(Hand.kLeft) > -RobotMap.CONTROLLER_STICK_DEADBAND)) {
+        if ((super.getX(hand) < RobotMap.CONTROLLER_STICK_DEADBAND) && (super.getX(hand) > -RobotMap.CONTROLLER_STICK_DEADBAND)) {
             // If so, stick value is set to 0
-            leftStickXValue = 0.00;
+            stickXValue = 0.00;
         }
         // If the stick is outside deadband, sets variable to stick value
         else {
-            leftStickXValue = m_myController.getX(Hand.kLeft);
+            stickXValue = super.getX(hand);
         }
         // Returns the stick value
-        return leftStickXValue;
+        return stickXValue;
     }
 
     /**
      * Gets the value of the left stick Y axis
      * @return The Y value of the left axis
      */
-    public double getLeftStickY() {
-        double leftStickYValue;
+    public double getY(Hand hand) {
+        double stickYValue;
         // Checks if stick value is within deadband
-        if ((m_myController.getY(Hand.kLeft) < RobotMap.CONTROLLER_STICK_DEADBAND) && (m_myController.getY(Hand.kLeft) > -RobotMap.CONTROLLER_STICK_DEADBAND)) {
+        if ((super.getY(hand) < RobotMap.CONTROLLER_STICK_DEADBAND) && (super.getY(hand) > -RobotMap.CONTROLLER_STICK_DEADBAND)) {
             // If so, stick value is set to 0
-            leftStickYValue = 0.00;
+            stickYValue = 0.00;
         }
         // If the stick is outside deadband, sets variable to stick value
         else {
             // Negative added to fix y-stick values
             // Up on stick is now positive
-            leftStickYValue = -m_myController.getY(Hand.kLeft);
+            stickYValue = -super.getY(hand);
         }
         // Returns the stick value
-        return leftStickYValue;
-    }
-
-    /**
-     * Gets the value of the right stick X axis
-     * @return The X value of the right axis
-     */
-    public double getRightStickX() {
-        double rightStickXValue;
-        // Checks if the stick value is within deadband
-        if ((m_myController.getX(Hand.kRight) < RobotMap.CONTROLLER_STICK_DEADBAND) && (m_myController.getX(Hand.kRight) > -RobotMap.CONTROLLER_STICK_DEADBAND)) {
-            // If so, set stick value to 0
-            rightStickXValue = 0.00;
-        }
-        // If the stick is outside deadband, sets variable to stick value
-        else {
-            rightStickXValue = m_myController.getX(Hand.kRight);
-        }
-        // Returns the stick value
-        return rightStickXValue;
-    }
-
-    /**
-     * Gets the value of the right stick Y axis
-     * @return The Y value of the right axis
-     */
-    public double getRightStickY() {
-        double rightStickYValue;
-        // Checks if the stick value is within deadband
-        if ((m_myController.getY(Hand.kRight) < RobotMap.CONTROLLER_STICK_DEADBAND) && (m_myController.getY(Hand.kRight) > -RobotMap.CONTROLLER_STICK_DEADBAND)) {
-            // If so, set stick value to 0
-            rightStickYValue = 0.00;
-        }
-        // If the stick is outside of deadband, sets variable to stick value
-        else {
-            // Negative added to fix y-stick values
-            // Up on stick is now positive
-            rightStickYValue = -m_myController.getY(Hand.kLeft);
-        }
-        // Returns the stick value
-        return rightStickYValue;
+        return stickYValue;
     }
 
     /**
      * Gets the value of the left trigger
      * @return The value of the left trigger axis
      */
-    public double getLeftTrigger() {
-        double leftTriggerValue;
+    public double getTriggerAxis(Hand hand) {
+        double triggerValue;
         // Checks if the trigger value is less than deadband
-        if (m_myController.getTriggerAxis(Hand.kLeft) < RobotMap.CONTROLLER_TRIGGER_DEADBAND) {
+        if (super.getTriggerAxis(hand) < RobotMap.CONTROLLER_TRIGGER_DEADBAND) {
             // If so, sets the trigger value to 0
-            leftTriggerValue = 0.00;
+            triggerValue = 0.00;
         }
         // If the trigger is outside of deadband, sets the variable to trigger value
         else {
-            leftTriggerValue = m_myController.getTriggerAxis(Hand.kLeft);
+            triggerValue = super.getTriggerAxis(hand);
         }
         // Returns trigger value
-        return leftTriggerValue;
-    }
-
-    /**
-     * Gets the value of the right trigger
-     * @return The value of the right trigger axis
-     */
-    public double getRightTrigger() {
-        double rightTriggerValue;
-        // Checks if the trigger value is less than deadband
-        if (m_myController.getTriggerAxis(Hand.kRight) < RobotMap.CONTROLLER_TRIGGER_DEADBAND) {
-            // If so, sets the trigger value to 0
-            rightTriggerValue = 0.00;
-        }
-        // If the trigger is outside of deadband, sets the variable to trigger axis
-        else {
-            rightTriggerValue = m_myController.getTriggerAxis(Hand.kRight);
-        }
-        // Returns the trigger value
-        return rightTriggerValue;
+        return triggerValue;
     }
 }
