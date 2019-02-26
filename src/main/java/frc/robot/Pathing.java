@@ -34,6 +34,7 @@ public class Pathing {
     private boolean m_rotLowTargetFinished = false;
     private boolean m_lowDriveFinished = false;
     private boolean breakFlag = true;
+    private boolean lowAutoBreak = true;
 
 	// Declare our duino communication port
 	DuinoToRioComms m_duinoToRio;
@@ -49,15 +50,18 @@ public class Pathing {
     Drivetrain m_drivetrain;
 
     int m_counter;
+    Controller m_pilotControl;
     
     /**
      * Constructor for our pathing sequence, passing in the drivetrain we want to use
      * @param drivetrain The drivetrain for using with the pathing sequence
      */
-    public Pathing(Drivetrain drivetrain, NavX ahrs) {
+    public Pathing(Drivetrain drivetrain, NavX ahrs, Controller controller) {
         // Instantiates the duino comms system to get data from the pixys
         m_duinoToRio = new DuinoToRioComms();
 
+        // Instantiates the controller for checking input
+        m_pilotControl = controller;
         // Instantiates the drivetrain with the drivetrain passed in
         m_drivetrain = drivetrain;
         // Instantiates the navx with the passed in ahrs
@@ -110,7 +114,21 @@ public class Pathing {
         }
     }
 
-    public boolean secondHalfPath() {
+    public boolean secondHalfPath(boolean toggle) {
+        if (toggle) {
+            lowAutoBreak = !lowAutoBreak;
+        }
+
+        if (lowAutoBreak) {
+            if ( m_pilotControl.getLeftTrigger() > 0 || m_pilotControl.getRightTrigger() > 0 || m_pilotControl.getLeftStickX() != 0) {
+                return false;
+            }
+            else {
+                m_drivetrain.talonArcadeDrive(0, 0);
+                return false;
+            }
+        }
+
         if (!m_lowTargetFound) {
             m_lowTargetFound = checkForLowTarget();
             System.out.println("low target: \t" + m_lowTargetFound);

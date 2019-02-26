@@ -49,6 +49,8 @@ public class RobotMap {
 
     // Elevator
     public static final int ELEVATOR_MOTOR_PORT = 3;
+    //Climber back motor
+    public static final int CLIMBER_DRIVE_MOTOR_PORT = 16;
 
 	// PWM motor controller port numbers
 	// Climber
@@ -99,6 +101,9 @@ public class RobotMap {
     // Elevator Motor Speed
     public static final double ELEVATOR_MOTOR_SPEED_UP = -0.4;
     public static final double ELEVATOR_MOTOR_SPEED_DOWN = 0.4;
+    // Climber back motor speed settings
+    public static final double CLIMBER_DRIVE_SPEED_FOREWARD = 0.4;
+    public static final double CLIMBER_DRIVE_SPEED_BACKWARD = -0.4;
 
     // PID Controller
     // Rotate Controller
@@ -111,6 +116,10 @@ public class RobotMap {
 
     // Constants for calculating drive distance
     public static final double DRIVE_TICS_PER_INCH = (4096 / (6*RobotMap.PI));
+
+    // Constants for climber targets
+    public static final int RAISED_CLIMBER_POS = 0;
+    public static final int LOWERED_CLIMBER_POS = 4096; // TODO: Test value, replace
 
     // Stolen constants for sample code
 
