@@ -103,7 +103,7 @@ public class Robot extends TimedRobot {
 
 		// This requires the arduino to be plugged in, otherwise, it will fail
 		try {
-			m_pather = new Pathing(m_drivetrain, m_gyro);
+			m_pather = new Pathing(m_drivetrain, m_gyro, m_pilotController);
 		} catch (Exception e) {
 			System.out.println("Pather failed to instantiate");
 		}
@@ -194,16 +194,14 @@ public class Robot extends TimedRobot {
 
 		// Test drivetrain included, uses Left stick Y for speed, Right stick X for
 		// turning, quick turn is auto-enabled at low speed
+		m_pather.secondHalfPath(m_pilotController.getXButtonReleased());
 
 		if(m_pilotController.getYButton()) {
 			if (m_pather != null) {
 				m_pather.pathToTarget();
 			}
-		}
-		else if (m_pilotController.getXButton()) {
-			m_pather.secondHalfPath();
-		}
-		else {
+		}		
+		else if ((m_pilotController.getRightTrigger() - m_pilotController.getLeftTrigger()) > 0) {
 			// PID based sample talon arcade drive
 			m_drivetrain.talonArcadeDrive(m_pilotController.getRightTrigger() - m_pilotController.getLeftTrigger(), m_pilotController.getLeftStickX());
 		}

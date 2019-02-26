@@ -123,6 +123,10 @@ public class RobotMap {
     // Constants for calculating drive distance
     public static final double DRIVE_TICS_PER_INCH = (4096 / (6*RobotMap.PI));
 
+    // Constants for climber targets
+    public static final int RAISED_CLIMBER_POS = 0;
+    public static final int LOWERED_CLIMBER_POS = 4096; // TODO: Test value, replace
+
     // Stolen constants for sample code
 
     /**
