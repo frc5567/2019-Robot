@@ -72,7 +72,7 @@ public class Drivetrain implements PIDOutput {
 
     // Constants for calculating drive distance
     public static final double DRIVE_TICS_PER_INCH = 4096 / (6*RobotMap.PI);
-    private final double AUTO_SPEED = 0.3;
+    private final double AUTO_SPEED = 0.2;
     private boolean m_firstCallTest = true;
 
     // Counter for buying time for the PID
@@ -234,17 +234,17 @@ public class Drivetrain implements PIDOutput {
 
         // Sets our rotate speed to the return of the PID
         double returnedRotate = m_rotController.get();
-        Timer.delay(0.05);
 
         // Runs the drivetrain with 0 speed and the rotate speed set by the PID
-        System.out.println("target angle: \t" + targetAngle);
-        System.out.println("current angle: \t" + m_gyro.getYaw());
+        System.out.println("RETURN PID: \t" + returnedRotate);
+        System.out.println("Counter: \t" + m_counter);
         talonArcadeDrive(0, returnedRotate);
 
         // Checks to see if the the PID is finished or close enough
-        if ( (returnedRotate < RobotMap.FINISHED_PID_THRESHOLD) && (returnedRotate > -RobotMap.FINISHED_PID_THRESHOLD) ) {
+        if ( ((returnedRotate < RobotMap.FINISHED_PID_THRESHOLD) && (returnedRotate > -RobotMap.FINISHED_PID_THRESHOLD)) && (m_counter > 10)) {
             isFinished = true;
             m_firstCall = true;
+            System.out.println("FINISHED");
         }
         
         // if (m_counter > 10) {
@@ -254,6 +254,9 @@ public class Drivetrain implements PIDOutput {
 
         if (isFinished) {
             m_counter = 0;
+        }
+        else {
+            m_counter++;
         }
 
         return isFinished;
@@ -282,13 +285,12 @@ public class Drivetrain implements PIDOutput {
 
         // Sets our rotate speed to the return of the PID
         double returnedRotate = m_rotController.get();
-        Timer.delay(0.05);
 
         // Runs the drivetrain with 0 speed and the rotate speed set by the PID
         System.out.println("target angle: \t" + targetAngle);
         System.out.println("current angle: \t" + m_gyro.getYaw());
         talonArcadeDrive(AUTO_SPEED, returnedRotate);
-        System.out.println("Area \t" + area);
+        // System.out.println("Area \t" + area);
         // Checks to see if the the PID is finished or close enough
         // if (area > 3000) {
         //     isFinished = true;

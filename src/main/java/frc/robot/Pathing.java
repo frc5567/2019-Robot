@@ -112,8 +112,8 @@ public class Pathing {
 
     public boolean secondHalfPath() {
         if (!m_lowTargetFound) {
-            System.out.println("low target found");
             m_lowTargetFound = checkForLowTarget();
+            System.out.println("low target: \t" + m_lowTargetFound);
             return false;
         }
         // Runs the rotLowTarget method after all previous are finished and only if we see a target
@@ -254,7 +254,7 @@ public class Pathing {
         if(!m_angleToCenter.isNaN()) {
             System.out.println("Found Target");
             m_startingDegrees = m_gyro.getYaw();
-            m_absoluteDegToTarget = m_startingDegrees - m_angleToCenter;
+            m_absoluteDegToTarget = m_startingDegrees + m_angleToCenter;
         }
         
         // if (!m_angleToCenter.isNaN() && Math.abs(m_angleToCenter) > 30){

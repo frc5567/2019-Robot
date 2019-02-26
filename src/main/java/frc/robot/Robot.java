@@ -190,7 +190,7 @@ public class Robot extends TimedRobot {
 	@Override
 	public void teleopPeriodic() {
 
-		m_teleopCommands.teleopModeCommands();
+		// m_teleopCommands.teleopModeCommands();
 
 		// Test drivetrain included, uses Left stick Y for speed, Right stick X for
 		// turning, quick turn is auto-enabled at low speed
@@ -201,7 +201,7 @@ public class Robot extends TimedRobot {
 			}
 		}
 		else if (m_pilotController.getXButton()) {
-			m_drivetrain.rotateDriveAngle(10, Double.MAX_VALUE);
+			m_pather.secondHalfPath();
 		}
 		else {
 			// PID based sample talon arcade drive
