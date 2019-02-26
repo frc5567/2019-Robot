@@ -69,6 +69,7 @@ public class DuinoToRioComms {
         if (angleToCenter == -460.82) {
             angleToCenter = Double.NaN;
         }
+        System.out.println("angleToCenter:\t" + angleToCenter);
         return angleToCenter;
     }
 
