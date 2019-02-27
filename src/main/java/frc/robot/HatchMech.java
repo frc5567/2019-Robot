@@ -6,7 +6,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.Servo;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.Counter;
 
 public class HatchMech{
 
@@ -17,7 +17,7 @@ public class HatchMech{
     WPI_VictorSPX m_hatchArmMotor;
     DigitalInput m_limitSwitchTop;
     DigitalInput m_limitSwitchBottom;
-    Encoder m_hatchMechEncoder;
+    Counter m_hatchMechEncoder;
   
     public HatchMech(){
         //Creates servo variable for hatch mechanism.
@@ -65,31 +65,29 @@ public class HatchMech{
     /**
      * Raises the Hatch Mech arm to its high position when called
      */
-    public void armUp(){
-       /* 
-       if (m_hatchMechEncoder.get() >= RobotMap.HATCH_MECH_UP_MOTOR_POSITION) {
+    public boolean armUp(){
+       if (m_hatchMechEncoder.get() <= RobotMap.HATCH_MECH_UP_STOP_POSITION) {
             m_hatchArmMotor.set(RobotMap.HATCH_MECH_ARM_UP_MOTOR_SPEED);
+            return false;
         }
         else {
             m_hatchArmMotor.set(RobotMap.HATCH_MECH_STOP_MOTOR_SPEED);
-        }
-        */
-        m_hatchArmMotor.set(RobotMap.HATCH_MECH_ARM_UP_MOTOR_SPEED);                       
+            return true;
+        }                    
     }
    
     /**
      * Lowers the Hatch Mech arm to its low arm when called
      */
-    public void armDown(){
-        /*
-        if (m_hatchMechEncoder.get() <= RobotMap.HATCH_MECH_DOWN_MOTOR_POSITION) {
-            m_hatchArmMotor.set(RobotMap.HATCH_MECH_ARM_DOWN_MOTOR_SPEED);                            
+    public boolean armDown(){
+        if (m_hatchMechEncoder.get() <= RobotMap.HATCH_MECH_DOWN_STOP_POSITION) {
+            m_hatchArmMotor.set(RobotMap.HATCH_MECH_ARM_DOWN_MOTOR_SPEED);
+            return false;                            
         }
         else {
             m_hatchArmMotor.set(RobotMap.HATCH_MECH_STOP_MOTOR_SPEED);
+            return true;
         }
-        */
-        m_hatchArmMotor.set(RobotMap.HATCH_MECH_ARM_DOWN_MOTOR_SPEED);
     }
 
     /**

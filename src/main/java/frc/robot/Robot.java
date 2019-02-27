@@ -342,7 +342,20 @@ public class Robot extends TimedRobot {
 			}
 		
 		}
+
+		if (m_copilotGamepad.getManualElevatorUp()) {
+			m_elevator.moveRaw(0.4);
+		}
+		else if (m_copilotGamepad.getManulaElevatorDown()) {
+			m_elevator.moveRaw(-0.4);
+		}
 		
+		if (m_copilotGamepad.getLiftHatchArm()) {
+			m_hatchMech.setArm(0.3);
+		}
+		else if (m_copilotGamepad.getDropHatchArm()) {
+			m_hatchMech.setArm(-0.3);
+		}
 		
 		// Arm servo controls bound to copilot controller
 		// On A button released, open
