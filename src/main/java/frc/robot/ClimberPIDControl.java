@@ -15,6 +15,12 @@ import com.ctre.phoenix.motorcontrol.SensorTerm;
 import com.ctre.phoenix.motorcontrol.FollowerType;
 import com.ctre.phoenix.motorcontrol.DemandType;
 
+/**
+ * This class contains the config and the pid move method for the climbers
+ * <p> 
+ * Note that the PID config can only be used in sync, so we have to call climbers individually without a PID for retraction
+ * @version Week 0 (Comp Season)
+ */
 public class ClimberPIDControl {
     Climber m_frontClimber;
     DriveClimber m_driveClimber;

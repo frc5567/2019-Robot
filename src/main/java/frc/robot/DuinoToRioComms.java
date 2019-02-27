@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj.SerialPort;
  *  Class for communicating with the arduino over serial bus (USB)
  *  Contains methods for recieving data from the Pixy2 through the arduino
  *  @author Josh Overbeek
- *  @version Pre-Comp Week 5
+ *  @version Pre-Comp Week 0 (Comp Season)
  */
 public class DuinoToRioComms {
     //  Declaration for usb port to interact with the Duino
@@ -59,7 +59,7 @@ public class DuinoToRioComms {
 
         //  Calls pixyRead with the command 3 to get angle to center and assign it to return variable
         angleToCenter = pixyRead(RobotMap.GET_ANGLE_TO_CENTER);
-        
+
         System.out.println("angleToCenter:\t" + angleToCenter);
         return angleToCenter;
     }

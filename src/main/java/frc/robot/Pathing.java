@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj.Timer;
 /**
  * This class is what will drive the robot in automated pathing calls
  * @author Josh Overbeek
- * @version Week 6 Pre-comp
+ * @version Week 0 (Comp Season)
  */
 public class Pathing {
     // Doubles for storing the return from the arduino
@@ -46,7 +46,11 @@ public class Pathing {
     // Declares a drivetrain to use in the auto movement
     Drivetrain m_drivetrain;
 
-    int m_counter;
+    // Counter so that we only get angle while turning every 5th cycle.
+    // Starts at 5 so we collect data the first time through
+    private int m_lowDataCollectCounter = 5;
+
+    private int m_rotateExitCounter;
     Controller m_pilotControl;
     
     /**
@@ -67,7 +71,7 @@ public class Pathing {
         // Configs the talon PIDs
         m_drivetrain.talonDriveConfig();
 
-        m_counter = 0;
+        m_rotateExitCounter = 0;
     }
 
     /**
@@ -188,11 +192,11 @@ public class Pathing {
             System.out.println("PIDOutput: \t" + m_drivetrain.m_rotController.get());
             m_drivetrain.rotateToAngle(m_absoluteDegToTarget);
             System.out.println("Post method PIDOutput: \t" + m_drivetrain.m_rotController.get());
-            if ((m_counter > 25) && ((m_drivetrain.m_rotController.get() < RobotMap.FINISHED_PID_THRESHOLD) && (m_drivetrain.m_rotController.get() > -RobotMap.FINISHED_PID_THRESHOLD))) {
+            if ((m_rotateExitCounter > 25) && ((m_drivetrain.m_rotController.get() < RobotMap.FINISHED_PID_THRESHOLD) && (m_drivetrain.m_rotController.get() > -RobotMap.FINISHED_PID_THRESHOLD))) {
                 return true;
             }
             else {
-                m_counter++;
+                m_rotateExitCounter++;
                 return false;
             }
         }
@@ -262,15 +266,27 @@ public class Pathing {
     private boolean rotLowTarget() {
         System.out.println("target angle: \t" + m_absoluteDegToTarget);
         System.out.println("current angle: \t" + m_gyro.getYaw());
-        // Assigns the target if there is no previous valid target
-        m_angleToCenter = m_duinoToRio.getAngleToCenter();
-        System.out.println("Looking for target");
-        // If the target is a valid number, assigns necesary target variables
-        if(!m_angleToCenter.isNaN()) {
-            System.out.println("Found Target");
-            m_startingDegrees = m_gyro.getYaw();
-            m_absoluteDegToTarget = m_startingDegrees + m_angleToCenter;
+
+        // Collects data and assigns values every 5th cycle
+        if (m_lowDataCollectCounter > 4) {
+            // Assigns data from duino to a variable
+            m_angleToCenter = m_duinoToRio.getAngleToCenter();
+
+            // If the target is a valid number, assigns necesary target variables
+            if(!m_angleToCenter.isNaN()) {
+                System.out.println("Found Target");
+                m_startingDegrees = m_gyro.getYaw();
+                m_absoluteDegToTarget = m_startingDegrees + m_angleToCenter;
+            }
+
+            // Reset the counter
+            m_lowDataCollectCounter = 0;
         }
+        else {
+            // Increments the counter if we don't get data
+            m_lowDataCollectCounter++;
+        }
+        
         
         // This code is designed to shift drive method into rotate without forward movement if the robot was too far off target
         // TODO: Find if this is necesary through testing and either update or remove this code on necesity
@@ -329,6 +345,9 @@ public class Pathing {
         m_lowTargetFound = false;
         m_rotLowTargetFinished = false;
         m_lowDriveFinished = false;
+
+        m_lowDataCollectCounter = 5;
+        m_rotateExitCounter = 0;
     }
 
 }
