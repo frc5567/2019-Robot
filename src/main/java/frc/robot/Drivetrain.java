@@ -70,9 +70,6 @@ public class Drivetrain implements PIDOutput {
     private double m_rightTargetTics;
     private double m_ticsToTarget;
 
-    // Constants for calculating drive distance
-    public static final double DRIVE_TICS_PER_INCH = 4096 / (6*RobotMap.PI);
-    private final double AUTO_SPEED = 0.2;
     private boolean m_firstCallTest = true;
 
     // Counter for buying time for the PID
@@ -123,10 +120,10 @@ public class Drivetrain implements PIDOutput {
         ultraRight.setDistanceUnits(Unit.kInches);
         
         // Initializes rotate PID controller with the PIDF constants, the ahrs, the PID output, and the loop time (s)
-        m_rotController = new PIDController(RobotMap.P_ROTATE_CONTROLLER, RobotMap.I_ROTATE_CONTROLLER, RobotMap.D_ROTATE_CONTROLLER, RobotMap.F_ROTATE_CONTROLLER, m_gyro, this, 0.02);
-        m_rotController.setInputRange(-180.00f, 180.00f);
+        m_rotController = new PIDController(RobotMap.P_ROTATE_CONTROLLER, RobotMap.I_ROTATE_CONTROLLER, RobotMap.D_ROTATE_CONTROLLER, RobotMap.F_ROTATE_CONTROLLER, m_gyro, this, RobotMap.PID_LOOP_TIME_S);
+        m_rotController.setInputRange(-RobotMap.PID_INPUT_RANGE, RobotMap.PID_INPUT_RANGE);
         // These values are temporary and need to be changed based on testing
-        m_rotController.setOutputRange(-0.5, 0.5);
+        m_rotController.setOutputRange(-RobotMap.PID_OUTPUT_RANGE, RobotMap.PID_OUTPUT_RANGE);
         m_rotController.setAbsoluteTolerance(RobotMap.TOLERANCE_ROTATE_CONTROLLER);
         m_rotController.setContinuous();
         m_rotController.disable();
@@ -246,11 +243,6 @@ public class Drivetrain implements PIDOutput {
             m_firstCall = true;
             System.out.println("FINISHED");
         }
-        
-        // if (m_counter > 10) {
-        //     isFinished = true;
-        //     m_firstCall = true;
-        // }
 
         if (isFinished) {
             m_counter = 0;
@@ -289,18 +281,10 @@ public class Drivetrain implements PIDOutput {
         // Runs the drivetrain with 0 speed and the rotate speed set by the PID
         System.out.println("target angle: \t" + targetAngle);
         System.out.println("current angle: \t" + m_gyro.getYaw());
-        talonArcadeDrive(AUTO_SPEED, returnedRotate);
-        // System.out.println("Area \t" + area);
-        // Checks to see if the the PID is finished or close enough
-        // if (area > 3000) {
-        //     isFinished = true;
-        //     m_firstCall = true;
-        // }
+        talonArcadeDrive(RobotMap.AUTO_SPEED, returnedRotate);
 
-        // if (isFinished) {
-        //     m_counter = 0;
-        // }
-
+        // isFinished acts as an exit flag once we have fulfilled the conditions desired
+        // It is currently not used as a result of testing necesity, but will likely be used on final implementation
         return isFinished;
     }
 
@@ -478,7 +462,7 @@ public class Drivetrain implements PIDOutput {
                 System.out.println("Forward");
                 // Drives straight if we have not reached our target
                 if (m_leftTargetTics < getLeftDriveEncoderPosition()/* && m_rightTargetTics < getLeftDriveEncoderPosition() */) {
-                    talonArcadeDrive(AUTO_SPEED, 0);
+                    talonArcadeDrive(RobotMap.AUTO_SPEED, 0);
                     System.out.println("Driving Forward");
                     return false;
                 }
@@ -490,11 +474,11 @@ public class Drivetrain implements PIDOutput {
                     return true;
                 }
             }
-            else if (m_leftTargetTics > m_leftInitTics) {
+            else {
                 // Drives straight if we have not reached our target
                 System.out.println("Back");
                 if (m_leftTargetTics > getLeftDriveEncoderPosition()/* && m_rightTargetTics > getLeftDriveEncoderPosition() */) {
-                    talonArcadeDrive(-AUTO_SPEED, 0);
+                    talonArcadeDrive(-RobotMap.AUTO_SPEED, 0);
                     System.out.println("Driving Back");
                     return false;
                 }
@@ -506,10 +490,6 @@ public class Drivetrain implements PIDOutput {
                     return true;
                 }
             }
-            else {
-                System.out.println("Fail to math, [HELP]");
-                return false;
-            }
         }
     }
 
@@ -519,7 +499,7 @@ public class Drivetrain implements PIDOutput {
      * @return Returns the resultant tips
      */
     private double inToTics(double inches) {
-        return inches*DRIVE_TICS_PER_INCH;
+        return inches*RobotMap.DRIVE_TICS_PER_INCH;
     }
 
     /**

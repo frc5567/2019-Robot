@@ -190,36 +190,12 @@ public class Robot extends TimedRobot {
 	@Override
 	public void teleopPeriodic() {
 
+		// This code is currently commented out for the sake of driver training. It is also untested
+		// TODO: Needs to be tested.
 		// m_teleopCommands.teleopModeCommands();
 
-		// Test drivetrain included, uses Left stick Y for speed, Right stick X for
-		// turning, quick turn is auto-enabled at low speed
-		m_pather.secondHalfPath(m_pilotController.getXButtonReleased());
-
-		if(m_pilotController.getYButton()) {
-			if (m_pather != null) {
-				m_pather.pathToTarget();
-			}
-		}		
-		else if ((m_pilotController.getRightTrigger() - m_pilotController.getLeftTrigger()) > 0) {
-			// PID based sample talon arcade drive
-			m_drivetrain.talonArcadeDrive(m_pilotController.getRightTrigger() - m_pilotController.getLeftTrigger(), m_pilotController.getLeftStickX());
-		}
-		
-		if (m_pilotController.getAButtonReleased()) {
-			m_gyro.zeroYaw();
-		}
-		if (m_pilotController.getBButtonReleased()) {
-			m_gyro.flipOffset();
-		}
-		if (m_pilotController.getBumper(Hand.kRight)) {
-			m_pather.resetFlags();
-		}
-		m_pilotController.setRumble(RumbleType.kLeftRumble, 0);
-		m_pilotController.setRumble(RumbleType.kRightRumble, 0);
-
-		// Prints yaw and if offset is applied to console
-		// System.out.println(m_gyro.getOffsetYaw() + "\t\t" + m_gyro.getOffsetStatus());
+		// PID based sample talon arcade drive
+		m_drivetrain.talonArcadeDrive(m_pilotController.getRightTrigger() - m_pilotController.getLeftTrigger(), m_pilotController.getLeftStickX());
 	}
 
 	/**
@@ -356,6 +332,19 @@ public class Robot extends TimedRobot {
 			m_hatchMech.closeServo();
 		}
 		
+		// Code for testing gyro reset and flipping. Commented out as the buttons are used elsewhere
+		// if (m_pilotController.getAButtonReleased()) {
+		// 	m_gyro.zeroYaw();
+		// }
+		// if (m_pilotController.getBButtonReleased()) {
+		// 	m_gyro.flipOffset();
+		// }
+		// if (m_pilotController.getBumper(Hand.kRight)) {
+		// 	m_pather.resetFlags();
+		// }
+		// m_pilotController.setRumble(RumbleType.kLeftRumble, 0);
+		// m_pilotController.setRumble(RumbleType.kRightRumble, 0);
+
 		// System.out.print("Left Ultrasonics: \t" + m_drivetrain.getLeftUltra().getRangeInches());
 		// System.out.print("Right Ultrasonics: \t" + m_drivetrain.getRightUltra().getRangeInches());
 		// System.out.print("Drivetrain Enc Velocity: \t" + m_drivetrain.getLeftDriveEncoderVelocity() + "\t\t" + m_drivetrain.getRightDriveEncoderVelocity());

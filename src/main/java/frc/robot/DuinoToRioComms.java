@@ -12,13 +12,6 @@ public class DuinoToRioComms {
     //  Declaration for usb port to interact with the Duino
 	private SerialPort m_duinoPort;
 
-	//	Declares command constants for communication
-	private final char GET_DEG_TO_TARGET = '2';
-	private final char GET_DIST_TO_TARGET = '1';
-	private final char GET_ANGLE_TO_CENTER = '3';
-    private final char GET_LOW_POSITION = '4';
-    private final char GET_AVG_AREA = '5';
-
     /**
      *  Constructor for the commuication class object
      */
@@ -37,7 +30,7 @@ public class DuinoToRioComms {
         Double degToTarget = Double.NaN;
 
         //  Calls pixyRead with the command 2 to get deg to target and assign it to return variable
-        degToTarget = pixyRead(GET_DEG_TO_TARGET);
+        degToTarget = pixyRead(RobotMap.GET_DEG_TO_TARGET);
 
         return degToTarget;
     }
@@ -51,7 +44,7 @@ public class DuinoToRioComms {
         Double distToTarget = Double.NaN;
 
         //  Calls pixyRead with the command 1 to get dist to target and assign it to return variable
-        distToTarget = pixyRead(GET_DIST_TO_TARGET);
+        distToTarget = pixyRead(RobotMap.GET_DIST_TO_TARGET);
 
         return distToTarget;
     }
@@ -65,10 +58,8 @@ public class DuinoToRioComms {
         Double angleToCenter = Double.NaN;
 
         //  Calls pixyRead with the command 3 to get angle to center and assign it to return variable
-        angleToCenter = pixyRead(GET_ANGLE_TO_CENTER);
-        if (angleToCenter == -460.82) {
-            angleToCenter = Double.NaN;
-        }
+        angleToCenter = pixyRead(RobotMap.GET_ANGLE_TO_CENTER);
+        
         System.out.println("angleToCenter:\t" + angleToCenter);
         return angleToCenter;
     }
@@ -82,7 +73,7 @@ public class DuinoToRioComms {
         Double lowPosition = Double.NaN;
 
         //  Calls pixyRead with the command 4 to get lowPosition and assign it to return variable
-        lowPosition = pixyRead(GET_LOW_POSITION);
+        lowPosition = pixyRead(RobotMap.GET_LOW_POSITION);
 
         return lowPosition;
     }
@@ -90,7 +81,7 @@ public class DuinoToRioComms {
     public double getAverageArea() {
         Double averageArea = Double.NaN;
 
-        averageArea = pixyRead(GET_AVG_AREA);
+        averageArea = pixyRead(RobotMap.GET_AVG_AREA);
 
         return averageArea;
     }
@@ -142,7 +133,7 @@ public class DuinoToRioComms {
         String sPixyOut = m_duinoPort.readString(6);
 
         //  Checks to see if the passed in command is valid
-        if (command != GET_AVG_AREA && ((command != GET_ANGLE_TO_CENTER && command != GET_DEG_TO_TARGET) && (command != GET_DIST_TO_TARGET && command != GET_LOW_POSITION)) ){
+        if (command != RobotMap.GET_AVG_AREA && ((command != RobotMap.GET_ANGLE_TO_CENTER && command != RobotMap.GET_DEG_TO_TARGET) && (command != RobotMap.GET_DIST_TO_TARGET && command != RobotMap.GET_LOW_POSITION)) ){
             System.out.println("Invalid Command");
 		}
         else {

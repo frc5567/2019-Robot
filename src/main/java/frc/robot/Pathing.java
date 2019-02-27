@@ -39,9 +39,6 @@ public class Pathing {
 	// Declare our duino communication port
 	DuinoToRioComms m_duinoToRio;
     private DuinoCommStorage m_pkt;
-    
-    // Constants for calculating drive distance
-    private final double AUTO_SPEED = 0.3;
 
     // Declare NavX
     NavX m_gyro;
@@ -227,7 +224,7 @@ public class Pathing {
         else {
             // Drives straight if we have not reached our target
             if (m_leftTargetTics < m_drivetrain.getLeftDriveEncoderPosition() && m_rightTargetTics < m_drivetrain.getLeftDriveEncoderPosition()) {
-                m_drivetrain.talonArcadeDrive(AUTO_SPEED, 0);
+                m_drivetrain.talonArcadeDrive(RobotMap.AUTO_SPEED, 0);
                 return false;
             }
             else {
@@ -275,8 +272,9 @@ public class Pathing {
             m_absoluteDegToTarget = m_startingDegrees + m_angleToCenter;
         }
         
+        // This code is designed to shift drive method into rotate without forward movement if the robot was too far off target
+        // TODO: Find if this is necesary through testing and either update or remove this code on necesity
         // if (!m_angleToCenter.isNaN() && Math.abs(m_angleToCenter) > 30){
-        //     // Timer.delay(0.1);
         //     // Rotates until the method says that its done
         //     if ((m_drivetrain.rotateToAngle(m_absoluteDegToTarget))) {
         //         System.out.println("Done Rotating");
@@ -287,8 +285,8 @@ public class Pathing {
         //         return false;
         //     }
         // }
+
         if (!m_angleToCenter.isNaN()) {
-            // Timer.delay(0.1);
             // Rotates until the method says that its done
             if (m_drivetrain.rotateDriveAngle(m_absoluteDegToTarget, m_duinoToRio.getAverageArea())) {
                 System.out.println("Done Rotating");

@@ -119,9 +119,15 @@ public class RobotMap {
     public static final double F_ROTATE_CONTROLLER = 0.00;
     public static final double TOLERANCE_ROTATE_CONTROLLER = 2;
     public static final double FINISHED_PID_THRESHOLD = 0.15;
+    public static final double PID_LOOP_TIME_S = 0.02;
+    public static final double PID_INPUT_RANGE = 180.00;
+    public static final double PID_OUTPUT_RANGE = 0.5;
 
     // Constants for calculating drive distance
     public static final double DRIVE_TICS_PER_INCH = (4096 / (6*RobotMap.PI));
+
+    // Speed of robot drive in autonomous functions
+    public static final double AUTO_SPEED = 0.2;
 
     // Constants for climber targets
     public static final int RAISED_CLIMBER_POS = 0;
@@ -194,4 +200,11 @@ public class RobotMap {
     public final static int SLOT_TURNING = SLOT_1;
     public final static int SLOT_VELOCIT = SLOT_2;
     public final static int SLOT_MOT_PROF = SLOT_3;
+
+    //	Declares command constants for arduino communication
+	public final static char GET_DEG_TO_TARGET = '2';
+	public final static char GET_DIST_TO_TARGET = '1';
+	public final static char GET_ANGLE_TO_CENTER = '3';
+    public final static char GET_LOW_POSITION = '4';
+    public final static char GET_AVG_AREA = '5';
 }
