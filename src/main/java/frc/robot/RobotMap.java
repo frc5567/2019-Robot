@@ -42,16 +42,10 @@ public class RobotMap {
     public static final boolean COMP = false;
     
     // COMP BOT VALUES
-    // public static final int SLAVE_LEFT_DRIVE_MOTOR_PORT = 12;
-    // public static final int SLAVE_RIGHT_DRIVE_MOTOR_PORT = 11;
-    // public static final int MASTER_LEFT_DRIVE_MOTOR_PORT = 2;
-    // public static final int MASTER_RIGHT_DRIVE_MOTOR_PORT = 1;
-
-    // TEST BOT VALUES
-    public static final int SLAVE_LEFT_DRIVE_MOTOR_PORT = 30;
-    public static final int SLAVE_RIGHT_DRIVE_MOTOR_PORT = 31;
-    public static final int MASTER_LEFT_DRIVE_MOTOR_PORT = 20;
-    public static final int MASTER_RIGHT_DRIVE_MOTOR_PORT = 21;
+    public static final int SLAVE_LEFT_DRIVE_MOTOR_PORT = 12;
+    public static final int SLAVE_RIGHT_DRIVE_MOTOR_PORT = 11;
+    public static final int MASTER_LEFT_DRIVE_MOTOR_PORT = 2;
+    public static final int MASTER_RIGHT_DRIVE_MOTOR_PORT = 1;
 
     // Elevator
     public static final int ELEVATOR_MOTOR_PORT = 3;
