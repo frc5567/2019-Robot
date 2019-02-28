@@ -100,6 +100,22 @@ public class TeleopCommands {
      * Allows the drivers to control the climbers as a pair and seperately
      */
     public void controlClimbers() {
+
+        // Raises climbers (Gamepad control)
+        if (m_copilotController.getManualElevatorUp()) {
+            m_frontClimber.raiseClimber(RobotMap.FRONT_CLIMBER_SPEED_UP);
+            m_backClimber.raiseClimber(RobotMap.BACK_CLIMBER_SPEED_UP);
+
+        }
+        else if (m_copilotController.getManulaElevatorDown()) {
+            m_frontClimber.lowerClimber(RobotMap.FRONT_CLIMBER_SPEED_DOWN);
+            m_backClimber.lowerClimber(RobotMap.BACK_CLIMBER_SPEED_DOWN);
+        }
+        else {
+            m_backClimber.setClimber(0.00);
+            m_frontClimber.setClimber(0.00);
+        }
+/*
         // Raises both climbers
         if (m_pilotController.getBackButton()) {
             m_frontClimber.raiseClimber(RobotMap.FRONT_CLIMBER_SPEED_UP);
@@ -137,5 +153,6 @@ public class TeleopCommands {
                 m_backClimber.setClimber(0.0);
             }
         }
+*/
     }
 }
