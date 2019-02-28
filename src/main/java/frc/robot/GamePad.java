@@ -56,6 +56,15 @@ public class GamePad extends GenericHID {
 	}
 
 	/**
+	 * Returns the status of the button (true if held)
+	 * @param button Button to view if button is held
+	 * @return Returns button status (if held)
+	 */
+	public boolean getGamePadButton(GamePadControls button) {
+		return super.getRawButton(button.value);
+	}
+
+	/**
 	 * Gets the X axis of the gamepad
 	 * @return The value of the x axis
 	 */
@@ -149,5 +158,53 @@ public class GamePad extends GenericHID {
 	 */
 	public boolean getDropHatchArmReleased() {
 		return getGamePadButtonReleased(GamePadControls.DROP_HATCH_ARM);
+	}
+
+	/**
+	 * Gets the current state of the pickup hatch button
+	 * @return Returns the current status of the button (held)
+	 */
+	public boolean getPickupHatchCargo() {
+		return getGamePadButton(GamePadControls.PICKUP_HATCH_CARGO);
+	}
+
+	/**
+	 * Gets the current state of the low hatch button
+	 * @return Returns the current status of the button (held)
+	 */
+	public boolean getLowHatchCargo() {
+		return getGamePadButton(GamePadControls.LOW_HATCH_CARGO);
+	}
+
+	/**
+	 * Gets the current state of the medium hatch button
+	 * @return Returns the current status of the button (held)
+	 */
+	public boolean getMediumHatchCargo() {
+		return getGamePadButton(GamePadControls.MEDIUM_HATCH_CARGO);
+	}
+
+	/**
+	 * Gets the current state of the high hatch button
+	 * @return Returns the current status of the button (held)
+	 */
+	public boolean getHighHatchCargo() {
+		return getGamePadButton(GamePadControls.HIGH_HATCH_CARGO);
+	}
+
+	/**
+	 * Gets the current state of the lift hatch arm button
+	 * @return Returns the current status of the button (held)
+	 */
+	public boolean getLiftHatchArm() {
+		return getGamePadButton(GamePadControls.LIFT_HATCH_ARM);
+	}
+
+	/**
+	 * Gets the current state of the drop hatch arm button
+	 * @return Returns the current status of the button (held)
+	 */
+	public boolean getDropHatchArm() {
+		return getGamePadButton(GamePadControls.DROP_HATCH_ARM);
 	}
 }
