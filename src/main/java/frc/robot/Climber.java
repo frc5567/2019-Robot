@@ -1,12 +1,12 @@
 package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.DigitalInput;
 
 public class Climber {
 
-    private WPI_VictorSPX m_climberMotor;
+    WPI_TalonSRX m_climberMotor;
     private DigitalInput m_topLimitSwitch;
     private DigitalInput m_bottomLimitSwitch;
 
@@ -18,11 +18,11 @@ public class Climber {
      * @param bottomLimitSwitchPort The port of the bottom limit switch on the climber
      */
     public Climber(int motorPort, int topLimitSwitchPort, int bottomLimitSwitchPort) {
-        m_climberMotor = new WPI_VictorSPX(motorPort);
+        m_climberMotor = new WPI_TalonSRX(motorPort);
         m_topLimitSwitch = new DigitalInput(topLimitSwitchPort);
         m_bottomLimitSwitch = new DigitalInput(bottomLimitSwitchPort);
     }
-
+    
     /**
      * Raises climber at a constant speed while button is pressed and the limit switch is not reached
      * (Button to be determined later).
