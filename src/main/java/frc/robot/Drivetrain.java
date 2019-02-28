@@ -1,10 +1,33 @@
-/**
- * This class defines the mechanism that allows the robot to move backwards and forwards using motors and wheels. 
- */
-<<<<<<< HEAD
-
 package frc.robot;
-=======
+
+import edu.wpi.first.wpilibj.PIDOutput;
+// Imports needed for motor controllers, speed controller groups, and the drivetrain
+import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+// These imports are extending SpeedController, allowing us to use SpeedControllerGroup
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.DemandType;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.SensorCollection;
+
+// Stolen imports from the CTRE sample code
+import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
+import com.ctre.phoenix.motorcontrol.SensorTerm;
+import com.ctre.phoenix.motorcontrol.StatusFrame;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+
+// Import needed to initialize NavX and rotation controller
+import edu.wpi.first.wpilibj.PIDController;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.Ultrasonic;
+import edu.wpi.first.wpilibj.Ultrasonic.Unit;
+
+/**
+ * This class defines the main drivetrain used with CAN motor controllers
+ * @author Matt, Josh
+ * @version Week 5 Pre-comp
+ */
 public class Drivetrain implements PIDOutput {
     // Declares NavX for rotation control
     private NavX m_gyro;
@@ -510,20 +533,29 @@ public class Drivetrain implements PIDOutput {
     public int getRightDriveEncoderPosition() {
         return m_rightDriveEncoder.getQuadraturePosition();
     }
->>>>>>> 45582576f07aacd61655f31789ba20fa969daa44
 
-//we imported the methods for the controller, differential drive, and VictorSP
-import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.drive.DifferentialDrive; 
-import edu.wpi.first.wpilibj.VictorSP;
+    /**
+     * Returns the encoder velocity of the drivetrain left side encoder
+     * 
+     * @return The velocity of the left side encoder
+     */
+    public int getLeftDriveEncoderVelocity() {
+        return m_leftDriveEncoder.getQuadratureVelocity();
+    }
 
+    /**
+     * Returns the encoder velocity of the drivetrain right side encoder
+     * 
+     * @return The velocity of the right side encoder
+     */
+    public int getRightDriveEncoderVelocity() {
+        return m_rightDriveEncoder.getQuadratureVelocity();
+    }
 
-public class DriveTrain {
-    private double m_motorPowerLeft= 0;
-    private double m_motorPowerRight= 0;
-    private XboxController m_driveController;
-    private VictorSP m_leftMotor;
-    private VictorSP m_rightMotor;
-    private DifferentialDrive m_driveTrain;
+    /**
+     * 
+     */
+    public void pidWrite(double output) {
 
+    }
 }
