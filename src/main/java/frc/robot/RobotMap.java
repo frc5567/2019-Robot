@@ -17,7 +17,7 @@ public class RobotMap {
     // Encoder ticks / revolution
     public static final int TICKS_PER_REVOLUTION = 4096;
     // Controller deadbands
-    public static final double CONTROLLER_STICK_DEADBAND = 0.05;
+    public static final double CONTROLLER_STICK_DEADBAND = 0.1;
     public static final double CONTROLLER_TRIGGER_DEADBAND = 0.1;
     // Elevator drum measurements
     public static final double DRUM_CIRCUMFERENCE = 8.1875;
@@ -38,10 +38,15 @@ public class RobotMap {
     // CAN motor controller ID numbers
     // Drivetrain
     // NOTE: Test robot can IDs for drivetrain.
+
+    public static final boolean COMP = false;
+    
+    // COMP BOT VALUES
     public static final int SLAVE_LEFT_DRIVE_MOTOR_PORT = 12;
     public static final int SLAVE_RIGHT_DRIVE_MOTOR_PORT = 11;
     public static final int MASTER_LEFT_DRIVE_MOTOR_PORT = 2;
     public static final int MASTER_RIGHT_DRIVE_MOTOR_PORT = 1;
+
     // Elevator
     public static final int ELEVATOR_MOTOR_PORT = 3;
     //Climber back motor
@@ -102,12 +107,25 @@ public class RobotMap {
 
     // PID Controller
     // Rotate Controller
-    public static final double P_ROTATE_CONTROLLER = 0.035;
+    public static final double P_ROTATE_CONTROLLER = 0.025;
     public static final double I_ROTATE_CONTROLLER = 0.00;
     public static final double D_ROTATE_CONTROLLER = 0.00;
     public static final double F_ROTATE_CONTROLLER = 0.00;
     public static final double TOLERANCE_ROTATE_CONTROLLER = 2;
     public static final double FINISHED_PID_THRESHOLD = 0.15;
+    public static final double PID_LOOP_TIME_S = 0.02;
+    public static final double PID_INPUT_RANGE = 180.00;
+    public static final double PID_OUTPUT_RANGE = 0.5;
+
+    // Constants for calculating drive distance
+    public static final double DRIVE_TICS_PER_INCH = (4096 / (6*RobotMap.PI));
+
+    // Speed of robot drive in autonomous functions
+    public static final double AUTO_SPEED = 0.2;
+
+    // Constants for climber targets
+    public static final int RAISED_CLIMBER_POS = 0;
+    public static final int LOWERED_CLIMBER_POS = 4096; // TODO: Test value, replace
 
     // Stolen constants for sample code
 
@@ -133,7 +151,7 @@ public class RobotMap {
      * Josh's note: This is referring to the actual robot, which means we need to test with said robot.
      * This cannot be used without that testing
      */
-    public final static int ENCODER_UNITS_PER_ROTATION = 51711;
+    public final static int ENCODER_UNITS_PER_ROTATION = 36224;
 
     /**
      * PID Gains may have to be adjusted based on the responsiveness of control
@@ -176,4 +194,11 @@ public class RobotMap {
     public final static int SLOT_TURNING = SLOT_1;
     public final static int SLOT_VELOCIT = SLOT_2;
     public final static int SLOT_MOT_PROF = SLOT_3;
+
+    //	Declares command constants for arduino communication
+	public final static char GET_DEG_TO_TARGET = '2';
+	public final static char GET_DIST_TO_TARGET = '1';
+	public final static char GET_ANGLE_TO_CENTER = '3';
+    public final static char GET_LOW_POSITION = '4';
+    public final static char GET_AVG_AREA = '5';
 }

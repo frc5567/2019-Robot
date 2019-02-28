@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
@@ -51,7 +50,7 @@ public class Robot extends TimedRobot {
 	DriveClimber m_backClimber;
 
 	// Declare NavX
-	NavX m_ahrs;
+	NavX m_gyro;
 
 	// Declares Elevator
 	Elevator m_elevator;
@@ -69,7 +68,8 @@ public class Robot extends TimedRobot {
 	UsbCamera camera;
 	HatchMech m_hatchMech;
 
-	WPI_VictorSPX liftDriveMotor;
+	// Declare the continuous command sequence
+	ContinuousCommand testContinuousCommand;
 
 	Robot() {
 
@@ -93,19 +93,17 @@ public class Robot extends TimedRobot {
 		// Instantiates hatch arm class 
 		m_hatchMech = new HatchMech();
 
-		liftDriveMotor = new WPI_VictorSPX(16);
-		
 		try {
-			m_ahrs = new NavX(SPI.Port.kMXP);
+			m_gyro = new NavX(SPI.Port.kMXP);
 		} catch (RuntimeException ex) {
 			System.out.println("Error instantiating navX MXP");
 		}
 
-		m_drivetrain = new Drivetrain(m_ahrs);
+		m_drivetrain = new Drivetrain(m_gyro);
 
 		// This requires the arduino to be plugged in, otherwise, it will fail
 		try {
-			m_pather = new Pathing(m_drivetrain, m_ahrs);
+			m_pather = new Pathing(m_drivetrain, m_gyro, m_pilotController);
 		} catch (Exception e) {
 			System.out.println("Pather failed to instantiate");
 		}
@@ -113,8 +111,9 @@ public class Robot extends TimedRobot {
 		// Runs config for the PID system on the drivetrain
 		m_drivetrain.talonDriveConfig();
 
-		m_autoCommands = new AutoCommands(m_drivetrain, m_ahrs, m_elevator, m_frontClimber, m_backClimber);
+		m_autoCommands = new AutoCommands(m_drivetrain, m_gyro, m_elevator, m_frontClimber, m_backClimber);
 		m_teleopCommands = new TeleopCommands(m_pilotController, m_copilotGamepad, m_drivetrain, m_elevator, m_frontClimber, m_backClimber, m_hatchMech);
+		testContinuousCommand = new ContinuousCommand(m_drivetrain, m_gyro);
 	}
 
 	/**
@@ -191,41 +190,12 @@ public class Robot extends TimedRobot {
 	@Override
 	public void teleopPeriodic() {
 
-		m_teleopCommands.teleopModeCommands();
-
-		// Test drivetrain included, uses Left stick Y for speed, Right stick X for
-		// turning, quick turn is auto-enabled at low speed
-
+		// This code is currently commented out for the sake of driver training. It is also untested
+		// TODO: Needs to be tested.
+		// m_teleopCommands.teleopModeCommands();
 
 		// PID based sample talon arcade drive
 		m_drivetrain.talonArcadeDrive(m_pilotController.getRightTrigger() - m_pilotController.getLeftTrigger(), m_pilotController.getLeftStickX());
-
-		if(m_pilotController.getYButton()) {
-			if (m_pather != null) {
-				m_pather.pathToTarget();
-			}
-		}
-		else if (m_pilotController.getXButton()) {
-			m_pather.secondHalfPath();
-		}
-		else {
-			m_drivetrain.talonArcadeDrive(m_pilotController.getLeftStickY(), m_pilotController.getRightStickX());
-		}
-		
-		if (m_pilotController.getAButtonReleased()) {
-			m_ahrs.zeroYaw();
-		}
-		if (m_pilotController.getBButtonReleased()) {
-			m_ahrs.flipOffset();
-		}
-		if (m_pilotController.getBumper(Hand.kRight)) {
-			m_pather.resetFlags();
-		}
-		m_pilotController.setRumble(RumbleType.kLeftRumble, 0);
-		m_pilotController.setRumble(RumbleType.kRightRumble, 0);
-
-		// Prints yaw and if offset is applied to console
-		System.out.println(m_ahrs.getOffsetYaw() + "\t\t" + m_ahrs.getOffsetStatus());
 	}
 
 	/**
@@ -241,8 +211,16 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void testPeriodic() {
+		testContinuousCommand.loop(m_pilotController.getStartButtonReleased());
+		if (m_pilotController.getStickButton(Hand.kLeft)) {
+			m_drivetrain.m_slaveLeftMotor.set(.3);
+		}
 
-		m_drivetrain.talonArcadeDrive(m_pilotController.getRightTrigger() - m_pilotController.getRightTrigger(), m_pilotController.getLeftStickX());
+		if (m_pilotController.getStickButton(Hand.kRight)) {
+			m_drivetrain.m_slaveRightMotor.set(.3);
+		}
+
+//		m_drivetrain.talonArcadeDrive(m_pilotController.getRightTrigger() - m_pilotController.getLeftTrigger(), m_pilotController.getLeftStickX());
 
 		// [NOTE] Negative power moves the elevator up, but the encoder will still tic
 		// positive. This is due to the way the string is wound on the winch
@@ -367,14 +345,27 @@ public class Robot extends TimedRobot {
 			m_hatchMech.closeServo();
 		}
 		
-		System.out.print("Left Ultrasonics: \t" + m_drivetrain.getLeftUltra().getRangeInches());
-		System.out.print("Right Ultrasonics: \t" + m_drivetrain.getRightUltra().getRangeInches());
-		System.out.print("Drivetrain Enc Velocity: \t" + m_drivetrain.getLeftDriveEncoderVelocity() + "\t\t" + m_drivetrain.getRightDriveEncoderVelocity());
-		System.out.print("Drivetrain Enc Pos: \t"+ m_drivetrain.getLeftDriveEncoderPosition() + "\t\t" + m_drivetrain.getRightDriveEncoderPosition());	
-		System.out.print("Elevator Enc Velocity: \t" + m_elevator.m_elevatorMotor.getSelectedSensorVelocity());
-		System.out.print("Elevator Enc Pos: \t"+ m_elevator.m_elevatorMotor.getSelectedSensorPosition());
-		System.out.print("Front Break Beams: \t  Top: " + m_frontClimber.getTopLimitSwitch() + "\t Bottom: " + m_frontClimber.getBottomLimitSwitch());
-		System.out.println("Back Break Beams: \t  Top: " + m_backClimber.getTopLimitSwitch() + "\t Bottom: " + m_backClimber.getBottomLimitSwitch());
+		// Code for testing gyro reset and flipping. Commented out as the buttons are used elsewhere
+		// if (m_pilotController.getAButtonReleased()) {
+		// 	m_gyro.zeroYaw();
+		// }
+		// if (m_pilotController.getBButtonReleased()) {
+		// 	m_gyro.flipOffset();
+		// }
+		// if (m_pilotController.getBumper(Hand.kRight)) {
+		// 	m_pather.resetFlags();
+		// }
+		// m_pilotController.setRumble(RumbleType.kLeftRumble, 0);
+		// m_pilotController.setRumble(RumbleType.kRightRumble, 0);
+
+		// System.out.print("Left Ultrasonics: \t" + m_drivetrain.getLeftUltra().getRangeInches());
+		// System.out.print("Right Ultrasonics: \t" + m_drivetrain.getRightUltra().getRangeInches());
+		// System.out.print("Drivetrain Enc Velocity: \t" + m_drivetrain.getLeftDriveEncoderVelocity() + "\t\t" + m_drivetrain.getRightDriveEncoderVelocity());
+		System.out.println("Drivetrain Enc Pos: \t"+ m_drivetrain.getLeftDriveEncoderPosition() + "\t\t" + m_drivetrain.getRightDriveEncoderPosition());	
+		// System.out.print("Elevator Enc Velocity: \t" + m_elevator.m_elevatorMotor.getSelectedSensorVelocity());
+		// System.out.print("Elevator Enc Pos: \t"+ m_elevator.m_elevatorMotor.getSelectedSensorPosition());
+		// System.out.print("Front Break Beams: \t  Top: " + m_frontClimber.getTopLimitSwitch() + "\t Bottom: " + m_frontClimber.getBottomLimitSwitch());
+		// System.out.println("Back Break Beams: \t  Top: " + m_backClimber.getTopLimitSwitch() + "\t Bottom: " + m_backClimber.getBottomLimitSwitch());
 		
 	}
 }
