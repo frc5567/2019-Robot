@@ -16,28 +16,57 @@
 //Pixy2I2C highPixy;
 Pixy2SPI_SS lowPixy;
 
-//  Declares variables for the low pixy
+// The x values of the center of blocks
 int leftX;
 int rightX;
+
+// The width of the blocks
 int leftWidth;
 int rightWidth;
+
+// Area of the blocks
 float aL;
 float aR;
+
+// Arrays used for calculating rolling average of area
 float arrL[3] = {0,0,0};
 float arrR[3] = {0,0,0};
+
+// Average area calculated with rolling average
 float avgL;
 float avgR;
+
+// Percent difference in area
 float dA;
+
+// Max acceptable difference in area before we start to adjust the center point
+// This number is arbitrary
 float maxDa = 0.15;
+
+// Position of the edges of each block
 int xLOne;
 int xROne;
 int xLTwo;
 int xRTwo;
+
+// Center of the two blocks
 int centerPoint;
-int absoluteCenter = 158;
+
+// The x value of the center of the lowPixy's FOV
+const int absoluteCenter = 158;
+
+// Degrees per x pixel, used to convert 'distance to center' to 'angle to center'
+const double xPixToDeg = 0.189873;
+
+// The center adjusted based on compared area
 int adjAbsCenter;
-int distToCenter;
+
+// The final value for the degrees to target passed to the rio
 double angleToCenter;
+
+// Values for selecting closest vector to the center
+// Not currently functional
+int distToCenter;
 double tempDistCenter;
 double selectedDistCenter = 39;
 double targetIndex;
@@ -85,7 +114,7 @@ double xInPerPix;
 //  Distance from midline to the target on the floor in Inches
 double xDistIn;
 
-//  Degrees from the base of the robot to the target point
+// c Degrees from the base of the robot to the target point
 double degToTarget;
 double distToTarget;
 
@@ -93,6 +122,7 @@ double distToTarget;
 char incCommand = '0';
 
 //	Commands we are comparing incCommand to
+//  These command constants must be the same as the constants in RobotMap
 const char GET_DEG_TO_TARGET = '2';
 const char GET_DIST_TO_TARGET = '1';
 const char GET_ANGLE_TO_CENTER = '3';
@@ -178,7 +208,7 @@ void calcDistToCenterLow()
 	xRTwo = rightX + (rightWidth / 2);
 	centerPoint = ((xLTwo - xROne) / 2) + xROne;
 	distToCenter = adjAbsCenter - centerPoint;
-	angleToCenter = distToCenter * 0.189873;
+	angleToCenter = distToCenter * xPixToDeg;
 }
 
 void setup()
