@@ -161,12 +161,19 @@ public class Elevator {
 		m_elevatorMotor.selectProfileSlot(0, RobotMap.PID_PRIMARY);
 	}
 
-	public void elevatorPIDDrive(State state) {
+	public boolean elevatorPIDDrive(State state) {
 		double target = (state.deltaInches) * (RobotMap.TICKS_PER_REVOLUTION / RobotMap.DRUM_CIRCUMFERENCE);
 		System.out.println("PIDTarget in tics: \t" + target);
 		System.out.println("Current Position in tics: \t" + m_elevatorMotor.getSelectedSensorPosition());
 		System.out.println("State: \t" + state);
 		m_elevatorMotor.set(ControlMode.MotionMagic, target);
+
+		if(getElevatorEncoderVelocity() > 100){
+			return false;
+		}
+		else{
+			return true;
+		}
 	}
 
 	/**
