@@ -27,6 +27,7 @@ import frc.robot.AutoCommands;
 import frc.robot.TeleopCommands;
 import frc.robot.GamePad;
 import frc.robot.DriveClimber;
+import edu.wpi.first.wpilibj.GenericHID;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -70,6 +71,10 @@ public class Robot extends TimedRobot {
 
 	// Declare the continuous command sequence
 	ContinuousCommand testContinuousCommand;
+
+	// TODO: Remove this
+	boolean toggletoggle = true;
+	int storValue = 0;
 
 	Robot() {
 
@@ -127,7 +132,7 @@ public class Robot extends TimedRobot {
 		try {
 			camera = CameraServer.getInstance().startAutomaticCapture();
 			camera.setResolution(160, 120);
-			camera.setFPS(1);			
+			camera.setFPS(20);			
 		} catch (Exception e) {
 			System.out.println("Camera failed to instantiate");
 		}
@@ -192,10 +197,69 @@ public class Robot extends TimedRobot {
 
 		// This code is currently commented out for the sake of driver training. It is also untested
 		// TODO: Needs to be tested.
-		// m_teleopCommands.teleopModeCommands();
-
+		
+		if (m_pilotController.getAButton()) {
+			if (toggletoggle) {
+				if (m_hatchMech.m_hatchMechEncoder.get() < 2000) {
+					m_hatchMech.armUp();
+				}
+				else {
+					m_hatchMech.m_hatchMechEncoder.reset();
+					toggletoggle = !toggletoggle;
+				}
+			}
+			else {
+				if (m_hatchMech.m_hatchMechEncoder.get() < 2000) {
+					m_hatchMech.armDown();
+				}
+				else {
+					m_hatchMech.m_hatchMechEncoder.reset();
+					toggletoggle = !toggletoggle;
+				}
+			}
+		}
+		else if (m_copilotGamepad.getRawAxis(1) == -1) {
+			m_hatchMech.armUp();
+			storValue = m_hatchMech.m_hatchMechEncoder.get();
+		}
+		else if (m_pilotController.getBButton()) {
+			if (m_hatchMech.m_hatchMechEncoder.get() < (storValue*1.935)) {
+				m_hatchMech.armDown();
+				System.out.println("Current: \t" + m_hatchMech.m_hatchMechEncoder.get() + "\t Target: \t" + storValue*1.935);
+				if (m_hatchMech.m_hatchMechEncoder.getRate() < 50) {
+					storValue = 0;
+					m_hatchMech.m_hatchMechEncoder.reset();
+					m_hatchMech.setArm(0);
+					System.out.println("Stopped due to movement");
+				}
+			}
+			else {
+				storValue = 0;
+				m_hatchMech.m_hatchMechEncoder.reset();
+				m_hatchMech.setArm(0);
+			}
+		}
+		else if (m_copilotGamepad.getRawAxis(1) ==1) {
+			m_hatchMech.armDown();
+		}
+		else if (m_pilotController.getXButtonReleased()) {
+			m_hatchMech.m_hatchMechEncoder.reset();
+		}
+		else {
+			m_teleopCommands.teleopModeCommands();
+		}
+		// System.out.println("Hatch Mech Counter Value: \t" + m_hatchMech.m_hatchMechEncoder.get());
 		// PID based sample talon arcade drive
-		m_drivetrain.talonArcadeDrive(m_pilotController.getRightTrigger() - m_pilotController.getLeftTrigger(), m_pilotController.getLeftStickX());
+		// if (m_pilotController.getAButton()) {
+		// 	m_pather.secondHalfPath(m_pilotController.getXButtonReleased());
+		// }
+		// else if (m_pilotController.getYButtonReleased()) {
+		// 	m_gyro.reset();
+		// }
+		// else {
+		// 	m_drivetrain.talonArcadeDrive(m_pilotController.getRightTrigger() - m_pilotController.getLeftTrigger(), m_pilotController.getLeftStickX());
+		// }
+
 	}
 
 	/**
@@ -211,6 +275,9 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void testPeriodic() {
+		// m_pather.secondHalfPath(m_pilotController.getXButtonReleased());
+		
+		/*
 		testContinuousCommand.loop(m_pilotController.getStartButtonReleased());
 		if (m_pilotController.getStickButton(Hand.kLeft)) {
 			m_drivetrain.m_slaveLeftMotor.set(.3);
@@ -353,6 +420,6 @@ public class Robot extends TimedRobot {
 		// System.out.print("Elevator Enc Pos: \t"+ m_elevator.m_elevatorMotor.getSelectedSensorPosition());
 		// System.out.print("Front Break Beams: \t  Top: " + m_frontClimber.getTopLimitSwitch() + "\t Bottom: " + m_frontClimber.getBottomLimitSwitch());
 		// System.out.println("Back Break Beams: \t  Top: " + m_backClimber.getTopLimitSwitch() + "\t Bottom: " + m_backClimber.getBottomLimitSwitch());
-		
+		*/
 	}
 }

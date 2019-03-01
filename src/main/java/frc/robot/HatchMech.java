@@ -4,9 +4,11 @@ package frc.robot;
 
 //Imports servo, motor controller, and digital input (true or false) for later use.
 import edu.wpi.first.wpilibj.Servo;
+
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.Counter;
 
 public class HatchMech{
 
@@ -17,7 +19,7 @@ public class HatchMech{
     WPI_VictorSPX m_hatchArmMotor;
     DigitalInput m_limitSwitchTop;
     DigitalInput m_limitSwitchBottom;
-    Encoder m_hatchMechEncoder;
+    Counter m_hatchMechEncoder;
   
     public HatchMech(){
         //Creates servo variable for hatch mechanism.
@@ -28,6 +30,10 @@ public class HatchMech{
         //m_limitSwitchTop = new DigitalInput(RobotMap.HATCH_MECH_LIMIT_TOP_PORT);
         //m_limitSwitchBottom = new DigitalInput(RobotMap.HATCH_MECH_LIMIT_BOTTOM_PORT);
         m_hatchArmMotor = new WPI_VictorSPX(RobotMap.HATCH_MECH_MOTOR_PORT);
+        m_hatchMechEncoder = new Counter(0);
+        m_hatchArmMotor.setNeutralMode(NeutralMode.Brake);
+        m_hatchMechEncoder.setDistancePerPulse(1);
+        m_hatchMechEncoder.setMaxPeriod(1);
 //        m_hatchMechEncoder = new Encoder(RobotMap.HATCH_MECH_ENCODER_A, RobotMap.HATCH_MECH_ENCODER_B, false, Encoder.EncodingType.k4X);
 //        m_hatchMechEncoder.reset();
     }
