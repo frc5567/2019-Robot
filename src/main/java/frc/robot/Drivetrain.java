@@ -110,8 +110,8 @@ public class Drivetrain implements PIDOutput {
         m_gyro = ahrs;
 
         // Instantiates the Ultrasonics
-        ultraLeft = new Ultrasonic(1, 0);
-        ultraRight = new Ultrasonic(3, 2);
+        ultraLeft = new Ultrasonic(2, 1);
+        ultraRight = new Ultrasonic(4, 3);
         ultraLeft.setEnabled(true);
         ultraLeft.setAutomaticMode(true);
         ultraLeft.setDistanceUnits(Unit.kInches);

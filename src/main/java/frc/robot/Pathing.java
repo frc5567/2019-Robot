@@ -53,6 +53,8 @@ public class Pathing {
 
     private int m_rotateExitCounter;
     Controller m_pilotControl;
+
+    boolean firstFlag = true;
     
     /**
      * Constructor for our pathing sequence, passing in the drivetrain we want to use
@@ -277,7 +279,8 @@ public class Pathing {
             if(!m_angleToCenter.isNaN()) {
                 System.out.println("Found Target");
                 m_startingDegrees = m_gyro.getYaw();
-                m_absoluteDegToTarget = m_startingDegrees + m_angleToCenter;
+                m_absoluteDegToTarget = m_startingDegrees - m_angleToCenter;
+                firstFlag = false;
             }
 
             // Reset the counter
@@ -307,6 +310,7 @@ public class Pathing {
             // Rotates until the method says that its done
             if (m_drivetrain.rotateDriveAngle(m_absoluteDegToTarget, m_duinoToRio.getAverageArea())) {
                 System.out.println("Done Rotating");
+                // firstFlag = true;
                 return true;
             }
             else {

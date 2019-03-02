@@ -88,8 +88,8 @@ public class RobotMap {
     public static final double DRIVE_MAX_DELTA_SPEED = 0.1;
     public static final double DRIVE_MAX_QUICK_TURN_SPEED = 0.1;
     //HatchMech motor speeds
-    public static final double HATCH_MECH_ARM_UP_MOTOR_SPEED = 0.5;     // Check Speed
-    public static final double HATCH_MECH_ARM_DOWN_MOTOR_SPEED = -0.5;  // Check Speed
+    public static final double HATCH_MECH_ARM_UP_MOTOR_SPEED = -0.3;     // Check Speed
+    public static final double HATCH_MECH_ARM_DOWN_MOTOR_SPEED = 0.3;  // Check Speed
     public static final double HATCH_MECH_STOP_MOTOR_SPEED = 0.0;
     // Climber motor speeds
     public static final double FRONT_CLIMBER_SPEED_UP = -0.3;      //UPDATE THIS VALUE
@@ -97,6 +97,9 @@ public class RobotMap {
     
     public static final double BACK_CLIMBER_SPEED_UP = -0.3;      //UPDATE THIS VALUE
     public static final double BACK_CLIMBER_SPEED_DOWN = 0.6;
+
+    // Climber encoder target in tics
+    public static final int CLIMBER_TARGET = 100; // TODO: This is an arbitrary number
 
     // Elevator Motor Speed
     public static final double ELEVATOR_MOTOR_SPEED_UP = -0.4;

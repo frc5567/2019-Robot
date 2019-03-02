@@ -79,7 +79,8 @@ public class GamePad extends GenericHID {
 	 * @return The value of the x axis
 	 */
 	public double getX(Hand hand) {
-		return Double.NaN;
+		System.out.println("Get X: \t" + getX());
+		return getX();
 	}
 
 	/**
@@ -87,7 +88,8 @@ public class GamePad extends GenericHID {
 	 * @return The value of the y axis
 	 */
 	public double getY(Hand hand) {
-		return Double.NaN;
+		System.out.println("Get Y: \t" + getY());
+		return getY();
 	}
 
 	/**
