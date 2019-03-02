@@ -23,15 +23,15 @@ public class DriveClimber extends Climber {
         m_driveMotor.setNeutralMode(NeutralMode.Coast);
     }
 
-    public void driveMotorForeward() {
+    public void driveForward() {
         m_driveMotor.set(RobotMap.CLIMBER_DRIVE_SPEED_FOREWARD);
     }
 
-    public void driveMotorBackward() {
+    public void driveBackward() {
         m_driveMotor.set(RobotMap.CLIMBER_DRIVE_SPEED_BACKWARD);
     }
 
-    public void driveMotorInput(double input) {
+    public void driveRaw(double input) {
         m_driveMotor.set(input);
     }
 }

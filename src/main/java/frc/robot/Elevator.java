@@ -81,10 +81,10 @@ public class Elevator {
 	}
 
 	// Declaring the encoder for the elevator height.
-	SensorCollection m_elevatorEncoder;
+	SensorCollection m_encoder;
 
 	// Declaring the speed controller for the elevator.
-	WPI_TalonSRX m_elevatorMotor;
+	WPI_TalonSRX m_motor;
 
 	// Declaring the elevator state enum.
 	State currentState;
@@ -101,13 +101,13 @@ public class Elevator {
 	public Elevator() {
 
 		// Instantiates Motor controller for elevator
-		m_elevatorMotor = new WPI_TalonSRX(RobotMap.ELEVATOR_MOTOR_PORT);
+		m_motor = new WPI_TalonSRX(RobotMap.ELEVATOR_MOTOR_PORT);
 
 		// Instantiating encoder for the elevator height
-		m_elevatorEncoder = new SensorCollection(m_elevatorMotor);
+		m_encoder = new SensorCollection(m_motor);
 
 		// Zeroes the encoder
-		m_elevatorEncoder.setQuadraturePosition(0, 0);
+		m_encoder.setQuadraturePosition(0, 0);
 
 		// Sets the State enum to it's initial state
 		currentState = State.LEVEL_ZERO;
@@ -117,58 +117,58 @@ public class Elevator {
 		m_targetAngle = 0;
 	}
 
-	public void elevatorPIDConfig() {
+	public void configPID() {
 		// Stops motor controllers
-		m_elevatorMotor.set(ControlMode.PercentOutput, 0);
+		m_motor.set(ControlMode.PercentOutput, 0);
 
 		// Set neutral mode
-		m_elevatorMotor.setNeutralMode(NeutralMode.Brake);
+		m_motor.setNeutralMode(NeutralMode.Brake);
 
 		// Configures sensor as quadrature encoder
-		m_elevatorMotor.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, RobotMap.PID_PRIMARY, RobotMap.TIMEOUT_MS);
+		m_motor.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, RobotMap.PID_PRIMARY, RobotMap.TIMEOUT_MS);
 
 		// Config sensor and motor direction
-		m_elevatorMotor.setInverted(true);
-		m_elevatorMotor.setSensorPhase(true);
+		m_motor.setInverted(true);
+		m_motor.setSensorPhase(true);
 
 		// Set status frame period for data collection
-		m_elevatorMotor.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 5, RobotMap.TIMEOUT_MS);
+		m_motor.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 5, RobotMap.TIMEOUT_MS);
 
 		// Config neutral deadband
-		m_elevatorMotor.configNeutralDeadband(RobotMap.NEUTRAL_DEADBAND, RobotMap.TIMEOUT_MS);
+		m_motor.configNeutralDeadband(RobotMap.NEUTRAL_DEADBAND, RobotMap.TIMEOUT_MS);
 
 		// Config peak output
-		m_elevatorMotor.configPeakOutputForward(+RobotMap.PID_PEAK_OUTPUT, RobotMap.TIMEOUT_MS);
-		m_elevatorMotor.configPeakOutputReverse(-RobotMap.PID_PEAK_OUTPUT, RobotMap.TIMEOUT_MS);
+		m_motor.configPeakOutputForward(+RobotMap.PID_PEAK_OUTPUT, RobotMap.TIMEOUT_MS);
+		m_motor.configPeakOutputReverse(-RobotMap.PID_PEAK_OUTPUT, RobotMap.TIMEOUT_MS);
 
 		// Motion Magic Config
-		m_elevatorMotor.configMotionAcceleration(2000, RobotMap.TIMEOUT_MS);
-		m_elevatorMotor.configMotionCruiseVelocity(2000, RobotMap.TIMEOUT_MS);
+		m_motor.configMotionAcceleration(2000, RobotMap.TIMEOUT_MS);
+		m_motor.configMotionCruiseVelocity(2000, RobotMap.TIMEOUT_MS);
 
 		// PID Config
-		m_elevatorMotor.config_kP(0, RobotMap.GAINS.kP, RobotMap.TIMEOUT_MS);
-		m_elevatorMotor.config_kI(0, RobotMap.GAINS.kI, RobotMap.TIMEOUT_MS);
-		m_elevatorMotor.config_kD(0, RobotMap.GAINS.kD, RobotMap.TIMEOUT_MS);
-		m_elevatorMotor.config_kF(0, RobotMap.GAINS.kF, RobotMap.TIMEOUT_MS);
-		m_elevatorMotor.config_IntegralZone(0, RobotMap.GAINS.kIzone, RobotMap.TIMEOUT_MS);
-		m_elevatorMotor.configClosedLoopPeakOutput(0, RobotMap.GAINS.kPeakOutput, RobotMap.TIMEOUT_MS);
-		m_elevatorMotor.configAllowableClosedloopError(0, 0, RobotMap.TIMEOUT_MS);
+		m_motor.config_kP(0, RobotMap.GAINS.kP, RobotMap.TIMEOUT_MS);
+		m_motor.config_kI(0, RobotMap.GAINS.kI, RobotMap.TIMEOUT_MS);
+		m_motor.config_kD(0, RobotMap.GAINS.kD, RobotMap.TIMEOUT_MS);
+		m_motor.config_kF(0, RobotMap.GAINS.kF, RobotMap.TIMEOUT_MS);
+		m_motor.config_IntegralZone(0, RobotMap.GAINS.kIzone, RobotMap.TIMEOUT_MS);
+		m_motor.configClosedLoopPeakOutput(0, RobotMap.GAINS.kPeakOutput, RobotMap.TIMEOUT_MS);
+		m_motor.configAllowableClosedloopError(0, 0, RobotMap.TIMEOUT_MS);
 
 		// PID closed loop config
-		m_elevatorMotor.configClosedLoopPeriod(0, 5, RobotMap.TIMEOUT_MS);
+		m_motor.configClosedLoopPeriod(0, 5, RobotMap.TIMEOUT_MS);
 
 		// Sets profile slot for PID
-		m_elevatorMotor.selectProfileSlot(0, RobotMap.PID_PRIMARY);
+		m_motor.selectProfileSlot(0, RobotMap.PID_PRIMARY);
 	}
 
-	public boolean elevatorPIDDrive(State state) {
+	public boolean drivePID(State state) {
 		double target = (state.deltaInches) * (RobotMap.TICKS_PER_REVOLUTION / RobotMap.DRUM_CIRCUMFERENCE);
 		System.out.println("PIDTarget in tics: \t" + target);
-		System.out.println("Current Position in tics: \t" + m_elevatorMotor.getSelectedSensorPosition());
+		System.out.println("Current Position in tics: \t" + m_motor.getSelectedSensorPosition());
 		System.out.println("State: \t" + state);
-		m_elevatorMotor.set(ControlMode.MotionMagic, target);
+		m_motor.set(ControlMode.MotionMagic, target);
 
-		if(getElevatorEncoderVelocity() > 100){
+		if(getEncoderVelocity() > 100){
 			return false;
 		}
 		else{
@@ -181,8 +181,8 @@ public class Elevator {
 	 * 
 	 * @return The position of the elevator encoder
 	 */
-	public int getElevatorEncoderPosition() {
-		return m_elevatorEncoder.getQuadraturePosition();
+	public int getEncoderPosition() {
+		return m_encoder.getQuadraturePosition();
 	}
 
 	/**
@@ -190,8 +190,8 @@ public class Elevator {
 	 * 
 	 * @return The velocity of the elevator encoder
 	 */
-	public int getElevatorEncoderVelocity() {
-		return m_elevatorEncoder.getQuadratureVelocity();
+	public int getEncoderVelocity() {
+		return m_encoder.getQuadratureVelocity();
 	}
 
 	/**
@@ -199,7 +199,7 @@ public class Elevator {
 	 * @param input Joystick/variable input.
 	 */
 	public void moveRaw(double input){
-			m_elevatorMotor.set(ControlMode.PercentOutput, (input /* 0.4*/));
+			m_motor.set(ControlMode.PercentOutput, (input /* 0.4*/));
 	}
 	
 	/**
@@ -208,7 +208,7 @@ public class Elevator {
 	 * @return The elevator's current height
 	 */
 	public double getPosition(){
-		double positionInches = (m_elevatorEncoder.getQuadraturePosition() * (RobotMap.DRUM_CIRCUMFERENCE / RobotMap.TICKS_PER_REVOLUTION));
+		double positionInches = (m_encoder.getQuadraturePosition() * (RobotMap.DRUM_CIRCUMFERENCE / RobotMap.TICKS_PER_REVOLUTION));
 		//position = RobotMap.DRUM_CIRCUMFERENCE * numRevolutions;
 		currentState = getState(positionInches);
 		return positionInches;
@@ -224,14 +224,14 @@ public class Elevator {
 	public void moveToPosition(boolean button , State desiredState){
 		if(button && currentState != desiredState){
 			if(currentState.deltaInches > desiredState.deltaInches){
-				m_elevatorMotor.set(RobotMap.ELEVATOR_MOTOR_SPEED_DOWN);
+				m_motor.set(RobotMap.ELEVATOR_MOTOR_SPEED_DOWN);
 			}
 			else if(currentState.deltaInches < desiredState.deltaInches){
-				m_elevatorMotor.set(RobotMap.ELEVATOR_MOTOR_SPEED_UP);
+				m_motor.set(RobotMap.ELEVATOR_MOTOR_SPEED_UP);
 			}
 		}
 		else if(currentState == desiredState){
-			m_elevatorMotor.set(0.0);
+			m_motor.set(0.0);
 		}
 	}
 

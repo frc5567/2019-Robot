@@ -51,7 +51,9 @@ public class TeleopCommands {
      * parameters set to true.
      */
     public void teleopModeCommands() {
-        controlDrivetrain();
+        if (!m_driveClimberDeployed) {
+            controlDrivetrain();
+        }
         controlElevator();
         controlHatchMech();
         controlClimbers();
@@ -72,7 +74,7 @@ public class TeleopCommands {
         if (m_gamepad.getRawAxis(1) == -1) {
             m_elevator.moveRaw(RobotMap.ELEVATOR_MOTOR_SPEED_UP);
         }
-        else if (m_gamepad.getRawAxis(1) == 1) {
+        else if (m_gamepad.getRawAxis(1) == -1) {
             m_elevator.moveRaw(RobotMap.ELEVATOR_MOTOR_SPEED_DOWN);
         }
         else {
@@ -89,7 +91,7 @@ public class TeleopCommands {
                 m_desiredElevatorState = State.HATCH_L3;
             }
 
-            m_elevator.elevatorPIDDrive(m_desiredElevatorState);
+            m_elevator.drivePID(m_desiredElevatorState);
         }
 
     }
@@ -139,7 +141,8 @@ public class TeleopCommands {
             m_driveClimberDeployed = true;
 		}
 		else if (m_controller.getYButton() && m_driveClimberDeployed) {
-			m_backClimber.driveMotorForeward();
+            m_backClimber.driveForward();
+            m_drivetrain.talonArcadeDrive(.2, 0);
         }
         
     }
