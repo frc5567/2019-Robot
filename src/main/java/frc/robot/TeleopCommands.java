@@ -5,6 +5,7 @@ import frc.robot.GamePad;
 import frc.robot.Elevator.State;
 import frc.robot.Drivetrain;
 import frc.robot.Elevator;
+import edu.wpi.first.wpilibj.GenericHID.Hand;
 import frc.robot.Climber;
 import frc.robot.HatchMech;
 
@@ -15,26 +16,30 @@ import frc.robot.HatchMech;
  */
 public class TeleopCommands {
 
-    Controller m_pilotController;
-    GamePad m_copilotController;
+    Controller m_controller;
+    GamePad m_gamepad;
 
     Drivetrain m_drivetrain;
 
     Elevator m_elevator;
 
     Climber m_frontClimber;
-    Climber m_backClimber;
+    DriveClimber m_backClimber;
+    ClimberPIDControl m_climberPID;
 
     HatchMech m_hatchMech;
 
-    public TeleopCommands(Controller pilotController, GamePad copilotController, Drivetrain drivetrain, Elevator elevator, Climber frontClimber, Climber backClimber, HatchMech hatchMech) {
-        m_pilotController = pilotController;
-        m_copilotController = copilotController;
+    boolean m_driveClimberDeployed = false;
+
+    public TeleopCommands(Controller pilotController, GamePad copilotController, Drivetrain drivetrain, Elevator elevator, Climber frontClimber, DriveClimber backClimber, HatchMech hatchMech, ClimberPIDControl climberPID) {
+        m_controller = pilotController;
+        m_gamepad = copilotController;
         m_drivetrain = drivetrain;
         m_elevator = elevator;
         m_frontClimber = frontClimber;
         m_backClimber = backClimber;
         m_hatchMech = hatchMech;
+        m_climberPID = climberPID;
     }
 
     /**
@@ -53,23 +58,23 @@ public class TeleopCommands {
      * Allows the drivers to control the drivetrain
      */
     public void controlDrivetrain() {
-        m_drivetrain.talonArcadeDrive((m_pilotController.getRightTrigger() - m_pilotController.getLeftTrigger()), m_pilotController.getLeftStickX());
+        m_drivetrain.talonArcadeDrive((m_controller.getRightTrigger() - m_controller.getLeftTrigger()), m_controller.getLeftStickX());
     }
 
     /**
      * Allows the drivers to control the elevator
      */
     public void controlElevator() {
-        if (m_copilotController.getPickupHatchCargo()) {
+        if (m_gamepad.getPickupHatchCargo()) {
             m_elevator.elevatorPIDDrive(State.LEVEL_ZERO);
         }
-        else if (m_copilotController.getLowHatchCargo()) {
+        else if (m_gamepad.getLowHatchCargo()) {
             m_elevator.elevatorPIDDrive(State.HATCH_L1);
         }
-        else if (m_copilotController.getMediumHatchCargo()) {
+        else if (m_gamepad.getMediumHatchCargo()) {
             m_elevator.elevatorPIDDrive(State.HATCH_L2);
         }
-        else if (m_copilotController.getHighHatchCargo()) {
+        else if (m_gamepad.getHighHatchCargo()) {
             m_elevator.elevatorPIDDrive(State.HATCH_L3);
         }
     }
@@ -78,20 +83,20 @@ public class TeleopCommands {
      * Allows the drivers to control the hatch mechanism
      */
     public void controlHatchMech() {
-        if (m_copilotController.getLiftHatchArm()) {
+        if (m_gamepad.getLiftHatchArm()) {
             m_hatchMech.armUp();
         }
-        else if (m_copilotController.getDropHatchArm()) {
+        else if (m_gamepad.getDropHatchArm()) {
             m_hatchMech.armDown();
         }
         else {
             m_hatchMech.setArm(0.0);
         }
 
-        if (m_copilotController.getOpenHatchReleased()) {
+        if (m_gamepad.getOpenHatchReleased()) {
             m_hatchMech.openServo();
         }
-        else if (m_copilotController.getCloseHatchReleased()) {
+        else if (m_gamepad.getCloseHatchReleased()) {
             m_hatchMech.closeServo();
         }
     }
@@ -100,42 +105,28 @@ public class TeleopCommands {
      * Allows the drivers to control the climbers as a pair and seperately
      */
     public void controlClimbers() {
-        // Raises both climbers
-        if (m_pilotController.getBackButton()) {
-            m_frontClimber.raiseClimber(RobotMap.FRONT_CLIMBER_SPEED_UP);
-            m_backClimber.raiseClimber(RobotMap.BACK_CLIMBER_SPEED_UP);
+        		// PID climber controls bound to pilot controller
+		if (m_controller.getAButton()) {
+            m_climberPID.climberPIDDrive(RobotMap.CLIMBER_TARGET);
+            m_driveClimberDeployed = true;
+		}
+		else if (m_controller.getBButton()) {
+			m_frontClimber.raiseClimber(RobotMap.FRONT_CLIMBER_SPEED_UP);
+		}
+		else if (m_controller.getXButton()) {
+            m_backClimber.raiseClimber(RobotMap.FRONT_CLIMBER_SPEED_UP);
+            m_driveClimberDeployed = false;
         }
-        // Lowers both climbers
-        else if (m_pilotController.getStartButton()) {
-            m_frontClimber.lowerClimber(RobotMap.FRONT_CLIMBER_SPEED_DOWN);
-            m_backClimber.lowerClimber(RobotMap.BACK_CLIMBER_SPEED_DOWN);
+        else if (m_controller.getBumper(Hand.kLeft)) {
+			m_frontClimber.lowerClimber(RobotMap.FRONT_CLIMBER_SPEED_DOWN);
+		}
+		else if (m_controller.getBumper(Hand.kRight)) {
+            m_backClimber.lowerClimber(RobotMap.FRONT_CLIMBER_SPEED_DOWN);
+            m_driveClimberDeployed = true;
+		}
+		else if (m_controller.getYButton() && m_driveClimberDeployed) {
+			m_backClimber.driveMotorForeward();
         }
-        else {
-            // Raises front climber
-            if (m_pilotController.getAButton()) {
-                m_frontClimber.raiseClimber(RobotMap.FRONT_CLIMBER_SPEED_UP);
-            }
-            // Lowers front climber
-            else if (m_pilotController.getBButton()) {
-                m_frontClimber.lowerClimber(RobotMap.FRONT_CLIMBER_SPEED_DOWN);
-            }
-            // Defaults front climber motor speed to 0 if no buttons are held
-            else {
-                m_frontClimber.setClimber(0.0);
-            }
-
-            // Raises back climber
-            if (m_pilotController.getXButton()) {
-                m_backClimber.raiseClimber(RobotMap.BACK_CLIMBER_SPEED_UP);
-            }
-            // Lowers back climber
-            else if (m_pilotController.getYButton()) {
-                m_backClimber.lowerClimber(RobotMap.BACK_CLIMBER_SPEED_DOWN);
-            }
-            // Defaults back climber motor speed to 0 if no buttons are held
-            else {
-                m_backClimber.setClimber(0.0);
-            }
-        }
+        
     }
 }
