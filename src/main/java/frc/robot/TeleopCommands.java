@@ -51,7 +51,9 @@ public class TeleopCommands {
      * parameters set to true.
      */
     public void teleopModeCommands() {
-        controlDrivetrain();
+        if (!m_driveClimberDeployed) {
+            controlDrivetrain();
+        }
         controlElevator();
         controlHatchMech();
         controlClimbers();
@@ -139,7 +141,8 @@ public class TeleopCommands {
             m_driveClimberDeployed = true;
 		}
 		else if (m_controller.getYButton() && m_driveClimberDeployed) {
-			m_backClimber.driveMotorForeward();
+            m_backClimber.driveMotorForeward();
+            m_drivetrain.talonArcadeDrive(.2, 0);
         }
         
     }
