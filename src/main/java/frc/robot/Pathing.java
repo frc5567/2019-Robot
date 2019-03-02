@@ -124,11 +124,7 @@ public class Pathing {
         }
 
         if (lowAutoBreak) {
-<<<<<<< HEAD
-            if ( m_pilotControl.getTriggerAxis(Hand.kRight) > 0 || m_pilotControl.getTriggerAxis(Hand.kRight) > 0 || m_pilotControl.getX(Hand.kLeft) != 0) {
-=======
             if ( m_pilotControl.getTriggerAxis(Hand.kLeft) > 0 || m_pilotControl.getTriggerAxis(Hand.kRight) > 0 || m_pilotControl.getX() != 0) {
->>>>>>> 430e25d5c8161ef8d46da90eb63e38b59509ed7b
                 return false;
             }
             else {

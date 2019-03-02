@@ -202,17 +202,7 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
-<<<<<<< HEAD
 		m_teleopCommands.teleopModeCommands();
-=======
-
-		// This code is currently commented out for the sake of driver training. It is also untested
-		// TODO: Needs to be tested.
-		// m_teleopCommands.teleopModeCommands();
-
-		// PID based sample talon arcade drive
-		m_drivetrain.talonArcadeDrive(m_pilotController.getTriggerAxis(Hand.kRight) - m_pilotController.getTriggerAxis(Hand.kLeft), m_pilotController.getX());
->>>>>>> 430e25d5c8161ef8d46da90eb63e38b59509ed7b
 	}
 
 	/**
