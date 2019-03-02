@@ -19,7 +19,7 @@ public class GamePad extends GenericHID {
 	 */
 	private enum GamePadControls {
 		// Buttons
-		LOW_HATCH_CARGO(7),
+		LOW_HATCH_CARGO(5),
 		MEDIUM_HATCH_CARGO(6),
 		HIGH_HATCH_CARGO(7),
 		PICKUP_HATCH_CARGO(4),
@@ -212,21 +212,5 @@ public class GamePad extends GenericHID {
 	 */
 	public boolean getDropHatchArm() {
 		return getGamePadButton(GamePadControls.DROP_HATCH_ARM);
-	}
-
-	public boolean getJoystickXLeft() {
-		return getGamePadButton(GamePadControls.JOYSITCK_X_LEFT);
-	}
-
-	public boolean getJoystickXRight() {
-		return getGamePadButton(GamePadControls.JOYSTICK_X_RIGHT);
-	}
-
-	public boolean getManualElevatorUp() {
-		return getGamePadButton(GamePadControls.MANUAL_ELEVATOR_UP);
-	}
-
-	public boolean getManualElevatorDown() {
-		return getGamePadButton(GamePadControls.MANUAL_ELEVATOR_DOWN);
 	}
 }
