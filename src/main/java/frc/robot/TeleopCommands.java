@@ -70,10 +70,10 @@ public class TeleopCommands {
      */
     public void controlElevator() {
 
-        if (m_gamepad.getManualElevatorUp()) {
+        if (m_gamepad.getRawAxis(1) == -1) {
             m_elevator.moveRaw(RobotMap.ELEVATOR_MOTOR_SPEED_UP);
         }
-        else if (m_gamepad.getManulaElevatorDown()) {
+        else if (m_gamepad.getRawAxis(1) == 1) {
             m_elevator.moveRaw(RobotMap.ELEVATOR_MOTOR_SPEED_DOWN);
         }
         else {
