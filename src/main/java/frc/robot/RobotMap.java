@@ -54,8 +54,8 @@ public class RobotMap {
 
 	// PWM motor controller port numbers
 	// Climber
-	public static final int FRONT_CLIMBER_MOTOR_PORT = 13;
-	public static final int BACK_CLIMBER_MOTOR_PORT = 14;
+	public static final int FRONT_CLIMBER_MOTOR_PORT = 5;
+	public static final int BACK_CLIMBER_MOTOR_PORT = 4;
 
     // Sensors
     // Front Climber limit switches DIO port numbers
@@ -92,14 +92,14 @@ public class RobotMap {
     public static final double HATCH_MECH_ARM_DOWN_MOTOR_SPEED = 0.3;  // Check Speed
     public static final double HATCH_MECH_STOP_MOTOR_SPEED = 0.0;
     // Climber motor speeds
-    public static final double FRONT_CLIMBER_SPEED_UP = -0.3;      //UPDATE THIS VALUE
-    public static final double FRONT_CLIMBER_SPEED_DOWN = 0.8;       //UPDATE THIS VALUE
+    public static final double FRONT_CLIMBER_SPEED_UP = 0.5;      //UPDATE THIS VALUE
+    public static final double FRONT_CLIMBER_SPEED_DOWN = -0.5;       //UPDATE THIS VALUE
     
-    public static final double BACK_CLIMBER_SPEED_UP = -0.3;      //UPDATE THIS VALUE
-    public static final double BACK_CLIMBER_SPEED_DOWN = 0.6;
+    public static final double BACK_CLIMBER_SPEED_UP = 0.5;      //UPDATE THIS VALUE
+    public static final double BACK_CLIMBER_SPEED_DOWN = -0.5;
 
     // Climber encoder target in tics
-    public static final int CLIMBER_TARGET = 100; // TODO: This is an arbitrary number
+    public static final int CLIMBER_TARGET = -300000; // TODO: This is an arbitrary number
 
     // Elevator Motor Speed
     public static final double ELEVATOR_MOTOR_SPEED_UP = -0.4;
@@ -166,8 +166,8 @@ public class RobotMap {
      * Not all set of Gains are used in this project and may be removed as desired.
      * kP kI kD kF Iz PeakOut
      */
-    public final static Gains GAINS_TURNING = new Gains(2.0, 0.0, 4.0, 0.0, 200, 1.00);
-    public final static Gains GAINS_VELOCIT = new Gains(0.1, 0.0, 20.0, 1023.0 / 6800.0, 300, 0.50);
+    public final static Gains GAINS_TURNING = new Gains(0.1, 0.0, 0.0, 0.0, 200, 1.0);
+    public final static Gains GAINS_VELOCIT = new Gains(0.1, 0.0, 0.0, 0.0, 300, 1.0);
 
     /** ---- Flat constants, you should not need to change these ---- */
 

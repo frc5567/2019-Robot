@@ -73,14 +73,14 @@ public class ClimberPIDControl {
         m_driveClimber.m_climberMotor.configNeutralDeadband(RobotMap.NEUTRAL_DEADBAND, RobotMap.TIMEOUT_MS);
 
 		// Config peak output
-		m_driveClimber.m_climberMotor.configPeakOutputForward(+RobotMap.PID_PEAK_OUTPUT, RobotMap.TIMEOUT_MS);
-		m_driveClimber.m_climberMotor.configPeakOutputReverse(-RobotMap.PID_PEAK_OUTPUT, RobotMap.TIMEOUT_MS);
-        m_frontClimber.m_climberMotor.configPeakOutputForward(+RobotMap.PID_PEAK_OUTPUT, RobotMap.TIMEOUT_MS);
-		m_frontClimber.m_climberMotor.configPeakOutputReverse(-RobotMap.PID_PEAK_OUTPUT, RobotMap.TIMEOUT_MS);
+		m_driveClimber.m_climberMotor.configPeakOutputForward(+1.0, RobotMap.TIMEOUT_MS);
+		m_driveClimber.m_climberMotor.configPeakOutputReverse(-1.0, RobotMap.TIMEOUT_MS);
+        m_frontClimber.m_climberMotor.configPeakOutputForward(+1.0, RobotMap.TIMEOUT_MS);
+		m_frontClimber.m_climberMotor.configPeakOutputReverse(-1.0, RobotMap.TIMEOUT_MS);
 
 		// Motion Magic Config
-		m_driveClimber.m_climberMotor.configMotionAcceleration(2000, RobotMap.TIMEOUT_MS);
-		m_driveClimber.m_climberMotor.configMotionCruiseVelocity(2000, RobotMap.TIMEOUT_MS);
+		m_driveClimber.m_climberMotor.configMotionAcceleration(4000, RobotMap.TIMEOUT_MS);
+		m_driveClimber.m_climberMotor.configMotionCruiseVelocity(10000, RobotMap.TIMEOUT_MS);
 
 		// PID Config
 		m_driveClimber.m_climberMotor.config_kP(0, RobotMap.GAINS.kP, RobotMap.TIMEOUT_MS);
