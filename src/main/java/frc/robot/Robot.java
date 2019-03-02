@@ -195,7 +195,7 @@ public class Robot extends TimedRobot {
 		// m_teleopCommands.teleopModeCommands();
 
 		// PID based sample talon arcade drive
-		m_drivetrain.talonArcadeDrive(m_pilotController.getRightTrigger() - m_pilotController.getLeftTrigger(), m_pilotController.getLeftStickX());
+		m_drivetrain.talonArcadeDrive(m_pilotController.getTriggerAxis(Hand.kRight) - m_pilotController.getTriggerAxis(Hand.kLeft), m_pilotController.getX());
 	}
 
 	/**
