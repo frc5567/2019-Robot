@@ -19,7 +19,6 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 
 // Import needed to initialize NavX and rotation controller
 import edu.wpi.first.wpilibj.PIDController;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.Ultrasonic.Unit;
 
