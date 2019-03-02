@@ -98,6 +98,9 @@ public class RobotMap {
     public static final double BACK_CLIMBER_SPEED_UP = -0.3;      //UPDATE THIS VALUE
     public static final double BACK_CLIMBER_SPEED_DOWN = 0.6;
 
+    // Climber encoder target in tics
+    public static final int CLIMBER_TARGET = 100; // TODO: This is an arbitrary number
+
     // Elevator Motor Speed
     public static final double ELEVATOR_MOTOR_SPEED_UP = -0.4;
     public static final double ELEVATOR_MOTOR_SPEED_DOWN = 0.4;
