@@ -19,25 +19,19 @@ public class GamePad extends GenericHID {
 	 */
 	private enum GamePadControls {
 		// Buttons
-		LOW_HATCH_CARGO(6),
-		MEDIUM_HATCH_CARGO(7),
-		HIGH_HATCH_CARGO(8),
-		PICKUP_HATCH_CARGO(5),
+		LOW_HATCH_CARGO(7),
+		MEDIUM_HATCH_CARGO(6),
+		HIGH_HATCH_CARGO(7),
+		PICKUP_HATCH_CARGO(4),
 		// Toggle switches
-		HATCH_TO_CARGO(10),
-		MANUAL_TO_AUTO(9),
+		HATCH_TO_CARGO(9),
+		MANUAL_TO_AUTO(8),
 		// Buttons
-		OPEN_HATCH(2),
-		CLOSE_HATCH(1),
+		OPEN_HATCH(1),
+		CLOSE_HATCH(0),
 		// Buttons
-		LIFT_HATCH_ARM(4),
-		DROP_HATCH_ARM(3),
-		// Joystick X axis
-		JOYSITCK_X_LEFT(11),
-		JOYSTICK_X_RIGHT(12),
-		// Joystick Y axis
-		MANUAL_ELEVATOR_UP(13),
-		MANUAL_ELEVATOR_DOWN(14);
+		LIFT_HATCH_ARM(3),
+		DROP_HATCH_ARM(2);
 
 		@SuppressWarnings("MemberName")
 		public final int value;
