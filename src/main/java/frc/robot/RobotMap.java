@@ -20,7 +20,7 @@ public class RobotMap {
     public static final double CONTROLLER_STICK_DEADBAND = 0.1;
     public static final double CONTROLLER_TRIGGER_DEADBAND = 0.1;
     // Elevator drum measurements
-    public static final double DRUM_CIRCUMFERENCE = 7.8854;         //Backup Drum Diameter is 2.50
+    public static final double DRUM_CIRCUMFERENCE = 8.1875;
     // PID timout constant
     public static final int TIMEOUT_MS = 30;
     // PID Index, 0 is primary, 1 is aux
