@@ -18,7 +18,6 @@ public class BallGrabber {
 SpeedController m_rightArmGrabberMotor;
 SpeedController m_leftArmGrabberMotor;
 SpeedControllerGroup m_grabberArmMotors;
-]
 SpeedController m_rightRotateGrabberMotor;
 SpeedController m_leftRotateGrabberMotor;
 SpeedControllerGroup m_grabberRotateMotors;

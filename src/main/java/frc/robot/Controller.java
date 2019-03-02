@@ -9,8 +9,6 @@ import edu.wpi.first.wpilibj.XboxController;
  * @version Week 5 Pre-comp
  */
 public class Controller extends XboxController {
-    // Declares xbox controller used by Controller object
-    XboxController m_myController;
 
     /**
      * Handles for input from driver's Xbox Controllers, and abjusts analog input using deadbands
@@ -18,9 +16,6 @@ public class Controller extends XboxController {
      */
     public Controller(int port) {
         super(port);
-
-        // Initializes controller to port passed in contructor
-        m_myController = new XboxController(port);
     }
 
     /**

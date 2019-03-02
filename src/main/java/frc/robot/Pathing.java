@@ -2,6 +2,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.GenericHID.Hand;
 
 /**
  * This class is what will drive the robot in automated pathing calls
@@ -121,7 +122,7 @@ public class Pathing {
         }
 
         if (lowAutoBreak) {
-            if ( m_pilotControl.getLeftTrigger() > 0 || m_pilotControl.getRightTrigger() > 0 || m_pilotControl.getLeftStickX() != 0) {
+            if ( m_pilotControl.getTriggerAxis(Hand.kRight) > 0 || m_pilotControl.getTriggerAxis(Hand.kRight) > 0 || m_pilotControl.getX(Hand.kLeft) != 0) {
                 return false;
             }
             else {

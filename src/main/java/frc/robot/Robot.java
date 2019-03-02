@@ -6,7 +6,6 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
-import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.cameraserver.CameraServer;
@@ -186,7 +185,7 @@ public class Robot extends TimedRobot {
 		// m_teleopCommands.teleopModeCommands();
 
 		// PID based sample talon arcade drive
-		m_drivetrain.talonArcadeDrive(m_pilotController.getRightTrigger() - m_pilotController.getLeftTrigger(), m_pilotController.getLeftStickX());
+		m_drivetrain.talonArcadeDrive(m_pilotController.getTriggerAxis(Hand.kRight) - m_pilotController.getTriggerAxis(Hand.kRight), m_pilotController.getX(Hand.kLeft));
 	}
 
 	/**
@@ -210,8 +209,6 @@ public class Robot extends TimedRobot {
 		if (m_pilotController.getStickButton(Hand.kRight)) {
 			m_drivetrain.m_slaveRightMotor.set(.3);
 		}
-
-//		m_drivetrain.talonArcadeDrive(m_pilotController.getRightTrigger() - m_pilotController.getLeftTrigger(), m_pilotController.getLeftStickX());
 
 		// [NOTE] Negative power moves the elevator up, but the encoder will still tic
 		// positive. This is due to the way the string is wound on the winch
