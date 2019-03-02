@@ -2,6 +2,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.GenericHID.Hand;
 
 /**
  * This class is what will drive the robot in automated pathing calls
@@ -52,6 +53,8 @@ public class Pathing {
 
     private int m_rotateExitCounter;
     Controller m_pilotControl;
+
+    boolean firstFlag = true;
     
     /**
      * Constructor for our pathing sequence, passing in the drivetrain we want to use
@@ -121,7 +124,7 @@ public class Pathing {
         }
 
         if (lowAutoBreak) {
-            if ( m_pilotControl.getLeftTrigger() > 0 || m_pilotControl.getRightTrigger() > 0 || m_pilotControl.getLeftStickX() != 0) {
+            if ( m_pilotControl.getTriggerAxis(Hand.kLeft) > 0 || m_pilotControl.getTriggerAxis(Hand.kRight) > 0 || m_pilotControl.getX() != 0) {
                 return false;
             }
             else {
@@ -276,7 +279,8 @@ public class Pathing {
             if(!m_angleToCenter.isNaN()) {
                 System.out.println("Found Target");
                 m_startingDegrees = m_gyro.getYaw();
-                m_absoluteDegToTarget = m_startingDegrees + m_angleToCenter;
+                m_absoluteDegToTarget = m_startingDegrees - m_angleToCenter;
+                firstFlag = false;
             }
 
             // Reset the counter
@@ -306,6 +310,7 @@ public class Pathing {
             // Rotates until the method says that its done
             if (m_drivetrain.rotateDriveAngle(m_absoluteDegToTarget, m_duinoToRio.getAverageArea())) {
                 System.out.println("Done Rotating");
+                // firstFlag = true;
                 return true;
             }
             else {

@@ -26,6 +26,7 @@ import frc.robot.AutoCommands;
 import frc.robot.TeleopCommands;
 import frc.robot.GamePad;
 import frc.robot.DriveClimber;
+import edu.wpi.first.wpilibj.GenericHID;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -40,9 +41,10 @@ public class Robot extends TimedRobot {
 	Pathing m_pather;
 
 	// Declare Pilot XBox Controller
-	Controller m_pilotController;
+	Controller m_controller;
 
-	GamePad m_copilotGamepad;
+	// Declare Copilot Gamepad
+	GamePad m_gamepad;
 
 	// Declare climbing mechanisms for front and back climbers
 	Climber m_frontClimber;
@@ -70,14 +72,20 @@ public class Robot extends TimedRobot {
 	// Declare the continuous command sequence
 	ContinuousCommand testContinuousCommand;
 
+	// Declare PID control for the elevator
+	ClimberPIDControl climberPID;
+
+	// TODO: Remove this
+	int storValue = 0;
+
 	Robot() {
 
 		// Instanciates drivetrain, driver controllers, climbers, and elevator
-		m_pilotController = new Controller(RobotMap.PILOT_CONTROLLER_PORT);
+		m_controller = new Controller(RobotMap.PILOT_CONTROLLER_PORT);
 
 		m_elevator = new Elevator();
 		
-		m_copilotGamepad = new GamePad(RobotMap.COPILOT_CONTROLLER_PORT);
+		m_gamepad = new GamePad(RobotMap.COPILOT_CONTROLLER_PORT);
 
 		// Instantiates the front and back climbers with their respective motor and break beam ports
 		m_frontClimber = new Climber(RobotMap.FRONT_CLIMBER_MOTOR_PORT, RobotMap.FRONT_CLIMBER_LIMIT_TOP_PORT, RobotMap.FRONT_CLIMBER_LIMIT_BOTTOM_PORT);
@@ -102,7 +110,7 @@ public class Robot extends TimedRobot {
 
 		// This requires the arduino to be plugged in, otherwise, it will fail
 		try {
-			m_pather = new Pathing(m_drivetrain, m_gyro, m_pilotController);
+			m_pather = new Pathing(m_drivetrain, m_gyro, m_controller);
 		} catch (Exception e) {
 			System.out.println("Pather failed to instantiate");
 		}
@@ -110,8 +118,14 @@ public class Robot extends TimedRobot {
 		// Runs config for the PID system on the drivetrain
 		m_drivetrain.talonDriveConfig();
 
+		// Instantiates PID control
+		climberPID = new ClimberPIDControl(m_frontClimber, m_backClimber);
+
+		// Runs config for synced PID climbers
+		climberPID.climberPIDConfig();
+
 		m_autoCommands = new AutoCommands(m_drivetrain, m_gyro, m_elevator, m_frontClimber, m_backClimber);
-		m_teleopCommands = new TeleopCommands(m_pilotController, m_copilotGamepad, m_drivetrain, m_elevator, m_frontClimber, m_backClimber, m_hatchMech);
+		m_teleopCommands = new TeleopCommands(m_controller, m_gamepad, m_drivetrain, m_elevator, m_frontClimber, m_backClimber, m_hatchMech, climberPID);
 		testContinuousCommand = new ContinuousCommand(m_drivetrain, m_gyro);
 	}
 
@@ -126,7 +140,7 @@ public class Robot extends TimedRobot {
 		try {
 			camera = CameraServer.getInstance().startAutomaticCapture();
 			camera.setResolution(160, 120);
-			camera.setFPS(1);			
+			camera.setFPS(20);			
 		} catch (Exception e) {
 			System.out.println("Camera failed to instantiate");
 		}
@@ -188,13 +202,7 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
-
-		// This code is currently commented out for the sake of driver training. It is also untested
-		// TODO: Needs to be tested.
-		// m_teleopCommands.teleopModeCommands();
-
-		// PID based sample talon arcade drive
-		m_drivetrain.talonArcadeDrive(m_pilotController.getRightTrigger() - m_pilotController.getLeftTrigger(), m_pilotController.getLeftStickX());
+		m_teleopCommands.teleopModeCommands();
 	}
 
 	/**
@@ -210,148 +218,19 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void testPeriodic() {
-		testContinuousCommand.loop(m_pilotController.getStartButtonReleased());
-		if (m_pilotController.getStickButton(Hand.kLeft)) {
-			m_drivetrain.m_slaveLeftMotor.set(.3);
-		}
+		m_teleopCommands.teleopModeCommands();
 
-		if (m_pilotController.getStickButton(Hand.kRight)) {
-			m_drivetrain.m_slaveRightMotor.set(.3);
-		}
-
-//		m_drivetrain.talonArcadeDrive(m_pilotController.getRightTrigger() - m_pilotController.getLeftTrigger(), m_pilotController.getLeftStickX());
-
-		// [NOTE] Negative power moves the elevator up, but the encoder will still tic
-		// positive. This is due to the way the string is wound on the winch
-		// Follow up: This is no longer quite true. So long as we call the elevator PID
-		// config, the motor will be inverted, thus positive should be up
-
-		// Sets elevator to hatch level 1 state
-		//X button
-		if (m_copilotGamepad.getLowHatchCargo()) {
-			m_elevator.elevatorPIDDrive(State.HATCH_L1);
-			// m_elevator.moveToPosition(m_pilotController.getXButton() , State.HATCH_L1);
-		}
-		// Sets elevator to hatch level 2 state
-		// Y button
-		else if (m_copilotGamepad.getMediumHatchCargo()) {
-			m_elevator.elevatorPIDDrive(State.HATCH_L2);
-			// m_elevator.moveToPosition(m_pilotController.getYButton() , State.HATCH_L2);
-		}
-		// Sets elevator to hatch level 3 state
-		// Right bumper
-		else if (m_copilotGamepad.getHighHatchCargo()) {
-			m_elevator.elevatorPIDDrive(State.HATCH_L3);
-			// m_elevator.moveToPosition(m_pilotController.getBumper(Hand.kRight) ,
-			// State.HATCH_L3);
-		}
-		// Sets elevator to level 0 state (starting position / bottom)
-		// Left bumper
-		else if (m_copilotGamepad.getPickupHatchCargo()) {
-			m_elevator.elevatorPIDDrive(State.LEVEL_ZERO);
-		}
-		// Sets elevator speed to 0
-		// No buttons
-		else {
-			m_elevator.moveRaw(0);
-		}
-		
-		// Hatch arm controller bound to the copilot controller
-		// Raise the arm on Y button
-		// Lower the arm on X button
-		if (m_copilotGamepad.getLiftHatchArm()) {
-			m_hatchMech.armUp();
-		}
-		else if (m_copilotGamepad.getDropHatchArm()) {
-			 m_hatchMech.armDown();
-		}
-		else {
-			m_hatchMech.setArm(0.0);
-		}
-
-
-		// On copilot controller
-		
-		// Raises both climbers at once
-		// Back button
-		if (m_pilotController.getBButton()) {
-			m_frontClimber.raiseClimber(RobotMap.FRONT_CLIMBER_SPEED_UP);
-			m_backClimber.raiseClimber(RobotMap.BACK_CLIMBER_SPEED_UP);
-		}
-		// Lowers both climbers at once
-		// Start button
-		else if (m_pilotController.getAButton()) {
-			m_frontClimber.lowerClimber(RobotMap.FRONT_CLIMBER_SPEED_DOWN);
-			m_backClimber.lowerClimber(RobotMap.BACK_CLIMBER_SPEED_DOWN);
-		}
-		// Otherwise takes commands for seperate control
-		else {
-			// Raises the front climber
-			// X button
-			if (m_pilotController.getXButton()) {
-				m_frontClimber.raiseClimber(RobotMap.FRONT_CLIMBER_SPEED_UP);
-			}
-			// Lowers front climber
-			// Y button
-			else if (m_pilotController.getYButton()) {
-				m_frontClimber.lowerClimber(RobotMap.FRONT_CLIMBER_SPEED_DOWN);
-			}
-			// Sets front climber speed to 0
-			// No buttons
-			else {
-				m_frontClimber.setClimber(0.0);
-			}
-
-			// Raises back climber
-			// LBump button
-			if (m_pilotController.getBumper(Hand.kLeft)) {
-				m_backClimber.raiseClimber(RobotMap.BACK_CLIMBER_SPEED_UP);
-			}
-			// Lowers back climber
-			// RBump button
-			else if (m_pilotController.getBumper(Hand.kRight)) {
-				m_backClimber.lowerClimber(RobotMap.BACK_CLIMBER_SPEED_DOWN);
-			}
-			// Sets back climber speed to 0
-			// Not buttons
-			else {
-				m_backClimber.setClimber(0.0);
-			}
-		
-		}
-		
-		
-		// Arm servo controls bound to copilot controller
-		// On A button released, open
-		// On B button released, close
-		if (m_copilotGamepad.getOpenHatchReleased()){
-			m_hatchMech.openServo();
-		}
-		else if(m_copilotGamepad.getCloseHatchReleased()){
-			m_hatchMech.closeServo();
-		}
-		
-		// Code for testing gyro reset and flipping. Commented out as the buttons are used elsewhere
-		// if (m_pilotController.getAButtonReleased()) {
-		// 	m_gyro.zeroYaw();
-		// }
-		// if (m_pilotController.getBButtonReleased()) {
-		// 	m_gyro.flipOffset();
-		// }
-		// if (m_pilotController.getBumper(Hand.kRight)) {
-		// 	m_pather.resetFlags();
-		// }
-		// m_pilotController.setRumble(RumbleType.kLeftRumble, 0);
-		// m_pilotController.setRumble(RumbleType.kRightRumble, 0);
-
-		// System.out.print("Left Ultrasonics: \t" + m_drivetrain.getLeftUltra().getRangeInches());
-		// System.out.print("Right Ultrasonics: \t" + m_drivetrain.getRightUltra().getRangeInches());
-		// System.out.print("Drivetrain Enc Velocity: \t" + m_drivetrain.getLeftDriveEncoderVelocity() + "\t\t" + m_drivetrain.getRightDriveEncoderVelocity());
-		System.out.println("Drivetrain Enc Pos: \t"+ m_drivetrain.getLeftDriveEncoderPosition() + "\t\t" + m_drivetrain.getRightDriveEncoderPosition());	
-		// System.out.print("Elevator Enc Velocity: \t" + m_elevator.m_elevatorMotor.getSelectedSensorVelocity());
-		// System.out.print("Elevator Enc Pos: \t"+ m_elevator.m_elevatorMotor.getSelectedSensorPosition());
-		// System.out.print("Front Break Beams: \t  Top: " + m_frontClimber.getTopLimitSwitch() + "\t Bottom: " + m_frontClimber.getBottomLimitSwitch());
-		// System.out.println("Back Break Beams: \t  Top: " + m_backClimber.getTopLimitSwitch() + "\t Bottom: " + m_backClimber.getBottomLimitSwitch());
-		
+		System.out.print("Left Ultrasonics: \t" + m_drivetrain.getLeftUltra().getRangeInches());
+		System.out.print("Right Ultrasonics: \t" + m_drivetrain.getRightUltra().getRangeInches());
+		System.out.print("Drivetrain Enc Velocity: \t" + m_drivetrain.getLeftDriveEncoderVelocity() + "\t\t" + m_drivetrain.getRightDriveEncoderVelocity());
+		System.out.print("Drivetrain Enc Pos: \t"+ m_drivetrain.getLeftDriveEncoderPosition() + "\t\t" + m_drivetrain.getRightDriveEncoderPosition());	
+		System.out.print("Elevator Enc Velocity: \t" + m_elevator.m_elevatorMotor.getSelectedSensorVelocity());
+		System.out.print("Elevator Enc Pos: \t"+ m_elevator.m_elevatorMotor.getSelectedSensorPosition());
+		System.out.print("Front Climber Enc Velocity: \t" + m_frontClimber.m_climberMotor.getSelectedSensorVelocity()); //getSelectedSensorVelocity());
+		System.out.print("Front Climber Enc Pos: \t"+ m_frontClimber.m_climberMotor.getSelectedSensorPosition());
+		System.out.print("Back Climber Enc Velocity: \t" + m_backClimber.m_climberMotor.getSelectedSensorVelocity()); //getSelectedSensorVelocity());
+		System.out.print("Back Climber Enc Pos: \t"+ m_backClimber.m_climberMotor.getSelectedSensorPosition());
+		System.out.print("Front Break Beams: \t  Top: " + m_frontClimber.getTopLimitSwitch() + "\t Bottom: " + m_frontClimber.getBottomLimitSwitch());
+		System.out.println("Back Break Beams: \t  Top: " + m_backClimber.getTopLimitSwitch() + "\t Bottom: " + m_backClimber.getBottomLimitSwitch());
 	}
 }

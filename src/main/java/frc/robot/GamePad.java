@@ -18,16 +18,26 @@ public class GamePad extends GenericHID {
 	 * Change numbers to correct port number
 	 */
 	private enum GamePadControls {
+		// Buttons
 		LOW_HATCH_CARGO(1),
 		MEDIUM_HATCH_CARGO(2),
 		HIGH_HATCH_CARGO(3),
 		PICKUP_HATCH_CARGO(4),
+		// Toggle switches
 		HATCH_TO_CARGO(5),
 		MANUAL_TO_AUTO(6),
+		// Buttons
 		OPEN_HATCH(7),
 		CLOSE_HATCH(8),
+		// Buttons
 		LIFT_HATCH_ARM(9),
-		DROP_HATCH_ARM(10);
+		DROP_HATCH_ARM(10),
+		// Joystick X axis
+		JOYSITCK_X_LEFT(11),
+		JOYSTICK_X_RIGHT(12),
+		// Joystick Y axis
+		MANUAL_ELEVATOR_UP(13),
+		MANUAL_ELEVATOR_DOWN(14);
 
 		@SuppressWarnings("MemberName")
 		public final int value;
@@ -69,7 +79,8 @@ public class GamePad extends GenericHID {
 	 * @return The value of the x axis
 	 */
 	public double getX(Hand hand) {
-		return Double.NaN;
+		System.out.println("Get X: \t" + getX());
+		return getX();
 	}
 
 	/**
@@ -77,7 +88,8 @@ public class GamePad extends GenericHID {
 	 * @return The value of the y axis
 	 */
 	public double getY(Hand hand) {
-		return Double.NaN;
+		System.out.println("Get Y: \t" + getY());
+		return getY();
 	}
 
 	/**
@@ -206,5 +218,21 @@ public class GamePad extends GenericHID {
 	 */
 	public boolean getDropHatchArm() {
 		return getGamePadButton(GamePadControls.DROP_HATCH_ARM);
+	}
+
+	public boolean getJoystickXLeft() {
+		return getGamePadButton(GamePadControls.JOYSITCK_X_LEFT);
+	}
+
+	public boolean getJoystickXRight() {
+		return getGamePadButton(GamePadControls.JOYSTICK_X_RIGHT);
+	}
+
+	public boolean getManualElevatorUp() {
+		return getGamePadButton(GamePadControls.MANUAL_ELEVATOR_UP);
+	}
+
+	public boolean getManulaElevatorDown() {
+		return getGamePadButton(GamePadControls.MANUAL_ELEVATOR_DOWN);
 	}
 }
