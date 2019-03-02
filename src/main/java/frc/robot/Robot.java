@@ -8,26 +8,20 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.cameraserver.CameraServer;
-
-import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
 import frc.robot.Drivetrain;
 import frc.robot.Controller;
 import frc.robot.Climber;
 import frc.robot.NavX;
-import frc.robot.Elevator.State;
 import frc.robot.Elevator;
 import frc.robot.HatchMech;
 import frc.robot.AutoCommands;
 import frc.robot.TeleopCommands;
 import frc.robot.GamePad;
 import frc.robot.DriveClimber;
-import edu.wpi.first.wpilibj.GenericHID;
-
 /**
  * The VM is configured to automatically run this class, and to call the
  * functions corresponding to each mode, as described in the TimedRobot
@@ -74,9 +68,6 @@ public class Robot extends TimedRobot {
 
 	// Declare PID control for the elevator
 	ClimberPIDControl climberPID;
-
-	// TODO: Remove this
-	int storValue = 0;
 
 	Robot() {
 

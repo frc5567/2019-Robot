@@ -8,7 +8,6 @@ import frc.robot.Elevator;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import frc.robot.Climber;
 import frc.robot.HatchMech;
-import edu.wpi.first.wpilibj.GenericHID.Hand;
 
 /**
  * This class is to house all the commands used by the pilots in teleop mode
