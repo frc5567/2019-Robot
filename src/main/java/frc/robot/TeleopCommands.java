@@ -8,6 +8,7 @@ import frc.robot.Elevator;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import frc.robot.Climber;
 import frc.robot.HatchMech;
+import edu.wpi.first.wpilibj.GenericHID.Hand;
 
 /**
  * This class is to house all the commands used by the pilots in teleop mode
@@ -61,7 +62,7 @@ public class TeleopCommands {
      * Allows the drivers to control the drivetrain
      */
     public void controlDrivetrain() {
-        m_drivetrain.talonArcadeDrive((m_controller.getRightTrigger() - m_controller.getLeftTrigger()), m_controller.getLeftStickX());
+        m_drivetrain.talonArcadeDrive((m_controller.getTriggerAxis(Hand.kRight) - m_controller.getTriggerAxis(Hand.kLeft)), m_controller.getX());
     }
 
     /**
