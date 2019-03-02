@@ -2,6 +2,7 @@ package frc.robot;
 
 import frc.robot.RobotMap;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
 public class DriveClimber extends Climber {
@@ -19,6 +20,7 @@ public class DriveClimber extends Climber {
         super(motorPort, topLimitSwitch, bottomLimitSwitch);
 
         m_driveMotor = new WPI_VictorSPX(driveMotorPort);
+        m_driveMotor.setNeutralMode(NeutralMode.Coast);
     }
 
     public void driveMotorForeward() {

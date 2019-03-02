@@ -77,8 +77,8 @@ public class RobotMap {
     public static final double HATCH_MECH_OPEN_SERVO_POSITION = 0.6;
     public static final double HATCH_MECH_CLOSE_SERVO_POSITION = 0.3;
     // HatchMech motor encoder limits
-    public static final int HATCH_MECH_UP_MOTOR_POSITION = 0;
-    public static final int HATCH_MECH_DOWN_MOTOR_POSITION = 60;
+    public static final int HATCH_MECH_UP_STOP_POSITION = 50000;
+    public static final int HATCH_MECH_DOWN_STOP_POSITION = 25000;
     public static final int HATCH_MECH_MOTOR_PORT = 15;
     // Elevator height
     public static final double MAX_ELEVATOR_HEIGHT = 5.0;   //TODO: Update this?
@@ -88,8 +88,8 @@ public class RobotMap {
     public static final double DRIVE_MAX_DELTA_SPEED = 0.1;
     public static final double DRIVE_MAX_QUICK_TURN_SPEED = 0.1;
     //HatchMech motor speeds
-    public static final double HATCH_MECH_ARM_UP_MOTOR_SPEED = 0.5;     // Check Speed
-    public static final double HATCH_MECH_ARM_DOWN_MOTOR_SPEED = -0.5;  // Check Speed
+    public static final double HATCH_MECH_ARM_UP_MOTOR_SPEED = -0.3;     // Check Speed
+    public static final double HATCH_MECH_ARM_DOWN_MOTOR_SPEED = 0.3;  // Check Speed
     public static final double HATCH_MECH_STOP_MOTOR_SPEED = 0.0;
     // Climber motor speeds
     public static final double FRONT_CLIMBER_SPEED_UP = -0.3;      //UPDATE THIS VALUE
@@ -97,6 +97,9 @@ public class RobotMap {
     
     public static final double BACK_CLIMBER_SPEED_UP = -0.3;      //UPDATE THIS VALUE
     public static final double BACK_CLIMBER_SPEED_DOWN = 0.6;
+
+    // Climber encoder target in tics
+    public static final int CLIMBER_TARGET = 100; // TODO: This is an arbitrary number
 
     // Elevator Motor Speed
     public static final double ELEVATOR_MOTOR_SPEED_UP = -0.4;
