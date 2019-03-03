@@ -131,7 +131,7 @@ public class Robot extends TimedRobot {
 		try {
 			camera = CameraServer.getInstance().startAutomaticCapture();
 			camera.setResolution(160, 120);
-			camera.setFPS(20);			
+			camera.setFPS(10);			
 		} catch (Exception e) {
 			System.out.println("Camera failed to instantiate");
 		}
@@ -215,12 +215,12 @@ public class Robot extends TimedRobot {
 		// System.out.print("Right Ultrasonics: \t" + m_drivetrain.getRightUltra().getRangeInches());
 		// System.out.print("Drivetrain Enc Velocity: \t" + m_drivetrain.getLeftDriveEncoderVelocity() + "\t\t" + m_drivetrain.getRightDriveEncoderVelocity());
 		// System.out.print("Drivetrain Enc Pos: \t"+ m_drivetrain.getLeftDriveEncoderPosition() + "\t\t" + m_drivetrain.getRightDriveEncoderPosition());	
-		// System.out.print("Elevator Enc Velocity: \t" + m_elevator.m_motor.getSelectedSensorVelocity());
-		// System.out.print("Elevator Enc Pos: \t"+ m_elevator.m_motor.getSelectedSensorPosition());
-		System.out.print("Front Climber Enc Velocity: \t" + m_frontClimber.m_climberMotor.getSelectedSensorVelocity()); //getSelectedSensorVelocity());
-		System.out.print("Front Climber Enc Pos: \t"+ m_frontClimber.m_climberMotor.getSelectedSensorPosition());
-		System.out.print("Back Climber Enc Velocity: \t" + m_backClimber.m_climberMotor.getSelectedSensorVelocity()); //getSelectedSensorVelocity());
-		System.out.println("Back Climber Enc Pos: \t"+ m_backClimber.m_climberMotor.getSelectedSensorPosition());
+		System.out.print("Elevator Enc Velocity: \t" + m_elevator.m_motor.getSelectedSensorVelocity());
+		System.out.println("Elevator Enc Pos: \t"+ m_elevator.m_motor.getSelectedSensorPosition());
+		// System.out.print("Front Climber Enc Velocity: \t" + m_frontClimber.m_climberMotor.getSelectedSensorVelocity()); //getSelectedSensorVelocity());
+		// System.out.print("Front Climber Enc Pos: \t"+ m_frontClimber.m_climberMotor.getSelectedSensorPosition());
+		// System.out.print("Back Climber Enc Velocity: \t" + m_backClimber.m_climberMotor.getSelectedSensorVelocity()); //getSelectedSensorVelocity());
+		// System.out.print("Back Climber Enc Pos: \t"+ m_backClimber.m_climberMotor.getSelectedSensorPosition());
 		// System.out.print("Front Break Beams: \t  Top: " + m_frontClimber.getTopLimitSwitch() + "\t Bottom: " + m_frontClimber.getBottomLimitSwitch());
 		// System.out.println("Back Break Beams: \t  Top: " + m_backClimber.getTopLimitSwitch() + "\t Bottom: " + m_backClimber.getBottomLimitSwitch());
 	}

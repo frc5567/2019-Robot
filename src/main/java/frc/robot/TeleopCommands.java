@@ -43,6 +43,8 @@ public class TeleopCommands {
         m_backClimber = backClimber;
         m_hatchMech = hatchMech;
         m_climberPID = climberPID;
+
+        m_desiredElevatorState = State.LEVEL_ZERO;
     }
 
     /**
@@ -51,9 +53,9 @@ public class TeleopCommands {
      * parameters set to true.
      */
     public void teleopModeCommands() {
-        if (!m_driveClimberDeployed) {
+        // if (!m_driveClimberDeployed) {
             controlDrivetrain();
-        }
+        
         controlElevator();
         controlHatchMech();
         controlClimbers();
@@ -63,7 +65,7 @@ public class TeleopCommands {
      * Allows the drivers to control the drivetrain
      */
     public void controlDrivetrain() {
-        m_drivetrain.talonArcadeDrive((m_controller.getTriggerAxis(Hand.kRight) - m_controller.getTriggerAxis(Hand.kLeft)), m_controller.getX());
+        m_drivetrain.talonArcadeDrive((m_controller.getTriggerAxis(Hand.kRight) - m_controller.getTriggerAxis(Hand.kLeft)), m_controller.getX(Hand.kLeft));
     }
 
     /**
@@ -71,7 +73,7 @@ public class TeleopCommands {
      */
     public void controlElevator() {
 
-        if (m_gamepad.getRawAxis(1) == -1) {
+        if (m_gamepad.getRawAxis(1) == 1) {
             m_elevator.moveRaw(RobotMap.ELEVATOR_MOTOR_SPEED_UP);
         }
         else if (m_gamepad.getRawAxis(1) == -1) {
@@ -79,22 +81,20 @@ public class TeleopCommands {
         }
         else {
             if (m_gamepad.getPickupHatchCargo()) {
-                m_desiredElevatorState = State.LEVEL_ZERO;
+                m_elevator.drivePID(State.LEVEL_ZERO);
             }
             else if (m_gamepad.getLowHatchCargo()) {
-                m_desiredElevatorState = State.HATCH_L1;
+                m_elevator.drivePID(State.HATCH_L1);
             }
             else if (m_gamepad.getMediumHatchCargo()) {
-                m_desiredElevatorState = State.HATCH_L2;
+                m_elevator.drivePID(State.HATCH_L2);
             }
             else if (m_gamepad.getHighHatchCargo()) {
-                m_desiredElevatorState = State.HATCH_L3;
+                m_elevator.drivePID(State.HATCH_L3);
             }
             else {
-                m_desiredElevatorState = State.LEVEL_ZERO;
+                m_elevator.moveRaw(0.0);
             }
-
-            m_elevator.drivePID(m_desiredElevatorState);
         }
 
     }
@@ -139,7 +139,7 @@ public class TeleopCommands {
         }
         else {
             m_frontClimber.setClimber(0);
-            m_drivetrain.talonArcadeDrive(0, 0);
+            // m_drivetrain.talonArcadeDrive(0, 0);
         }
         
         if (m_controller.getXButton()) {
@@ -152,7 +152,7 @@ public class TeleopCommands {
         }
             else {
                 m_backClimber.setClimber(0);
-                m_drivetrain.talonArcadeDrive(0, 0);
+                // m_drivetrain.talonArcadeDrive(0, 0);
             }
         
 		    if (m_controller.getYButton() && m_driveClimberDeployed) {
@@ -160,7 +160,8 @@ public class TeleopCommands {
                 m_drivetrain.talonArcadeDrive(.2, 0);
             }
             else {
-                m_drivetrain.talonArcadeDrive(0, 0);
+                m_backClimber.m_driveMotor.set(0);
+                // m_drivetrain.talonArcadeDrive(0, 0);
             }
         }
         
