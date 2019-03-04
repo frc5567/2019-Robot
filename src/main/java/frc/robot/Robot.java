@@ -8,26 +8,20 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.cameraserver.CameraServer;
-
-import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
 import frc.robot.Drivetrain;
 import frc.robot.Controller;
 import frc.robot.Climber;
 import frc.robot.NavX;
-import frc.robot.Elevator.State;
 import frc.robot.Elevator;
 import frc.robot.HatchMech;
 import frc.robot.AutoCommands;
 import frc.robot.TeleopCommands;
 import frc.robot.GamePad;
 import frc.robot.DriveClimber;
-import edu.wpi.first.wpilibj.GenericHID;
-
 /**
  * The VM is configured to automatically run this class, and to call the
  * functions corresponding to each mode, as described in the TimedRobot
@@ -75,9 +69,6 @@ public class Robot extends TimedRobot {
 	// Declare PID control for the elevator
 	ClimberPIDControl climberPID;
 
-	// TODO: Remove this
-	int storValue = 0;
-
 	Robot() {
 
 		// Instanciates drivetrain, driver controllers, climbers, and elevator
@@ -95,7 +86,7 @@ public class Robot extends TimedRobot {
 		m_elevator = new Elevator();
 		
 		// Calls method to configure the PID settings for the elevator
-		m_elevator.elevatorPIDConfig();
+		m_elevator.configPID();
 		
 		// Instantiates hatch arm class 
 		m_hatchMech = new HatchMech();
@@ -224,8 +215,8 @@ public class Robot extends TimedRobot {
 		System.out.print("Right Ultrasonics: \t" + m_drivetrain.getRightUltra().getRangeInches());
 		System.out.print("Drivetrain Enc Velocity: \t" + m_drivetrain.getLeftDriveEncoderVelocity() + "\t\t" + m_drivetrain.getRightDriveEncoderVelocity());
 		System.out.print("Drivetrain Enc Pos: \t"+ m_drivetrain.getLeftDriveEncoderPosition() + "\t\t" + m_drivetrain.getRightDriveEncoderPosition());	
-		System.out.print("Elevator Enc Velocity: \t" + m_elevator.m_elevatorMotor.getSelectedSensorVelocity());
-		System.out.print("Elevator Enc Pos: \t"+ m_elevator.m_elevatorMotor.getSelectedSensorPosition());
+		System.out.print("Elevator Enc Velocity: \t" + m_elevator.m_motor.getSelectedSensorVelocity());
+		System.out.print("Elevator Enc Pos: \t"+ m_elevator.m_motor.getSelectedSensorPosition());
 		System.out.print("Front Climber Enc Velocity: \t" + m_frontClimber.m_climberMotor.getSelectedSensorVelocity()); //getSelectedSensorVelocity());
 		System.out.print("Front Climber Enc Pos: \t"+ m_frontClimber.m_climberMotor.getSelectedSensorPosition());
 		System.out.print("Back Climber Enc Velocity: \t" + m_backClimber.m_climberMotor.getSelectedSensorVelocity()); //getSelectedSensorVelocity());

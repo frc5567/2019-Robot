@@ -19,25 +19,19 @@ public class GamePad extends GenericHID {
 	 */
 	private enum GamePadControls {
 		// Buttons
-		LOW_HATCH_CARGO(1),
-		MEDIUM_HATCH_CARGO(2),
-		HIGH_HATCH_CARGO(3),
+		LOW_HATCH_CARGO(5),
+		MEDIUM_HATCH_CARGO(6),
+		HIGH_HATCH_CARGO(7),
 		PICKUP_HATCH_CARGO(4),
 		// Toggle switches
-		HATCH_TO_CARGO(5),
-		MANUAL_TO_AUTO(6),
+		HATCH_TO_CARGO(9),
+		MANUAL_TO_AUTO(8),
 		// Buttons
-		OPEN_HATCH(7),
-		CLOSE_HATCH(8),
+		OPEN_HATCH(1),
+		CLOSE_HATCH(0),
 		// Buttons
-		LIFT_HATCH_ARM(9),
-		DROP_HATCH_ARM(10),
-		// Joystick X axis
-		JOYSITCK_X_LEFT(11),
-		JOYSTICK_X_RIGHT(12),
-		// Joystick Y axis
-		MANUAL_ELEVATOR_UP(13),
-		MANUAL_ELEVATOR_DOWN(14);
+		LIFT_HATCH_ARM(3),
+		DROP_HATCH_ARM(2);
 
 		@SuppressWarnings("MemberName")
 		public final int value;
@@ -218,21 +212,5 @@ public class GamePad extends GenericHID {
 	 */
 	public boolean getDropHatchArm() {
 		return getGamePadButton(GamePadControls.DROP_HATCH_ARM);
-	}
-
-	public boolean getJoystickXLeft() {
-		return getGamePadButton(GamePadControls.JOYSITCK_X_LEFT);
-	}
-
-	public boolean getJoystickXRight() {
-		return getGamePadButton(GamePadControls.JOYSTICK_X_RIGHT);
-	}
-
-	public boolean getManualElevatorUp() {
-		return getGamePadButton(GamePadControls.MANUAL_ELEVATOR_UP);
-	}
-
-	public boolean getManulaElevatorDown() {
-		return getGamePadButton(GamePadControls.MANUAL_ELEVATOR_DOWN);
 	}
 }
