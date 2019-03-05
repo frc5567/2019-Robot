@@ -19,19 +19,19 @@ public class GamePad extends GenericHID {
 	 */
 	private enum GamePadControls {
 		// Buttons
-		LOW_HATCH_CARGO(5),
-		MEDIUM_HATCH_CARGO(6),
-		HIGH_HATCH_CARGO(7),
-		PICKUP_HATCH_CARGO(4),
+		LOW_HATCH_CARGO(6),
+		MEDIUM_HATCH_CARGO(7),
+		HIGH_HATCH_CARGO(8),
+		PICKUP_HATCH_CARGO(5),
 		// Toggle switches
-		HATCH_TO_CARGO(9),
-		MANUAL_TO_AUTO(8),
+		HATCH_TO_CARGO(10),
+		MANUAL_TO_AUTO(9),
 		// Buttons
-		OPEN_HATCH(1),
-		CLOSE_HATCH(0),
+		OPEN_HATCH(2),
+		CLOSE_HATCH(1),
 		// Buttons
-		LIFT_HATCH_ARM(3),
-		DROP_HATCH_ARM(2);
+		LIFT_HATCH_ARM(4),
+		DROP_HATCH_ARM(3);
 
 		@SuppressWarnings("MemberName")
 		public final int value;
@@ -132,6 +132,10 @@ public class GamePad extends GenericHID {
 	 */
 	public boolean getManualToAutoReleased() {
 		return getGamePadButtonReleased(GamePadControls.MANUAL_TO_AUTO);
+	}
+
+	public boolean getManualToAuto() {
+		return getGamePadButton(GamePadControls.MANUAL_TO_AUTO);
 	}
 
 	/**
