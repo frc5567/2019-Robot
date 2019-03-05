@@ -253,7 +253,7 @@ public class Drivetrain implements PIDOutput {
         return isFinished;
     }
 
-    public boolean rotateDriveAngle(double targetAngle, double area) {
+    public boolean rotateDriveAngle(double targetAngle, double target) {
         // Flag for checking if the method is finished
         boolean isFinished = false;
 
@@ -282,6 +282,16 @@ public class Drivetrain implements PIDOutput {
         System.out.println("current angle: \t" + m_gyro.getYaw());
         talonArcadeDrive(RobotMap.AUTO_SPEED, returnedRotate);
 
+        if (ultraLeft.getRangeInches() > target && ultraRight.getRangeInches() > target) {
+            talonArcadeDrive(RobotMap.AUTO_SPEED, returnedRotate);
+            // System.out.println("LUS: " + ultraLeft.getRangeInches() + "\tRUS: " + ultraRight.getRangeInches());
+            isFinished = false;
+        }
+        else {
+            talonArcadeDrive(0.2, 0);
+            isFinished = true;
+        }
+
         // isFinished acts as an exit flag once we have fulfilled the conditions desired
         // It is currently not used as a result of testing necesity, but will likely be used on final implementation
         return isFinished;
@@ -294,7 +304,7 @@ public class Drivetrain implements PIDOutput {
     public boolean driveToUltra(double stopDistance) {
         if (ultraLeft.getRangeInches() > stopDistance && ultraRight.getRangeInches() > stopDistance) {
             talonArcadeDrive(.5, 0);
-            System.out.println("LUS: " + ultraLeft.getRangeInches() + "\tRUS: " + ultraRight.getRangeInches());
+            // System.out.println("LUS: " + ultraLeft.getRangeInches() + "\tRUS: " + ultraRight.getRangeInches());
             return false;
         }
         else {
@@ -410,7 +420,7 @@ public class Drivetrain implements PIDOutput {
          * 
          */
 
-        int closedLoopTimeMs = 1;
+        int closedLoopTimeMs = 10;
 
         m_masterRightMotor.configClosedLoopPeriod(0, closedLoopTimeMs, RobotMap.TIMEOUT_MS);
         m_masterRightMotor.configClosedLoopPeriod(1, closedLoopTimeMs, RobotMap.TIMEOUT_MS);

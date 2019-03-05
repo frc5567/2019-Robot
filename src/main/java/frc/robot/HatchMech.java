@@ -72,28 +72,29 @@ public class HatchMech{
      * Raises the Hatch Mech arm to its high position when called
      */
     public boolean armUp(){
-       if (m_hatchMechEncoder.get() <= RobotMap.HATCH_MECH_UP_STOP_POSITION) {
+       System.out.println("here");
+        // if (m_hatchMechEncoder.get() <= RobotMap.HATCH_MECH_UP_STOP_POSITION) {
             m_hatchArmMotor.set(RobotMap.HATCH_MECH_ARM_UP_MOTOR_SPEED);
-            return false;
-        }
-        else {
-            m_hatchArmMotor.set(RobotMap.HATCH_MECH_STOP_MOTOR_SPEED);
+            // return false;
+        // }
+        // else {
+            // m_hatchArmMotor.set(RobotMap.HATCH_MECH_STOP_MOTOR_SPEED);
             return true;
-        }                    
+        // }                    
     }
    
     /**
      * Lowers the Hatch Mech arm to its low arm when called
      */
     public boolean armDown(){
-        if (m_hatchMechEncoder.get() <= RobotMap.HATCH_MECH_DOWN_STOP_POSITION) {
+        // if (m_hatchMechEncoder.get() <= RobotMap.HATCH_MECH_DOWN_STOP_POSITION) {
             m_hatchArmMotor.set(RobotMap.HATCH_MECH_ARM_DOWN_MOTOR_SPEED);
-            return false;                            
-        }
-        else {
-            m_hatchArmMotor.set(RobotMap.HATCH_MECH_STOP_MOTOR_SPEED);
+            // return false;                            
+        // }
+        // else {
+            // m_hatchArmMotor.set(RobotMap.HATCH_MECH_STOP_MOTOR_SPEED);
             return true;
-        }
+        // }
     }
 
     /**
