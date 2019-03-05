@@ -167,9 +167,6 @@ public class RobotMap {
      * PID Gains may have to be adjusted based on the responsiveness of control
      * loop.
      * 
-     * kF: 1023 represents output value to Talon at 100%, 6800 represents Velocity
-     * units at 100% output
-     * 
      * Not all set of Gains are used in this project and may be removed as desired.
      * kP kI kD kF Iz PeakOut
      */

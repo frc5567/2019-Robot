@@ -59,8 +59,6 @@ public class DuinoToRioComms {
 
         //  Calls pixyRead with the command 3 to get angle to center and assign it to return variable
         angleToCenter = pixyRead(RobotMap.GET_ANGLE_TO_CENTER);
-
-        System.out.println("angleToCenter:\t" + angleToCenter);
         return angleToCenter;
     }
 
@@ -97,11 +95,6 @@ public class DuinoToRioComms {
         //  Call the data methods with a command inputed in the Robot class
         sendCommand(command);
         dataReturned = readData(command);
-
-        //  Telemetry for checking if the returned data was valid
-        if(dataReturned.isNaN()){
-            System.out.println("Nothing Returned");
-        }
 
         return dataReturned;
     }

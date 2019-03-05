@@ -54,6 +54,7 @@ public class Climber {
 
     /**
      * Used to get the status of the top break beam.
+     * Limit Switch not mounted, this should not be used or called
      * 
      * @return True if the top break beam is closed.
      */
@@ -63,6 +64,7 @@ public class Climber {
 
     /**
      * Used to get the status of the bottom break beam.
+     * Limit Switch not mounted, this should not be used or called
      * 
      * @return True if the bottim break beam is closed.
      */

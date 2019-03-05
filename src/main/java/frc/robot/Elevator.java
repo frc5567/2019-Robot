@@ -163,9 +163,6 @@ public class Elevator {
 
 	public boolean drivePID(State state) {
 		double target = (state.deltaInches) * (RobotMap.TICKS_PER_REVOLUTION / RobotMap.DRUM_CIRCUMFERENCE);
-		System.out.println("PIDTarget in tics: \t" + target);
-		System.out.println("Current Position in tics: \t" + m_motor.getSelectedSensorPosition());
-		System.out.println("State: \t" + state);
 		m_motor.set(ControlMode.MotionMagic, target);
 
 		if(getEncoderVelocity() > 100){

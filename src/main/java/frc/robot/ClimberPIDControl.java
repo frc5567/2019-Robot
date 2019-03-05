@@ -115,7 +115,6 @@ public class ClimberPIDControl {
     }
 
     public void climberPIDDrive(int target) {
-		System.out.println("PIDTarget in tics: \t" + target);
         m_driveClimber.m_climberMotor.set(ControlMode.MotionMagic, target, DemandType.AuxPID, 0);
         m_frontClimber.m_climberMotor.follow(m_driveClimber.m_climberMotor, FollowerType.AuxOutput1);
 	}

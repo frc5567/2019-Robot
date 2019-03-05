@@ -1,5 +1,11 @@
 package frc.robot;
 
+/**
+ * This class is designed explicitly for testing continuous commands by having the robot
+ * drive back and forth
+ * 
+ * @author Josh Overbeek
+ */
 public class ContinuousCommand {
 
     // Flags for keeping track of position in sequence
@@ -30,10 +36,9 @@ public class ContinuousCommand {
     public void loop(boolean toggle) {
         if (toggle) {
             m_breakFlag = !m_breakFlag;
-            m_drivetrain.talonArcadeDrive(0, 0);
+            m_drivetrain.talonArcadeDrive(0, 0, false);
             m_driveFlag = false;
             m_rotateFlag = true;
-            System.out.println("Toggled");
         }
 
         if (m_breakFlag) {
@@ -42,17 +47,13 @@ public class ContinuousCommand {
 
         if (!m_rotateFlag) {
             m_rotateFlag = m_drivetrain.driveToPosition(-8);
-            //System.out.println("Rotating");
             if(m_rotateFlag) {
-                //System.out.println("Done Rotating");
                 m_driveFlag = false;
             }
         }
         else if (!m_driveFlag) {
             m_driveFlag = m_drivetrain.driveToPosition(8);
-            //System.out.println("Driving");
             if(m_driveFlag) {
-                //System.out.println("Done Driving");
                 m_rotateFlag = false;
             }
         }
