@@ -41,7 +41,7 @@ float dA;
 
 // Max acceptable difference in area before we start to adjust the center point
 // This number is arbitrary
-float maxDa = 0.15;
+float maxDa = 0.25;
 
 // Position of the edges of each block
 int xLOne;
@@ -198,6 +198,16 @@ void calcDistToCenterLow()
 
   if ((abs(dA)) > maxDa)
   {
+	if (abs(dA) >= 1.0) 
+    {
+      if (dA > 0)
+      {
+        dA = .9;
+      }
+      else {
+        dA = -.9;
+      }
+    }
     if (!callToggle) 
     {
       adjAbsCenter = (int)(10 * dA) + absoluteCenter;
