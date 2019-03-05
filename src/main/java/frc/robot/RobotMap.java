@@ -8,6 +8,13 @@ package frc.robot;
  */
 public class RobotMap {
 
+    // Debug telmetry enable / disable constants
+    public static final boolean ULTRASONIC_TELEMETRY = false;
+    public static final boolean DRIVETRAIN_TELEMETRY = false;
+    public static final boolean ELEVATOR_TELEMETRY = false;
+    public static final boolean CLIMBER_TELEMETRY = false;
+    public static final int SAMPLE_RATE = 50;
+
     public static final Gains GAINS = new Gains(0.3, 0.0, 0.0, 0.0, 100, 1.0);
 
 	// NavX angle offset
@@ -110,7 +117,7 @@ public class RobotMap {
 
     // PID Controller
     // Rotate Controller
-    public static final double P_ROTATE_CONTROLLER = 0.025;
+    public static final double P_ROTATE_CONTROLLER = 0.035;
     public static final double I_ROTATE_CONTROLLER = 0.00;
     public static final double D_ROTATE_CONTROLLER = 0.00;
     public static final double F_ROTATE_CONTROLLER = 0.00;

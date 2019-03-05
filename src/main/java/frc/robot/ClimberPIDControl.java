@@ -104,8 +104,8 @@ public class ClimberPIDControl {
 		m_driveClimber.m_climberMotor.configAllowableClosedloopError(1, 0, RobotMap.TIMEOUT_MS);
 
 		// PID closed loop config
-        m_driveClimber.m_climberMotor.configClosedLoopPeriod(0, 5, RobotMap.TIMEOUT_MS);
-        m_driveClimber.m_climberMotor.configClosedLoopPeriod(1, 5, RobotMap.TIMEOUT_MS);
+        m_driveClimber.m_climberMotor.configClosedLoopPeriod(0, 10, RobotMap.TIMEOUT_MS);
+        m_driveClimber.m_climberMotor.configClosedLoopPeriod(1, 10, RobotMap.TIMEOUT_MS);
 
         m_driveClimber.m_climberMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_10_Targets, 10);
 

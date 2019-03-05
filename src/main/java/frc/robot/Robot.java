@@ -9,6 +9,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.cameraserver.CameraServer;
 
@@ -69,6 +70,11 @@ public class Robot extends TimedRobot {
 	// Declare PID control for the elevator
 	ClimberPIDControl climberPID;
 
+	// Solenoid innerRingLight;
+	// Solenoid outerRingLight;
+
+	int telemetryCounter;
+
 	Robot() {
 
 		// Instanciates drivetrain, driver controllers, climbers, and elevator
@@ -116,8 +122,21 @@ public class Robot extends TimedRobot {
 		climberPID.climberPIDConfig();
 
 		m_autoCommands = new AutoCommands(m_drivetrain, m_gyro, m_elevator, m_frontClimber, m_backClimber);
-		m_teleopCommands = new TeleopCommands(m_controller, m_gamepad, m_drivetrain, m_elevator, m_frontClimber, m_backClimber, m_hatchMech, climberPID);
+		m_teleopCommands = new TeleopCommands(m_controller, m_gamepad, m_drivetrain, m_elevator, m_frontClimber, m_backClimber, m_hatchMech, climberPID, m_pather);
 		testContinuousCommand = new ContinuousCommand(m_drivetrain, m_gyro);
+
+		// innerRingLight = new Solenoid(20, 0);
+		// outerRingLight = new Solenoid(20, 1);
+
+		try {
+			camera = CameraServer.getInstance().startAutomaticCapture();
+			camera.setResolution(160, 120);
+			camera.setFPS(10);			
+		} catch (Exception e) {
+			System.out.println("Camera failed to instantiate");
+		}
+
+		
 	}
 
 	/**
@@ -128,13 +147,6 @@ public class Robot extends TimedRobot {
 	public void robotInit() {
 		// Sets up the camera and inits the camera server
 		// This needs the camera to be plugged in
-		try {
-			camera = CameraServer.getInstance().startAutomaticCapture();
-			camera.setResolution(160, 120);
-			camera.setFPS(10);			
-		} catch (Exception e) {
-			System.out.println("Camera failed to instantiate");
-		}
 
 		m_hatchMech.openServo();
 	}
@@ -201,7 +213,7 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void testInit() {
-
+		telemetryCounter = 0;
 	}
 
 	/**
@@ -210,18 +222,34 @@ public class Robot extends TimedRobot {
 	@Override
 	public void testPeriodic() {
 		m_teleopCommands.teleopModeCommands();
+		
+			// innerRingLight.set(true);
+			// outerRingLight.set(true);
+		
+		if ((telemetryCounter % RobotMap.SAMPLE_RATE) == 0) {
+			if (RobotMap.ULTRASONIC_TELEMETRY) {
+				System.out.print("Left Ultrasonics: \t" + m_drivetrain.getLeftUltra().getRangeInches());
+				System.out.println("Right Ultrasonics: \t" + m_drivetrain.getRightUltra().getRangeInches());
+			}
+			
+			if (RobotMap.DRIVETRAIN_TELEMETRY) {
+				System.out.print("Drivetrain Enc Velocity: \t" + m_drivetrain.getLeftDriveEncoderVelocity() + "\t\t" + m_drivetrain.getRightDriveEncoderVelocity());
+				System.out.println("Drivetrain Enc Pos: \t"+ m_drivetrain.getLeftDriveEncoderPosition() + "\t\t" + m_drivetrain.getRightDriveEncoderPosition());	
+			}
 
-		// System.out.print("Left Ultrasonics: \t" + m_drivetrain.getLeftUltra().getRangeInches());
-		// System.out.print("Right Ultrasonics: \t" + m_drivetrain.getRightUltra().getRangeInches());
-		// System.out.print("Drivetrain Enc Velocity: \t" + m_drivetrain.getLeftDriveEncoderVelocity() + "\t\t" + m_drivetrain.getRightDriveEncoderVelocity());
-		// System.out.print("Drivetrain Enc Pos: \t"+ m_drivetrain.getLeftDriveEncoderPosition() + "\t\t" + m_drivetrain.getRightDriveEncoderPosition());	
-		System.out.print("Elevator Enc Velocity: \t" + m_elevator.m_motor.getSelectedSensorVelocity());
-		System.out.println("Elevator Enc Pos: \t"+ m_elevator.m_motor.getSelectedSensorPosition());
-		// System.out.print("Front Climber Enc Velocity: \t" + m_frontClimber.m_climberMotor.getSelectedSensorVelocity()); //getSelectedSensorVelocity());
-		// System.out.print("Front Climber Enc Pos: \t"+ m_frontClimber.m_climberMotor.getSelectedSensorPosition());
-		// System.out.print("Back Climber Enc Velocity: \t" + m_backClimber.m_climberMotor.getSelectedSensorVelocity()); //getSelectedSensorVelocity());
-		// System.out.print("Back Climber Enc Pos: \t"+ m_backClimber.m_climberMotor.getSelectedSensorPosition());
-		// System.out.print("Front Break Beams: \t  Top: " + m_frontClimber.getTopLimitSwitch() + "\t Bottom: " + m_frontClimber.getBottomLimitSwitch());
-		// System.out.println("Back Break Beams: \t  Top: " + m_backClimber.getTopLimitSwitch() + "\t Bottom: " + m_backClimber.getBottomLimitSwitch());
+			if (RobotMap.ELEVATOR_TELEMETRY) {
+				System.out.print("Elevator Enc Velocity: \t" + m_elevator.m_motor.getSelectedSensorVelocity());
+				System.out.println("Elevator Enc Pos: \t"+ m_elevator.m_motor.getSelectedSensorPosition());
+			}
+
+			if (RobotMap.CLIMBER_TELEMETRY) {
+				System.out.print("Front Climber Enc Velocity: \t" + m_frontClimber.m_climberMotor.getSelectedSensorVelocity()); //getSelectedSensorVelocity());
+				System.out.print("Front Climber Enc Pos: \t"+ m_frontClimber.m_climberMotor.getSelectedSensorPosition());
+				System.out.print("Back Climber Enc Velocity: \t" + m_backClimber.m_climberMotor.getSelectedSensorVelocity()); //getSelectedSensorVelocity());
+				System.out.println("Back Climber Enc Pos: \t"+ m_backClimber.m_climberMotor.getSelectedSensorPosition());
+			}
+		}
+		telemetryCounter++;
+		
 	}
 }

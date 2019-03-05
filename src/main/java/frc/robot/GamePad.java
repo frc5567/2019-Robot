@@ -134,6 +134,10 @@ public class GamePad extends GenericHID {
 		return getGamePadButtonReleased(GamePadControls.MANUAL_TO_AUTO);
 	}
 
+	public boolean getManualToAuto() {
+		return getGamePadButton(GamePadControls.MANUAL_TO_AUTO);
+	}
+
 	/**
 	 * Gets the status of the open hatch button
 	 * @return If the open hatch button has been released
