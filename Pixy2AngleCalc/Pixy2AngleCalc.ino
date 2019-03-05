@@ -129,6 +129,9 @@ const char GET_ANGLE_TO_CENTER = '3';
 const char GET_LOW_POSITION = '4';
 const char GET_AVG_AREA = '5';
 
+int callCounter = 0;
+boolean callToggle = false;
+
 //  This is the return for the position according to the lowPixy, where 1 is left, 2 is center, and 3 is right. -1 is no blocks
 int lowPosition = -1;
 
@@ -195,7 +198,14 @@ void calcDistToCenterLow()
 
   if ((abs(dA)) > maxDa)
   {
-    adjAbsCenter = (int)(10 * dA) + absoluteCenter;
+    if (!callToggle) 
+    {
+      adjAbsCenter = (int)(10 * dA) + absoluteCenter;
+    }
+    else 
+    {
+      adjAbsCenter = absoluteCenter;  
+    }
   }
   else
   {
@@ -256,6 +266,15 @@ void sendData(char command)
 //	}
 	if (command == GET_ANGLE_TO_CENTER)
 	{
+    if (callCounter > 4) 
+    {
+      callToggle = !callToggle;
+      callCounter = 0;
+    }
+    else 
+    {
+      callCounter++;
+    }
 		Serial.println(angleToCenter);
 	}
 	else if (command == GET_LOW_POSITION)
