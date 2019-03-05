@@ -155,7 +155,7 @@ public class Elevator {
 		m_motor.configAllowableClosedloopError(0, 0, RobotMap.TIMEOUT_MS);
 
 		// PID closed loop config
-		m_motor.configClosedLoopPeriod(0, 5, RobotMap.TIMEOUT_MS);
+		m_motor.configClosedLoopPeriod(0, 10, RobotMap.TIMEOUT_MS);
 
 		// Sets profile slot for PID
 		m_motor.selectProfileSlot(0, RobotMap.PID_PRIMARY);

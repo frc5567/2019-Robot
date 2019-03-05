@@ -65,14 +65,14 @@ public class Controller extends XboxController {
     public double getTriggerAxis(Hand hand) {
         double triggerValue;
         // Checks if the trigger value is less than deadband
-        if (super.getTriggerAxis(hand) < RobotMap.CONTROLLER_TRIGGER_DEADBAND) {
-            // If so, sets the trigger value to 0
-            triggerValue = 0.00;
-        }
+        // if (super.getTriggerAxis(hand) < RobotMap.CONTROLLER_TRIGGER_DEADBAND) {
+        //     // If so, sets the trigger value to 0
+        //     triggerValue = 0.00;
+        // }
         // If the trigger is outside of deadband, sets the variable to trigger value
-        else {
+        // else {
             triggerValue = super.getTriggerAxis(hand);
-        }
+        // }
         // Returns trigger value
         return triggerValue;
     }

@@ -116,20 +116,20 @@ public class Pathing {
         }
     }
 
-    public boolean secondHalfPath(boolean toggle) {
-        if (toggle) {
-            lowAutoBreak = !lowAutoBreak;
-        }
+    public boolean secondHalfPath(/*boolean toggle*/) {
+        // if (toggle) {
+        //     lowAutoBreak = !lowAutoBreak;
+        // }
 
-        if (lowAutoBreak) {
-            if ( m_pilotControl.getTriggerAxis(Hand.kLeft) > 0 || m_pilotControl.getTriggerAxis(Hand.kRight) > 0 || m_pilotControl.getX() != 0) {
-                return false;
-            }
-            else {
-                m_drivetrain.talonArcadeDrive(0, 0);
-                return false;
-            }
-        }
+        // if (lowAutoBreak) {
+        //     if ( m_pilotControl.getTriggerAxis(Hand.kLeft) > 0 || m_pilotControl.getTriggerAxis(Hand.kRight) > 0 || m_pilotControl.getX() != 0) {
+        //         return false;
+        //     }
+        //     else {
+        //         m_drivetrain.talonArcadeDrive(0, 0);
+        //         return false;
+        //     }
+        // }
 
         if (!m_lowTargetFound) {
             m_lowTargetFound = checkForLowTarget();
@@ -150,6 +150,7 @@ public class Pathing {
         }
         // Returns true after all are true
         else {
+            m_drivetrain.talonArcadeDrive(.27, 0);
             System.out.println("finished");
             return true;
         }
@@ -265,8 +266,8 @@ public class Pathing {
      * @return Returns whether the method is finished (True if it is)
      */
     private boolean rotLowTarget() {
-        System.out.println("target angle: \t" + m_absoluteDegToTarget);
-        System.out.println("current angle: \t" + m_gyro.getYaw());
+        // System.out.println("target angle: \t" + m_absoluteDegToTarget);
+        // System.out.println("current angle: \t" + m_gyro.getYaw());
 
         // Collects data and assigns values every 5th cycle
         if (m_lowDataCollectCounter > 4) {
@@ -288,27 +289,11 @@ public class Pathing {
             // Increments the counter if we don't get data
             m_lowDataCollectCounter++;
         }
-        
-        
-        // This code is designed to shift drive method into rotate without forward movement if the robot was too far off target
-        // TODO: Find if this is necesary through testing and either update or remove this code on necesity
-        // if (!m_angleToCenter.isNaN() && Math.abs(m_angleToCenter) > 30){
-        //     // Rotates until the method says that its done
-        //     if ((m_drivetrain.rotateToAngle(m_absoluteDegToTarget))) {
-        //         System.out.println("Done Rotating");
-        //         return true;
-        //     }
-        //     else {
-        //         System.out.println("Rotating");
-        //         return false;
-        //     }
-        // }
 
         if (!m_angleToCenter.isNaN()) {
             // Rotates until the method says that its done
-            if (m_drivetrain.rotateDriveAngle(m_absoluteDegToTarget, m_duinoToRio.getAverageArea())) {
+            if (m_drivetrain.rotateDriveAngle(m_absoluteDegToTarget, 12)) {
                 System.out.println("Done Rotating");
-                // firstFlag = true;
                 return true;
             }
             else {
@@ -317,7 +302,7 @@ public class Pathing {
             }
         }
         else {
-            m_drivetrain.talonArcadeDrive(0, 0);
+            m_drivetrain.talonArcadeDrive(0.0, 0);
             return false;
         }
     }
@@ -328,7 +313,7 @@ public class Pathing {
      */
     private boolean driveLowTarget() {
         // Drives forward until within certain distance of the wall
-        if(!m_drivetrain.driveToUltra(18)) {
+        if(!m_drivetrain.driveToUltra(12)) {
             return false;
         }
         else {

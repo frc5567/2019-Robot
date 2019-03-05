@@ -51,8 +51,12 @@ public class ClimberPIDControl {
         m_driveClimber.m_climberMotor.configSelectedFeedbackCoefficient(0.5, RobotMap.PID_PRIMARY, RobotMap.TIMEOUT_MS);
 
         m_driveClimber.m_climberMotor.configSelectedFeedbackSensor(FeedbackDevice.SensorDifference, RobotMap.PID_TURN, RobotMap.TIMEOUT_MS);
-        m_driveClimber.m_climberMotor.configSelectedFeedbackCoefficient(1, RobotMap.PID_TURN, RobotMap.TIMEOUT_MS);
-
+		m_driveClimber.m_climberMotor.configSelectedFeedbackCoefficient(1, RobotMap.PID_TURN, RobotMap.TIMEOUT_MS);
+		
+		m_driveClimber.m_climberMotor.setSelectedSensorPosition(0, 0, RobotMap.TIMEOUT_MS);
+		m_driveClimber.m_climberMotor.setSelectedSensorPosition(0, 1, RobotMap.TIMEOUT_MS);
+		m_frontClimber.m_climberMotor.setSelectedSensorPosition(0);
+		
 		// Config sensor and motor direction
 		m_driveClimber.m_climberMotor.setInverted(true);
 		m_driveClimber.m_climberMotor.setSensorPhase(true);
@@ -73,14 +77,14 @@ public class ClimberPIDControl {
         m_driveClimber.m_climberMotor.configNeutralDeadband(RobotMap.NEUTRAL_DEADBAND, RobotMap.TIMEOUT_MS);
 
 		// Config peak output
-		m_driveClimber.m_climberMotor.configPeakOutputForward(+RobotMap.PID_PEAK_OUTPUT, RobotMap.TIMEOUT_MS);
-		m_driveClimber.m_climberMotor.configPeakOutputReverse(-RobotMap.PID_PEAK_OUTPUT, RobotMap.TIMEOUT_MS);
-        m_frontClimber.m_climberMotor.configPeakOutputForward(+RobotMap.PID_PEAK_OUTPUT, RobotMap.TIMEOUT_MS);
-		m_frontClimber.m_climberMotor.configPeakOutputReverse(-RobotMap.PID_PEAK_OUTPUT, RobotMap.TIMEOUT_MS);
+		m_driveClimber.m_climberMotor.configPeakOutputForward(+1.0, RobotMap.TIMEOUT_MS);
+		m_driveClimber.m_climberMotor.configPeakOutputReverse(-1.0, RobotMap.TIMEOUT_MS);
+        m_frontClimber.m_climberMotor.configPeakOutputForward(+1.0, RobotMap.TIMEOUT_MS);
+		m_frontClimber.m_climberMotor.configPeakOutputReverse(-1.0, RobotMap.TIMEOUT_MS);
 
 		// Motion Magic Config
 		m_driveClimber.m_climberMotor.configMotionAcceleration(2000, RobotMap.TIMEOUT_MS);
-		m_driveClimber.m_climberMotor.configMotionCruiseVelocity(2000, RobotMap.TIMEOUT_MS);
+		m_driveClimber.m_climberMotor.configMotionCruiseVelocity(4000, RobotMap.TIMEOUT_MS);
 
 		// PID Config
 		m_driveClimber.m_climberMotor.config_kP(0, RobotMap.GAINS.kP, RobotMap.TIMEOUT_MS);
@@ -100,8 +104,8 @@ public class ClimberPIDControl {
 		m_driveClimber.m_climberMotor.configAllowableClosedloopError(1, 0, RobotMap.TIMEOUT_MS);
 
 		// PID closed loop config
-        m_driveClimber.m_climberMotor.configClosedLoopPeriod(0, 5, RobotMap.TIMEOUT_MS);
-        m_driveClimber.m_climberMotor.configClosedLoopPeriod(1, 5, RobotMap.TIMEOUT_MS);
+        m_driveClimber.m_climberMotor.configClosedLoopPeriod(0, 10, RobotMap.TIMEOUT_MS);
+        m_driveClimber.m_climberMotor.configClosedLoopPeriod(1, 10, RobotMap.TIMEOUT_MS);
 
         m_driveClimber.m_climberMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_10_Targets, 10);
 
