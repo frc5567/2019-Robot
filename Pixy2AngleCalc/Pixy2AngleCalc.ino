@@ -29,8 +29,8 @@ float aL;
 float aR;
 
 // Arrays used for calculating rolling average of area
-float arrL[3] = {0,0,0};
-float arrR[3] = {0,0,0};
+float arrL[3] = {0, 0, 0};
+float arrR[3] = {0, 0, 0};
 
 // Average area calculated with rolling average
 float avgL;
@@ -41,7 +41,7 @@ float dA;
 
 // Max acceptable difference in area before we start to adjust the center point
 // This number is arbitrary
-float maxDa = 0.25;
+float minDa = 0.25;
 
 // Position of the edges of each block
 int xLOne;
@@ -162,8 +162,8 @@ void calcDistToCenterLow()
 		rightX = lowPixy.ccc.blocks[1].m_x;
 		leftWidth = lowPixy.ccc.blocks[0].m_width;
 		rightWidth = lowPixy.ccc.blocks[1].m_width;
-    aL = lowPixy.ccc.blocks[0].m_width * lowPixy.ccc.blocks[0].m_height;
-    aR = lowPixy.ccc.blocks[1].m_width * lowPixy.ccc.blocks[1].m_height;
+		aL = lowPixy.ccc.blocks[0].m_width * lowPixy.ccc.blocks[0].m_height;
+		aR = lowPixy.ccc.blocks[1].m_width * lowPixy.ccc.blocks[1].m_height;
 	}
 	else if (lowPixy.ccc.blocks[0].m_x > lowPixy.ccc.blocks[1].m_x)
 	{
@@ -171,63 +171,65 @@ void calcDistToCenterLow()
 		rightX = lowPixy.ccc.blocks[0].m_x;
 		leftWidth = lowPixy.ccc.blocks[1].m_width;
 		rightWidth = lowPixy.ccc.blocks[0].m_width;
-    aL = lowPixy.ccc.blocks[1].m_width * lowPixy.ccc.blocks[1].m_height;
-    aR = lowPixy.ccc.blocks[0].m_width * lowPixy.ccc.blocks[0].m_height;
+		aL = lowPixy.ccc.blocks[1].m_width * lowPixy.ccc.blocks[1].m_height;
+		aR = lowPixy.ccc.blocks[0].m_width * lowPixy.ccc.blocks[0].m_height;
 	}
-  arrL[2] = arrL[1];
-  arrL[1] = arrL[0];
-  arrL[0] = aL;
-  int iL;
-  float lSum = 0;
-  for(iL = 0; iL < 3; iL++) {
-    lSum += arrL[iL];
-  }
-  avgL = lSum / 3;
-  
-  arrR[2] = arrR[1];
-  arrR[1] = arrR[0];
-  arrR[0] = aR;
-  int iR;
-  float rSum = 0;
-  for(iR = 0; iR < 3; iR++) {
-    rSum += arrR[iR];
-  }
-  avgR = rSum / 3;
-  
-  dA = ( 1 - ( avgR / avgL ) );
+	arrL[2] = arrL[1];
+	arrL[1] = arrL[0];
+	arrL[0] = aL;
+	int iL;
+	float lSum = 0;
+	for (iL = 0; iL < 3; iL++)
+	{
+		lSum += arrL[iL];
+	}
+	avgL = lSum / 3;
 
-  if ((abs(dA)) > maxDa)
-  {
-//	if (abs(dA) >= 1.0) 
-//    {
-//      if (dA > 0)
-//      {
-//        dA = .9;
-//      }
-//      else {
-//        dA = -.9;
-//      }
-//    }
-    if (!callToggle) 
-    {
-      if ( ((avgR + avgL) / 2) < 2000 )
-      {
-        adjAbsCenter = (int)(10 * dA) + absoluteCenter;
-      }
-      else
-      {
-        adjAbsCenter = (int)(5 * dA) + absoluteCenter;
-      }
-    }
-    else 
-    {
-      adjAbsCenter = absoluteCenter;  
-    }
-  }
-  else
-  {
-    adjAbsCenter = absoluteCenter;
-  }
+	arrR[2] = arrR[1];
+	arrR[1] = arrR[0];
+	arrR[0] = aR;
+	int iR;
+	float rSum = 0;
+	for (iR = 0; iR < 3; iR++)
+	{
+		rSum += arrR[iR];
+	}
+	avgR = rSum / 3;
+
+	dA = (1 - (avgR / avgL));
+
+	if ((abs(dA)) > minDa)
+	{
+		//	if (abs(dA) >= 1.0)
+		//    {
+		//      if (dA > 0)
+		//      {
+		//        dA = .9;
+		//      }
+		//      else {
+		//        dA = -.9;
+		//      }
+		//    }
+		if (!callToggle)
+		{
+			if (((avgR + avgL) / 2) < 2000)
+			{
+				adjAbsCenter = (int)(10 * dA) + absoluteCenter;
+			}
+			else
+			{
+				adjAbsCenter = (int)(5 * dA) + absoluteCenter;
+			}
+		}
+		else
+		{
+			adjAbsCenter = absoluteCenter;
+		}
+	}
+	else
+	{
+		adjAbsCenter = absoluteCenter;
+	}
 
 	xLOne = leftX - (leftWidth / 2);
 	xROne = rightX + (leftWidth / 2);
@@ -245,10 +247,10 @@ void setup()
 
 	//  Initializes the Pixy
 	//  Hexadecimal values passed in correspond to address set on the pixy
-//	highPixy.init(0x54);
+	//	highPixy.init(0x54);
 	lowPixy.init(0x53);
-//	highPixy.changeProg("line");
-//  highPixy.line.setMode(LINE_MODE_MANUAL_SELECT_VECTOR);
+	//	highPixy.changeProg("line");
+	//  highPixy.line.setMode(LINE_MODE_MANUAL_SELECT_VECTOR);
 }
 
 //  Reads command off of the wire and converts it to a usable char
@@ -269,75 +271,76 @@ void serialFlush()
 //  Writes data down the wire based on command passed in
 void sendData(char command)
 {
-//	if (command == GET_DEG_TO_TARGET)
-//	{
-//		if (String(degToTarget) == ("-34.36"))
-//		{
-//			degToTarget = -180;
-//		}
-//		Serial.println(degToTarget);
-//	}
-//	else if (command == GET_DIST_TO_TARGET)
-//	{
-//		Serial.println(distToTarget);
-//	}
+	//	if (command == GET_DEG_TO_TARGET)
+	//	{
+	//		if (String(degToTarget) == ("-34.36"))
+	//		{
+	//			degToTarget = -180;
+	//		}
+	//		Serial.println(degToTarget);
+	//	}
+	//	else if (command == GET_DIST_TO_TARGET)
+	//	{
+	//		Serial.println(distToTarget);
+	//	}
 	if (command == GET_ANGLE_TO_CENTER)
 	{
-//    if (callCounter > 4) 
-//    {
-      callToggle = !callToggle;
-//      callCounter = 0;
-//    }
-//    else 
-//    {
-//      callCounter++;
-//    }
+		//    if (callCounter > 4)
+		//    {
+		callToggle = !callToggle;
+		//      callCounter = 0;
+		//    }
+		//    else
+		//    {
+		//      callCounter++;
+		//    }
 		Serial.println(angleToCenter);
 	}
 	else if (command == GET_LOW_POSITION)
 	{
 		Serial.println(lowPosition);
-    //Serial.println(adjAbsCenter);
-   // Serial.print("Left Block Area: ");
-    //Serial.print(aL);
-    //Serial.print("\t");
-    //Serial.print("Right Block Area: ");
-    //Serial.println(aR);
+		//Serial.println(adjAbsCenter);
+		// Serial.print("Left Block Area: ");
+		//Serial.print(aL);
+		//Serial.print("\t");
+		//Serial.print("Right Block Area: ");
+		//Serial.println(aR);
 	}
- else if (command == GET_AVG_AREA) {
-  double avgArea = (avgL + avgR) / 2;
-  Serial.println(avgArea);
- }
+	else if (command == GET_AVG_AREA)
+	{
+		double avgArea = (avgL + avgR) / 2;
+		Serial.println(avgArea);
+	}
 }
 
 void loop()
 {
-//    Serial.print("dA\t");
-  //  Serial.println(dA);
-//  int indexindex = 0;
-//  targetIndex = -500;
-//	//  Gets data from the highPixy
-//	highPixy.line.getAllFeatures(1, false);
-// 
-//  selectedDistCenter = 39;
-//  tempDistCenter = 39;
-//  
-//  for(indexindex = 0; indexindex < highPixy.line.numVectors; indexindex++) 
-//  {
-//    tempDistCenter = abs(originX - highPixy.line.vectors[indexindex].m_x0);
-//    if (tempDistCenter < selectedDistCenter)
-//    {
-//      selectedDistCenter = tempDistCenter;
-//      targetIndex = highPixy.line.vectors[indexindex].m_index;
-//    }
-//  }
-//  highPixy.line.setVector(targetIndex);
-//  highPixy.line.getMainFeatures();
+	//    Serial.print("dA\t");
+	//  Serial.println(dA);
+	//  int indexindex = 0;
+	//  targetIndex = -500;
+	//	//  Gets data from the highPixy
+	//	highPixy.line.getAllFeatures(1, false);
+	//
+	//  selectedDistCenter = 39;
+	//  tempDistCenter = 39;
+	//
+	//  for(indexindex = 0; indexindex < highPixy.line.numVectors; indexindex++)
+	//  {
+	//    tempDistCenter = abs(originX - highPixy.line.vectors[indexindex].m_x0);
+	//    if (tempDistCenter < selectedDistCenter)
+	//    {
+	//      selectedDistCenter = tempDistCenter;
+	//      targetIndex = highPixy.line.vectors[indexindex].m_index;
+	//    }
+	//  }
+	//  highPixy.line.setVector(targetIndex);
+	//  highPixy.line.getMainFeatures();
 
 	//  Calculates return values for the highPixy
-//	calcInPerPix(cameraHeight, cameraAngle, highPixy.line.vectors->m_x0, highPixy.line.vectors->m_y0);
-//	degToTarget = (atan(xDistRobotToTarget / distRobotToTarget) * (180 / pi)) * (abs(xDist)/xDist);
-//	distToTarget = sqrt(sq(distRobotToTarget) + sq(xDistRobotToTarget));
+	//	calcInPerPix(cameraHeight, cameraAngle, highPixy.line.vectors->m_x0, highPixy.line.vectors->m_y0);
+	//	degToTarget = (atan(xDistRobotToTarget / distRobotToTarget) * (180 / pi)) * (abs(xDist)/xDist);
+	//	distToTarget = sqrt(sq(distRobotToTarget) + sq(xDistRobotToTarget));
 
 	//  Gets data from the lowPixy
 	lowPixy.ccc.getBlocks(true, 255, 2);
