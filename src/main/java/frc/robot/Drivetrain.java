@@ -255,25 +255,31 @@ public class Drivetrain implements PIDOutput {
         // Flag for checking if the method is finished
         boolean isFinished = false;
 
-        // Resets the PID only on first entry
         if (m_firstCall) {
             // Resets the error
             m_rotController.reset();
 
             // Enables the PID
             m_rotController.enable();
-
             // Prevents us from repeating the reset until we run the method again seperately
             m_firstCall = false;
-
-            m_counter = 0;
         }
 
-        // Sets the target to our target angle
-        m_rotController.setSetpoint(targetAngle);
+        if (m_rotController.getSetpoint() != targetAngle) {
+            // Resets the error
+            m_rotController.reset();
+
+            // Enables the PID
+            m_rotController.enable();
+
+            // Sets the target to our target angle
+            m_rotController.setSetpoint(targetAngle);
+        }        
 
         // Sets our rotate speed to the return of the PID
         double returnedRotate = m_rotController.get();
+
+        System.out.println("Returned Rotate: \t" + returnedRotate);
 
         // Runs the drivetrain with 0 speed and the rotate speed set by the PID
         talonArcadeDrive(RobotMap.AUTO_SPEED, returnedRotate, false);

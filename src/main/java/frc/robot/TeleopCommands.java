@@ -128,7 +128,7 @@ public class TeleopCommands {
 			    outerRingLight.set(true);
             }
             else {
-                m_drivetrain.talonArcadeDrive(0, 0, false);
+                controlDrivetrain();
                 m_elevator.moveRaw(0.0);
                 m_pather.resetFlags();
                 innerRingLight.set(false);

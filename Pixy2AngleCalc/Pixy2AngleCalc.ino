@@ -198,19 +198,26 @@ void calcDistToCenterLow()
 
   if ((abs(dA)) > maxDa)
   {
-	if (abs(dA) >= 1.0) 
-    {
-      if (dA > 0)
-      {
-        dA = .9;
-      }
-      else {
-        dA = -.9;
-      }
-    }
+//	if (abs(dA) >= 1.0) 
+//    {
+//      if (dA > 0)
+//      {
+//        dA = .9;
+//      }
+//      else {
+//        dA = -.9;
+//      }
+//    }
     if (!callToggle) 
     {
-      adjAbsCenter = (int)(10 * dA) + absoluteCenter;
+      if ( ((avgR + avgL) / 2) < 2000 )
+      {
+        adjAbsCenter = (int)(10 * dA) + absoluteCenter;
+      }
+      else
+      {
+        adjAbsCenter = (int)(5 * dA) + absoluteCenter;
+      }
     }
     else 
     {
@@ -276,15 +283,15 @@ void sendData(char command)
 //	}
 	if (command == GET_ANGLE_TO_CENTER)
 	{
-    if (callCounter > 4) 
-    {
+//    if (callCounter > 4) 
+//    {
       callToggle = !callToggle;
-      callCounter = 0;
-    }
-    else 
-    {
-      callCounter++;
-    }
+//      callCounter = 0;
+//    }
+//    else 
+//    {
+//      callCounter++;
+//    }
 		Serial.println(angleToCenter);
 	}
 	else if (command == GET_LOW_POSITION)

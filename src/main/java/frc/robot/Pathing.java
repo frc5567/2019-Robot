@@ -46,13 +46,11 @@ public class Pathing {
     Drivetrain m_drivetrain;
 
     // Counter so that we only get angle while turning every 5th cycle.
-    // Starts at 5 so we collect data the first time through
-    private int m_lowDataCollectCounter = 5;
+    // Starts at 15 so we collect data the first time through
+    private int m_lowDataCollectCounter = 15;
 
     private int m_rotateExitCounter;
     Controller m_pilotControl;
-
-    boolean firstFlag = true;
     
     /**
      * Constructor for our pathing sequence, passing in the drivetrain we want to use
@@ -143,8 +141,7 @@ public class Pathing {
         }
         // Returns true after all are true
         else {
-            m_drivetrain.talonArcadeDrive(.27, 0, false);
-            System.out.println("finished");
+            m_drivetrain.talonArcadeDrive(.17, 0, false);
             return true;
         }
     }
@@ -250,8 +247,8 @@ public class Pathing {
      * @return Returns whether the method is finished (True if it is)
      */
     private boolean rotLowTarget() {
-        // Collects data and assigns values every 5th cycle
-        if (m_lowDataCollectCounter > 4) {
+        // Collects data and assigns values every 50th cycle
+        if (m_lowDataCollectCounter > 14) {
             // Assigns data from duino to a variable
             m_angleToCenter = m_duinoToRio.getAngleToCenter();
 
@@ -259,20 +256,20 @@ public class Pathing {
             if(!m_angleToCenter.isNaN()) {
                 m_startingDegrees = m_gyro.getYaw();
                 m_absoluteDegToTarget = m_startingDegrees - m_angleToCenter;
-                firstFlag = false;
+                
+                // Reset the counter
+                m_lowDataCollectCounter = 0;
+                
+                System.out.println("degToTarget: \t" + m_angleToCenter);
             }
-
-            // Reset the counter
-            m_lowDataCollectCounter = 0;
         }
         else {
             // Increments the counter if we don't get data
             m_lowDataCollectCounter++;
         }
-
         if (!m_angleToCenter.isNaN()) {
             // Rotates until the method says that its done
-            if (m_drivetrain.rotateDriveAngle(m_absoluteDegToTarget, 12)) {
+            if (m_drivetrain.rotateDriveAngle(m_absoluteDegToTarget, 14)) {
                 return true;
             }
             else {
@@ -312,7 +309,7 @@ public class Pathing {
         m_rotLowTargetFinished = false;
         m_lowDriveFinished = false;
 
-        m_lowDataCollectCounter = 5;
+        m_lowDataCollectCounter = 15;
         m_rotateExitCounter = 0;
     }
 }
