@@ -91,8 +91,11 @@ public class TeleopCommands {
                 m_elevator.moveRaw(RobotMap.ELEVATOR_MOTOR_SPEED_DOWN);
             }
             else {
-                if (m_gamepad.getPickupHatchCargo()) {
+                if (m_controller.getStartButton()) {
                     m_elevator.drivePID(State.LEVEL_ZERO);
+                }
+                else if (m_gamepad.getPickupHatchCargo()) {
+                    m_elevator.drivePID(State.HATCH_PICKUP);
                 }
                 else if (m_gamepad.getLowHatchCargo()) {
                     m_elevator.drivePID(State.HATCH_L1);
@@ -126,6 +129,13 @@ public class TeleopCommands {
                 m_pather.secondHalfPath();
                 innerRingLight.set(true);
 			    outerRingLight.set(true);
+            }
+            else if (m_controller.getStartButton()) {
+                m_elevator.drivePID(State.LEVEL_ZERO);
+            }
+            else if (m_gamepad.getPickupHatchCargo()) {
+                m_elevator.drivePID(State.HATCH_PICKUP);
+                m_hatchMech.openServo();
             }
             else {
                 controlDrivetrain();
