@@ -84,7 +84,7 @@ public class ClimberPIDControl {
 
 		// Motion Magic Config
 		m_driveClimber.m_climberMotor.configMotionAcceleration(2000, RobotMap.TIMEOUT_MS);
-		m_driveClimber.m_climberMotor.configMotionCruiseVelocity(4000, RobotMap.TIMEOUT_MS);
+		m_driveClimber.m_climberMotor.configMotionCruiseVelocity(6000, RobotMap.TIMEOUT_MS);
 
 		// PID Config
 		m_driveClimber.m_climberMotor.config_kP(0, RobotMap.GAINS.kP, RobotMap.TIMEOUT_MS);

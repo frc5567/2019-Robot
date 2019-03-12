@@ -91,14 +91,24 @@ public class TeleopCommands {
                 m_elevator.moveRaw(RobotMap.ELEVATOR_MOTOR_SPEED_DOWN);
             }
             else {
-                if (m_controller.getStartButton()) {
-                    m_elevator.drivePID(State.LEVEL_ZERO);
+                // Button names are swapped due to port numbers for Level zero and manual low
+                // TODO: Buttons are swapped, make sure this is cleaned up after updating button names
+                if (m_gamepad.getLevelZero()) {
+                    m_elevator.drivePID(State.HATCH_PICKUP);
+                }
+                else if (m_gamepad.getManualLow()) {
+                    m_elevator.drivePID(State.LEVEL_ZERO);    
                 }
                 else if (m_gamepad.getPickupHatchCargo()) {
-                    m_elevator.drivePID(State.HATCH_PICKUP);
+                    m_elevator.drivePID(State.HATCH_PICKUP_2);
+                    //TODO: Make pos a RobotMap const
+                    m_hatchMech.m_servo.setPosition(.5);
                 }
                 else if (m_gamepad.getLowHatchCargo()) {
                     m_elevator.drivePID(State.HATCH_L1);
+                }
+                else if (m_gamepad.getManualLow()) {
+                    m_elevator.drivePID(State.HATCH_L1);    
                 }
                 else if (m_gamepad.getMediumHatchCargo()) {
                     m_elevator.drivePID(State.HATCH_L2);
@@ -130,11 +140,15 @@ public class TeleopCommands {
                 innerRingLight.set(true);
 			    outerRingLight.set(true);
             }
-            else if (m_controller.getStartButton()) {
-                m_elevator.drivePID(State.LEVEL_ZERO);
+            else if (m_gamepad.getLevelZero()) {
+                m_elevator.drivePID(State.HATCH_PICKUP);
+            }
+            else if (m_gamepad.getManualLow()) {
+                m_elevator.drivePID(State.LEVEL_ZERO);    
             }
             else if (m_gamepad.getPickupHatchCargo()) {
-                m_elevator.drivePID(State.HATCH_PICKUP);
+                m_elevator.drivePID(State.HATCH_PICKUP_2);
+                // TODO: This should match manual
                 m_hatchMech.openServo();
             }
             else {
@@ -196,6 +210,12 @@ public class TeleopCommands {
                 m_backClimber.raiseClimber(RobotMap.BACK_CLIMBER_SPEED_UP);
                 m_drivetrain.talonArcadeDrive(0, 0, false);
                 m_driveClimberDeployed = false;
+            }
+            else if (m_controller.getStartButton()) {
+                // TODO: Make this a second const or comment
+                m_backClimber.raiseClimber(RobotMap.FRONT_CLIMBER_SPEED_UP);
+                m_drivetrain.talonArcadeDrive(0, 0, false);
+                m_driveClimberDeployed = true;
             }
             else if (m_controller.getBumper(Hand.kRight)) {
                 m_backClimber.lowerClimber(RobotMap.BACK_CLIMBER_SPEED_DOWN);
