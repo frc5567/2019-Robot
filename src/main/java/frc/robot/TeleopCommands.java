@@ -91,24 +91,18 @@ public class TeleopCommands {
                 m_elevator.moveRaw(RobotMap.ELEVATOR_MOTOR_SPEED_DOWN);
             }
             else {
-                // Button names are swapped due to port numbers for Level zero and manual low
-                // TODO: Buttons are swapped, make sure this is cleaned up after updating button names
-                if (m_gamepad.getLevelZero()) {
+                if (m_gamepad.getManualLow()) {
                     m_elevator.drivePID(State.HATCH_PICKUP);
                 }
-                else if (m_gamepad.getManualLow()) {
+                else if (m_gamepad.getLevelZero()) {
                     m_elevator.drivePID(State.LEVEL_ZERO);    
                 }
                 else if (m_gamepad.getPickupHatchCargo()) {
                     m_elevator.drivePID(State.HATCH_PICKUP_2);
-                    //TODO: Make pos a RobotMap const
-                    m_hatchMech.m_servo.setPosition(.5);
+                    m_hatchMech.m_servo.setPosition(RobotMap.HATCH_MECH_DIAGONAL_SERVO_POSITION);
                 }
                 else if (m_gamepad.getLowHatchCargo()) {
                     m_elevator.drivePID(State.HATCH_L1);
-                }
-                else if (m_gamepad.getManualLow()) {
-                    m_elevator.drivePID(State.HATCH_L1);    
                 }
                 else if (m_gamepad.getMediumHatchCargo()) {
                     m_elevator.drivePID(State.HATCH_L2);
@@ -148,8 +142,7 @@ public class TeleopCommands {
             }
             else if (m_gamepad.getPickupHatchCargo()) {
                 m_elevator.drivePID(State.HATCH_PICKUP_2);
-                // TODO: This should match manual
-                m_hatchMech.openServo();
+                m_hatchMech.m_servo.setPosition(RobotMap.HATCH_MECH_DIAGONAL_SERVO_POSITION);
             }
             else {
                 controlDrivetrain();

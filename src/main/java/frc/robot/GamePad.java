@@ -34,8 +34,8 @@ public class GamePad extends GenericHID {
 		DROP_HATCH_ARM(3),
 
 		// TODO: Make sure that these ports match these names and ensure logic works post-fix
-		MANUAL_LOW(11),
-		ZERO_HATCH(12);
+		MANUAL_LOW(12),
+		ZERO_HATCH(11);
 
 		@SuppressWarnings("MemberName")
 		public final int value;

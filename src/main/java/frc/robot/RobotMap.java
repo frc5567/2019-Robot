@@ -83,6 +83,7 @@ public class RobotMap {
     // HatchMech servo positions
     public static final double HATCH_MECH_OPEN_SERVO_POSITION = 0.3;
     public static final double HATCH_MECH_CLOSE_SERVO_POSITION = 0.69;
+    public static final double HATCH_MECH_DIAGONAL_SERVO_POSITION = 0.5;
     // HatchMech motor encoder limits
     public static final int HATCH_MECH_UP_STOP_POSITION = 50000;
     public static final int HATCH_MECH_DOWN_STOP_POSITION = 25000;
