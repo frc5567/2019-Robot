@@ -13,13 +13,49 @@ public class AutoCommands {
     Elevator m_elevator;
     Climber m_frontClimber;
     Climber m_backClimber;
+    Pathing m_pathing;
+    TeleopCommands m_teleopCommands;
 
-    public AutoCommands(Drivetrain drivetrain, NavX ahrs, Elevator elevator, Climber frontClimber, Climber backClimber) {
+
+    boolean stage1;
+    boolean stage2;
+    boolean stage3;
+    boolean stage4;
+
+    public AutoCommands(Drivetrain drivetrain, NavX ahrs, Elevator elevator, Climber frontClimber, Climber backClimber, Pathing pathing, TeleopCommands teleopCommands) {
         m_drivetrain = drivetrain;
         m_gyro = ahrs;
         m_elevator = elevator;
         m_frontClimber = frontClimber;
         m_backClimber = backClimber;
+        m_pathing = pathing;
+        m_teleopCommands = teleopCommands;
+
+        stage1 = false;
+        stage2 = false;
+        stage3 = false;
+        stage4 = false;
+    }
+
+    public void AutoDrive() {
+        if (!stage1) {
+
+        }
+        else if (!stage2) {
+
+        }
+        else if (!stage3) {
+
+        }
+        else if (!stage4) {
+
+        }
+        else {
+            
+        }
+    }
+
+    public void resetFlags() {
 
     }
 
