@@ -500,17 +500,31 @@ public class Drivetrain implements PIDOutput {
         if (m_mmDriveToPosFirstFlag) {
             m_ticsToTarget = inToTics(distToTarget);
             m_rightInitTics = getRightDriveEncoderPosition();
-            m_rightTargetTics = m_rightInitTics - m_ticsToTarget;
+            m_rightTargetTics = m_rightInitTics + m_ticsToTarget;
             
             m_mmDriveToPosFirstFlag = false;
-            return false;
+        }
+
+        m_masterRightMotor.set(ControlMode.MotionMagic, m_rightTargetTics, DemandType.AuxPID, 0);
+        m_masterLeftMotor.follow(m_masterRightMotor, FollowerType.AuxOutput1);
+
+        if  (m_rightTargetTics > m_rightInitTics) {
+            if (m_masterRightMotor.getSelectedSensorPosition(0) > m_rightTargetTics) {
+                m_mmDriveToPosFirstFlag = true;
+                return true;
+            }
+            else {
+                return false;
+            }
         }
         else {
-            m_masterRightMotor.set(ControlMode.MotionMagic, m_rightTargetTics, DemandType.AuxPID, 0);
-            m_masterLeftMotor.follow(m_masterRightMotor, FollowerType.AuxOutput1);
-
-            // TODO: Figure out how to return true exclusivley when finished without early exit
-            return true;
+            if (m_masterRightMotor.getSelectedSensorPosition(0) < m_rightTargetTics) {
+                m_mmDriveToPosFirstFlag = true;
+                return true;
+            }
+            else {
+                return false;
+            }
         }
     }
 
