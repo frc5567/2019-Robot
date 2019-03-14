@@ -64,6 +64,7 @@ public class ClimberPIDControl {
         m_frontClimber.m_climberMotor.setInverted(true);
 		m_frontClimber.m_climberMotor.setSensorPhase(true);
 
+		// TODO: Ended here when copying to drive train
 		// Set status frame period for data collection
 		m_driveClimber.m_climberMotor.setStatusFramePeriod(StatusFrame.Status_12_Feedback1, 20, RobotMap.TIMEOUT_MS);
 		m_driveClimber.m_climberMotor.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20, RobotMap.TIMEOUT_MS);
