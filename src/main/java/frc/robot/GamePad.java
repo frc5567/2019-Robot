@@ -134,14 +134,6 @@ public class GamePad extends GenericHID {
 		return getGamePadButtonReleased(GamePadControls.HATCH_TO_CARGO);
 	}
 
-	/**
-	 * Gets the status of the manual to auto button
-	 * @return If the manual to auto button has been released
-	 */
-	public boolean isManualReleased() {
-		return getGamePadButtonReleased(GamePadControls.MANUAL_SWITCH);
-	}
-
 	/** 
 	 * Gets the current state of the manual or auto mode switch, where true is manual
 	 * @return Whether the robot is in manual mode

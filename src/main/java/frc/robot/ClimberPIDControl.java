@@ -64,7 +64,7 @@ public class ClimberPIDControl {
         m_frontClimber.m_climberMotor.setInverted(true);
 		m_frontClimber.m_climberMotor.setSensorPhase(true);
 
-		// Set status frame period for data collection
+		// Set status frame period for data collection where 20 and 5 are length of period in ms
 		m_driveClimber.m_climberMotor.setStatusFramePeriod(StatusFrame.Status_12_Feedback1, 20, RobotMap.TIMEOUT_MS);
 		m_driveClimber.m_climberMotor.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20, RobotMap.TIMEOUT_MS);
 		m_driveClimber.m_climberMotor.setStatusFramePeriod(StatusFrame.Status_14_Turn_PIDF1, 20, RobotMap.TIMEOUT_MS);
@@ -87,12 +87,12 @@ public class ClimberPIDControl {
 		m_driveClimber.m_climberMotor.configMotionCruiseVelocity(RobotMap.CLIMB_CRUISE_VELOCITY, RobotMap.TIMEOUT_MS);
 
 		// PID Config
-		m_driveClimber.m_climberMotor.config_kP(0, RobotMap.GAINS.kP, RobotMap.TIMEOUT_MS);
-		m_driveClimber.m_climberMotor.config_kI(0, RobotMap.GAINS.kI, RobotMap.TIMEOUT_MS);
-		m_driveClimber.m_climberMotor.config_kD(0, RobotMap.GAINS.kD, RobotMap.TIMEOUT_MS);
-		m_driveClimber.m_climberMotor.config_kF(0, RobotMap.GAINS.kF, RobotMap.TIMEOUT_MS);
-		m_driveClimber.m_climberMotor.config_IntegralZone(0, RobotMap.GAINS.kIzone, RobotMap.TIMEOUT_MS);
-		m_driveClimber.m_climberMotor.configClosedLoopPeakOutput(0, RobotMap.GAINS.kPeakOutput, RobotMap.TIMEOUT_MS);
+		m_driveClimber.m_climberMotor.config_kP(0, RobotMap.CLIMBER_GAINS.kP, RobotMap.TIMEOUT_MS);
+		m_driveClimber.m_climberMotor.config_kI(0, RobotMap.CLIMBER_GAINS.kI, RobotMap.TIMEOUT_MS);
+		m_driveClimber.m_climberMotor.config_kD(0, RobotMap.CLIMBER_GAINS.kD, RobotMap.TIMEOUT_MS);
+		m_driveClimber.m_climberMotor.config_kF(0, RobotMap.CLIMBER_GAINS.kF, RobotMap.TIMEOUT_MS);
+		m_driveClimber.m_climberMotor.config_IntegralZone(0, RobotMap.CLIMBER_GAINS.kIzone, RobotMap.TIMEOUT_MS);
+		m_driveClimber.m_climberMotor.configClosedLoopPeakOutput(0, RobotMap.CLIMBER_GAINS.kPeakOutput, RobotMap.TIMEOUT_MS);
         m_driveClimber.m_climberMotor.configAllowableClosedloopError(0, 0, RobotMap.TIMEOUT_MS);
         
         m_driveClimber.m_climberMotor.config_kP(1, RobotMap.GAINS_TURNING.kP, RobotMap.TIMEOUT_MS);
@@ -107,6 +107,7 @@ public class ClimberPIDControl {
         m_driveClimber.m_climberMotor.configClosedLoopPeriod(0, RobotMap.CLOSED_LOOP_TIME, RobotMap.TIMEOUT_MS);
         m_driveClimber.m_climberMotor.configClosedLoopPeriod(1, RobotMap.CLOSED_LOOP_TIME, RobotMap.TIMEOUT_MS);
 
+		// Sets a status frame period to 10ms
         m_driveClimber.m_climberMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_10_Targets, 10);
 
 		// Sets profile slot for PID

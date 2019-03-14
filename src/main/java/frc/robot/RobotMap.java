@@ -15,7 +15,14 @@ public class RobotMap {
     public static final boolean CLIMBER_TELEMETRY = false;
     public static final int SAMPLE_RATE = 50;
 
-    public static final Gains GAINS = new Gains(0.3, 0.0, 0.0, 0.0, 100, 1.0);
+    // Climber gains
+    public static final Gains CLIMBER_GAINS = new Gains(0.3, 0.0, 0.0, 0.0, 100, 1.0);
+
+    // Drivetrain gains
+    public static final Gains DRIVETRAIN_GAINS = new Gains(0.3, 0.0, 0.0, 0.0, 100, 1.0);
+
+    // Elevator gains
+    public static final Gains ELEVATOR_GAINS = new Gains(0.3, 0.0, 0.0, 0.0, 100, 1.0);
 
 	// NavX angle offset
     public static final int ANGLE_OFFSET = 180;

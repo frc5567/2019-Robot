@@ -373,7 +373,7 @@ public class Drivetrain implements PIDOutput {
         m_masterRightMotor.setSensorPhase(true);
 
 
-        // Set status frame periods to ensure we don't have stale data
+        // Set status frame periods to ensure we don't have stale data. 20 and 5 are time in ms
         m_masterRightMotor.setStatusFramePeriod(StatusFrame.Status_12_Feedback1, 20, RobotMap.TIMEOUT_MS);
         m_masterRightMotor.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20, RobotMap.TIMEOUT_MS);
         m_masterRightMotor.setStatusFramePeriod(StatusFrame.Status_14_Turn_PIDF1, 20, RobotMap.TIMEOUT_MS);
@@ -402,12 +402,12 @@ public class Drivetrain implements PIDOutput {
         m_masterRightMotor.configMotionCruiseVelocity(RobotMap.DRIVE_CRUISE_VELOCITY, RobotMap.TIMEOUT_MS);
         
         // FPID Gains for velocity servo
-        m_masterRightMotor.config_kP(0, RobotMap.GAINS.kP, RobotMap.TIMEOUT_MS);
-		m_masterRightMotor.config_kI(0, RobotMap.GAINS.kI, RobotMap.TIMEOUT_MS);
-		m_masterRightMotor.config_kD(0, RobotMap.GAINS.kD, RobotMap.TIMEOUT_MS);
-		m_masterRightMotor.config_kF(0, RobotMap.GAINS.kF, RobotMap.TIMEOUT_MS);
-		m_masterRightMotor.config_IntegralZone(0, RobotMap.GAINS.kIzone, RobotMap.TIMEOUT_MS);
-		m_masterRightMotor.configClosedLoopPeakOutput(0, RobotMap.GAINS.kPeakOutput, RobotMap.TIMEOUT_MS);
+        m_masterRightMotor.config_kP(0, RobotMap.DRIVETRAIN_GAINS.kP, RobotMap.TIMEOUT_MS);
+		m_masterRightMotor.config_kI(0, RobotMap.DRIVETRAIN_GAINS.kI, RobotMap.TIMEOUT_MS);
+		m_masterRightMotor.config_kD(0, RobotMap.DRIVETRAIN_GAINS.kD, RobotMap.TIMEOUT_MS);
+		m_masterRightMotor.config_kF(0, RobotMap.DRIVETRAIN_GAINS.kF, RobotMap.TIMEOUT_MS);
+		m_masterRightMotor.config_IntegralZone(0, RobotMap.DRIVETRAIN_GAINS.kIzone, RobotMap.TIMEOUT_MS);
+		m_masterRightMotor.configClosedLoopPeakOutput(0, RobotMap.DRIVETRAIN_GAINS.kPeakOutput, RobotMap.TIMEOUT_MS);
         m_masterRightMotor.configAllowableClosedloopError(0, 0, RobotMap.TIMEOUT_MS);
 
         // FPID Gains for turn servo
@@ -422,6 +422,7 @@ public class Drivetrain implements PIDOutput {
         m_masterRightMotor.configClosedLoopPeriod(0, RobotMap.CLOSED_LOOP_TIME, RobotMap.TIMEOUT_MS);
         m_masterRightMotor.configClosedLoopPeriod(1, RobotMap.CLOSED_LOOP_TIME, RobotMap.TIMEOUT_MS);
 
+        // Sets the status frame period to 10ms
         m_masterRightMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_10_Targets, 10);
        
         /**
