@@ -372,7 +372,6 @@ public class Drivetrain implements PIDOutput {
         m_masterRightMotor.setInverted(false);
         m_masterRightMotor.setSensorPhase(true);
 
-        // TODO: Ended here when replacing with motion magic
 
         // Set status frame periods to ensure we don't have stale data
         m_masterRightMotor.setStatusFramePeriod(StatusFrame.Status_12_Feedback1, 20, RobotMap.TIMEOUT_MS);
@@ -399,9 +398,8 @@ public class Drivetrain implements PIDOutput {
         m_masterRightMotor.configPeakOutputReverse(-1.0, RobotMap.TIMEOUT_MS);
 
         // Motion Magic Config
-        // TODO: Verifiy and update values, then move into robot map
-		m_masterRightMotor.configMotionAcceleration(2000, RobotMap.TIMEOUT_MS);
-        m_masterRightMotor.configMotionCruiseVelocity(2000, RobotMap.TIMEOUT_MS);
+		m_masterRightMotor.configMotionAcceleration(RobotMap.DRIVE_ACCELERATION, RobotMap.TIMEOUT_MS);
+        m_masterRightMotor.configMotionCruiseVelocity(RobotMap.DRIVE_CRUISE_VELOCITY, RobotMap.TIMEOUT_MS);
         
         // FPID Gains for velocity servo
         m_masterRightMotor.config_kP(0, RobotMap.GAINS.kP, RobotMap.TIMEOUT_MS);
@@ -421,11 +419,8 @@ public class Drivetrain implements PIDOutput {
 		m_masterRightMotor.configClosedLoopPeakOutput(1, RobotMap.GAINS_TURNING.kPeakOutput, RobotMap.TIMEOUT_MS);
 		m_masterRightMotor.configAllowableClosedloopError(1, 0, RobotMap.TIMEOUT_MS);
 
-        // TODO: Should be robot map constant
-        int closedLoopTimeMs = 10;
-
-        m_masterRightMotor.configClosedLoopPeriod(0, closedLoopTimeMs, RobotMap.TIMEOUT_MS);
-        m_masterRightMotor.configClosedLoopPeriod(1, closedLoopTimeMs, RobotMap.TIMEOUT_MS);
+        m_masterRightMotor.configClosedLoopPeriod(0, RobotMap.CLOSED_LOOP_TIME, RobotMap.TIMEOUT_MS);
+        m_masterRightMotor.configClosedLoopPeriod(1, RobotMap.CLOSED_LOOP_TIME, RobotMap.TIMEOUT_MS);
 
         m_masterRightMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_10_Targets, 10);
        

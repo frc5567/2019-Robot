@@ -25,7 +25,7 @@ public class GamePad extends GenericHID {
 		PICKUP_HATCH_CARGO(5),
 		// Toggle switches
 		HATCH_TO_CARGO(10),
-		MANUAL_TO_AUTO(9),
+		MANUAL_SWITCH(9),
 		// Buttons
 		OPEN_HATCH(2),
 		CLOSE_HATCH(1),
@@ -138,13 +138,16 @@ public class GamePad extends GenericHID {
 	 * Gets the status of the manual to auto button
 	 * @return If the manual to auto button has been released
 	 */
-	public boolean getManualToAutoReleased() {
-		return getGamePadButtonReleased(GamePadControls.MANUAL_TO_AUTO);
+	public boolean isManualReleased() {
+		return getGamePadButtonReleased(GamePadControls.MANUAL_SWITCH);
 	}
 
-	// TODO: Rename function to save brains. Also rename switch. HINT: Name after ON value
-	public boolean getManualToAuto() {
-		return getGamePadButton(GamePadControls.MANUAL_TO_AUTO);
+	/** 
+	 * Gets the current state of the manual or auto mode switch, where true is manual
+	 * @return Whether the robot is in manual mode
+	*/ 
+	public boolean isManual() {
+		return getGamePadButton(GamePadControls.MANUAL_SWITCH);
 	}
 
 	/**

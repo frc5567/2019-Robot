@@ -121,11 +121,8 @@ public class Robot extends TimedRobot {
 		// Runs config for synced PID climbers
 		climberPID.climberPIDConfig();
 
-		m_autoCommands = new AutoCommands(m_drivetrain, m_gyro, m_elevator, m_frontClimber, m_backClimber);
+		m_autoCommands = new AutoCommands(m_drivetrain, m_gyro, m_elevator, m_frontClimber, m_backClimber, m_pather, m_teleopCommands);
 		m_teleopCommands = new TeleopCommands(m_controller, m_gamepad, m_drivetrain, m_elevator, m_frontClimber, m_backClimber, m_hatchMech, climberPID, m_pather);
-		
-		// TODO: Unused, not comp code. Delete if this will not be used for testing
-		testContinuousCommand = new ContinuousCommand(m_drivetrain, m_gyro);
 
 		// Sets up the camera and inits the camera server
 		// This needs the camera to be plugged in

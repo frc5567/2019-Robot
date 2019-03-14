@@ -144,8 +144,8 @@ public class Elevator {
 		m_motor.configPeakOutputReverse(-RobotMap.PID_PEAK_OUTPUT, RobotMap.TIMEOUT_MS);
 
 		// Motion Magic Config
-		m_motor.configMotionAcceleration(2000, RobotMap.TIMEOUT_MS);
-		m_motor.configMotionCruiseVelocity(2000, RobotMap.TIMEOUT_MS);
+		m_motor.configMotionAcceleration(RobotMap.ELEVATOR_ACCELERATION, RobotMap.TIMEOUT_MS);
+		m_motor.configMotionCruiseVelocity(RobotMap.ELEVATOR_CRUISE_VELOCITY, RobotMap.TIMEOUT_MS);
 
 		// PID Config
 		m_motor.config_kP(0, RobotMap.GAINS.kP, RobotMap.TIMEOUT_MS);
@@ -198,7 +198,7 @@ public class Elevator {
 	 * @param input Joystick/variable input.
 	 */
 	public void moveRaw(double input){
-			m_motor.set(ControlMode.PercentOutput, (input /* 0.4*/));
+			m_motor.set(ControlMode.PercentOutput, (input));
 	}
 	
 	/**
