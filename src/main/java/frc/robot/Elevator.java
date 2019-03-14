@@ -22,12 +22,14 @@ public class Elevator {
 		state in String form.
 		*/
 		LEVEL_ZERO(0.0, 1.0, 1.0 , "Initial State"),
+		HATCH_PICKUP(5.87, 0.90, 0.50, "Hatch Pickup"), // TODO: Increase through testing, seemed to be too low
 		//	CARGO_L1(16.75, 0.80, 0.50 , "Cargo level 1"),
 		//	CARGO_L2(44.75, 0.60, 0.30 , "Cargo Level 2"),
 		//	CARGO_L3(72.75, 0.40, 0.20 , "Cargo Level 3"),
 		HATCH_L1(7.87, 0.90, 0.50 , "Hatch Level 1"),
 		HATCH_L2(40.65, 0.65, 0.30 , "Hatch Level 2"),
-		HATCH_L3(66.125, 0.45, 0.20 , "Hatch Level 3");
+		HATCH_L3(66.125, 0.45, 0.20 , "Hatch Level 3"),
+		HATCH_PICKUP_2(11.87, 0.90, 0.50, "Hatch Pickup 2");
 
 		private double deltaInches;
 		private double maxSpeedPercent;

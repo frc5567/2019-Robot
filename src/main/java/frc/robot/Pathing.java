@@ -110,20 +110,7 @@ public class Pathing {
         }
     }
 
-    public boolean secondHalfPath(/*boolean toggle*/) {
-        // if (toggle) {
-        //     lowAutoBreak = !lowAutoBreak;
-        // }
-
-        // if (lowAutoBreak) {
-        //     if ( m_pilotControl.getTriggerAxis(Hand.kLeft) > 0 || m_pilotControl.getTriggerAxis(Hand.kRight) > 0 || m_pilotControl.getX() != 0) {
-        //         return false;
-        //     }
-        //     else {
-        //         m_drivetrain.talonArcadeDrive(0, 0);
-        //         return false;
-        //     }
-        // }
+    public boolean secondHalfPath() {
 
         if (!m_lowTargetFound) {
             m_lowTargetFound = checkForLowTarget();

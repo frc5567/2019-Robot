@@ -31,7 +31,9 @@ public class GamePad extends GenericHID {
 		CLOSE_HATCH(1),
 		// Buttons
 		LIFT_HATCH_ARM(4),
-		DROP_HATCH_ARM(3);
+		DROP_HATCH_ARM(3),
+		MANUAL_LOW(12),
+		ZERO_HATCH(11);
 
 		@SuppressWarnings("MemberName")
 		public final int value;
@@ -84,6 +86,14 @@ public class GamePad extends GenericHID {
 		return getY();
 	}
 
+	public boolean getLevelZero() {
+		return getGamePadButton(GamePadControls.ZERO_HATCH);
+	}
+
+	public boolean getManualLow() {
+		return getGamePadButton(GamePadControls.MANUAL_LOW);
+	}
+
 	/**
 	 * Gets the status of the low hatch / cargo button
 	 * @return If the low hatch / cargo button has been released
@@ -132,6 +142,7 @@ public class GamePad extends GenericHID {
 		return getGamePadButtonReleased(GamePadControls.MANUAL_TO_AUTO);
 	}
 
+	// TODO: Rename function to save brains. Also rename switch. HINT: Name after ON value
 	public boolean getManualToAuto() {
 		return getGamePadButton(GamePadControls.MANUAL_TO_AUTO);
 	}

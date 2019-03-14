@@ -77,18 +77,17 @@ public class RobotMap {
 
     // Servo PWM ports
     // HatchMech
-    public static final int HATCH_MECH_SERVO_PORT = 0;
+    public static final int HATCH_MECH_SERVO_PORT = 2;
 
     // Position constants
     // HatchMech servo positions
-    public static final double HATCH_MECH_OPEN_SERVO_POSITION = 0.6;
-    public static final double HATCH_MECH_CLOSE_SERVO_POSITION = 0.3;
+    public static final double HATCH_MECH_OPEN_SERVO_POSITION = 0.3;
+    public static final double HATCH_MECH_CLOSE_SERVO_POSITION = 0.69;
+    public static final double HATCH_MECH_DIAGONAL_SERVO_POSITION = 0.5;
     // HatchMech motor encoder limits
     public static final int HATCH_MECH_UP_STOP_POSITION = 50000;
     public static final int HATCH_MECH_DOWN_STOP_POSITION = 25000;
     public static final int HATCH_MECH_MOTOR_PORT = 15;
-    // Elevator height
-    public static final double MAX_ELEVATOR_HEIGHT = 5.0;   //TODO: Update this?
 
     // Motor speed constants
     // Drivetrain
@@ -99,18 +98,18 @@ public class RobotMap {
     public static final double HATCH_MECH_ARM_DOWN_MOTOR_SPEED = -0.3;  // Check Speed
     public static final double HATCH_MECH_STOP_MOTOR_SPEED = 0.0;
     // Climber motor speeds
-    public static final double FRONT_CLIMBER_SPEED_UP = 0.5;      //UPDATE THIS VALUE
-    public static final double FRONT_CLIMBER_SPEED_DOWN = -0.5;       //UPDATE THIS VALUE
+    public static final double FRONT_CLIMBER_SPEED_UP = 0.75; 
+    public static final double FRONT_CLIMBER_SPEED_DOWN = -0.9;
     
-    public static final double BACK_CLIMBER_SPEED_UP = 0.5;      //UPDATE THIS VALUE
-    public static final double BACK_CLIMBER_SPEED_DOWN = -0.5;
+    public static final double BACK_CLIMBER_SPEED_UP = 0.35;
+    public static final double BACK_CLIMBER_SPEED_DOWN = -0.8;
 
     // Climber encoder target in tics
-    public static final int CLIMBER_TARGET = -450000; // TODO: This is an arbitrary number
+    public static final int CLIMBER_TARGET = -550000;
 
     // Elevator Motor Speed
-    public static final double ELEVATOR_MOTOR_SPEED_UP = -0.4;
-    public static final double ELEVATOR_MOTOR_SPEED_DOWN = 0.4;
+    public static final double ELEVATOR_MOTOR_SPEED_UP = 0.4;
+    public static final double ELEVATOR_MOTOR_SPEED_DOWN = -0.4;
     // Climber back motor speed settings
     public static final double CLIMBER_DRIVE_SPEED_FOREWARD = 0.4;
     public static final double CLIMBER_DRIVE_SPEED_BACKWARD = -0.4;

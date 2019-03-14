@@ -324,6 +324,9 @@ public class Drivetrain implements PIDOutput {
         // Sets all motors to brake
         m_masterLeftMotor.setNeutralMode(NeutralMode.Brake);
         m_masterRightMotor.setNeutralMode(NeutralMode.Brake);
+        
+        m_slaveLeftMotor.setNeutralMode(NeutralMode.Brake);
+        m_slaveRightMotor.setNeutralMode(NeutralMode.Brake);
 
         /** Feedback Sensor Configuration */
 
