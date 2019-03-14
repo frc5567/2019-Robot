@@ -10,12 +10,14 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.SensorCollection;
+import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 
 // Stolen imports from the CTRE sample code
 import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
 import com.ctre.phoenix.motorcontrol.SensorTerm;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.FollowerType;
 
 // Import needed to initialize NavX and rotation controller
 import edu.wpi.first.wpilibj.PIDController;
@@ -70,6 +72,7 @@ public class Drivetrain implements PIDOutput {
     private double m_ticsToTarget;
 
     private boolean m_firstCallTest = true;
+    private boolean m_mmDriveToPosFirstFlag = true;
 
     // Counter for buying time for the PID
     int m_counter;
@@ -332,7 +335,6 @@ public class Drivetrain implements PIDOutput {
 
         // Configure the left Talon's selected sensor to a Quad Encoder
         m_masterLeftMotor.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, RobotMap.PID_PRIMARY, RobotMap.TIMEOUT_MS);
-        m_masterRightMotor.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, RobotMap.PID_PRIMARY, RobotMap.TIMEOUT_MS);
 
         // Configure the Remote Talon's selected sensor as a remote sensor for the right Talon
         m_masterRightMotor.configRemoteFeedbackFilter(m_masterLeftMotor.getDeviceID(), RemoteSensorSource.TalonSRX_SelectedSensor, RobotMap.REMOTE_1, RobotMap.TIMEOUT_MS);
@@ -360,16 +362,22 @@ public class Drivetrain implements PIDOutput {
         // Don't scale the Feedback Sensor (use 1 for 1:1 ratio)
         m_masterRightMotor.configSelectedFeedbackCoefficient(1, RobotMap.PID_TURN, RobotMap.TIMEOUT_MS);
 
+        m_masterRightMotor.setSelectedSensorPosition(0, 0, RobotMap.TIMEOUT_MS);
+		m_masterRightMotor.setSelectedSensorPosition(0, 1, RobotMap.TIMEOUT_MS);
+        m_masterLeftMotor.setSelectedSensorPosition(0);
+        
         // Configure output and sensor direction
         m_masterLeftMotor.setInverted(false);
         m_masterLeftMotor.setSensorPhase(true);
         m_masterRightMotor.setInverted(false);
         m_masterRightMotor.setSensorPhase(true);
 
-        // Set status frame periods to ensure we don't have stale data
+
+        // Set status frame periods to ensure we don't have stale data. 20 and 5 are time in ms
         m_masterRightMotor.setStatusFramePeriod(StatusFrame.Status_12_Feedback1, 20, RobotMap.TIMEOUT_MS);
         m_masterRightMotor.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20, RobotMap.TIMEOUT_MS);
         m_masterRightMotor.setStatusFramePeriod(StatusFrame.Status_14_Turn_PIDF1, 20, RobotMap.TIMEOUT_MS);
+        m_masterRightMotor.setStatusFramePeriod(StatusFrame.Status_10_Targets, 20, RobotMap.TIMEOUT_MS);
         m_masterLeftMotor.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 5, RobotMap.TIMEOUT_MS);
 
         // Configure neutral deadband
@@ -389,44 +397,34 @@ public class Drivetrain implements PIDOutput {
         m_masterRightMotor.configPeakOutputForward(+1.0, RobotMap.TIMEOUT_MS);
         m_masterRightMotor.configPeakOutputReverse(-1.0, RobotMap.TIMEOUT_MS);
 
+        // Motion Magic Config
+		m_masterRightMotor.configMotionAcceleration(RobotMap.DRIVE_ACCELERATION, RobotMap.TIMEOUT_MS);
+        m_masterRightMotor.configMotionCruiseVelocity(RobotMap.DRIVE_CRUISE_VELOCITY, RobotMap.TIMEOUT_MS);
+        
         // FPID Gains for velocity servo
-        m_masterRightMotor.config_kP(RobotMap.SLOT_VELOCIT, RobotMap.GAINS_VELOCIT.kP, RobotMap.TIMEOUT_MS);
-        m_masterRightMotor.config_kI(RobotMap.SLOT_VELOCIT, RobotMap.GAINS_VELOCIT.kI, RobotMap.TIMEOUT_MS);
-        m_masterRightMotor.config_kD(RobotMap.SLOT_VELOCIT, RobotMap.GAINS_VELOCIT.kD, RobotMap.TIMEOUT_MS);
-        m_masterRightMotor.config_kF(RobotMap.SLOT_VELOCIT, RobotMap.GAINS_VELOCIT.kF, RobotMap.TIMEOUT_MS);
-        m_masterRightMotor.config_IntegralZone(RobotMap.SLOT_VELOCIT, RobotMap.GAINS_VELOCIT.kIzone, RobotMap.TIMEOUT_MS);
-        m_masterRightMotor.configClosedLoopPeakOutput(RobotMap.SLOT_VELOCIT, RobotMap.GAINS_VELOCIT.kPeakOutput, RobotMap.TIMEOUT_MS);
-        m_masterRightMotor.configAllowableClosedloopError(RobotMap.SLOT_VELOCIT, 0, RobotMap.TIMEOUT_MS);
+        m_masterRightMotor.config_kP(0, RobotMap.DRIVETRAIN_GAINS.kP, RobotMap.TIMEOUT_MS);
+		m_masterRightMotor.config_kI(0, RobotMap.DRIVETRAIN_GAINS.kI, RobotMap.TIMEOUT_MS);
+		m_masterRightMotor.config_kD(0, RobotMap.DRIVETRAIN_GAINS.kD, RobotMap.TIMEOUT_MS);
+		m_masterRightMotor.config_kF(0, RobotMap.DRIVETRAIN_GAINS.kF, RobotMap.TIMEOUT_MS);
+		m_masterRightMotor.config_IntegralZone(0, RobotMap.DRIVETRAIN_GAINS.kIzone, RobotMap.TIMEOUT_MS);
+		m_masterRightMotor.configClosedLoopPeakOutput(0, RobotMap.DRIVETRAIN_GAINS.kPeakOutput, RobotMap.TIMEOUT_MS);
+        m_masterRightMotor.configAllowableClosedloopError(0, 0, RobotMap.TIMEOUT_MS);
 
         // FPID Gains for turn servo
-        m_masterRightMotor.config_kP(RobotMap.SLOT_TURNING, RobotMap.GAINS_TURNING.kP, RobotMap.TIMEOUT_MS);
-        m_masterRightMotor.config_kI(RobotMap.SLOT_TURNING, RobotMap.GAINS_TURNING.kI, RobotMap.TIMEOUT_MS);
-        m_masterRightMotor.config_kD(RobotMap.SLOT_TURNING, RobotMap.GAINS_TURNING.kD, RobotMap.TIMEOUT_MS);
-        m_masterRightMotor.config_kF(RobotMap.SLOT_TURNING, RobotMap.GAINS_TURNING.kF, RobotMap.TIMEOUT_MS);
-        m_masterRightMotor.config_IntegralZone(RobotMap.SLOT_TURNING, RobotMap.GAINS_TURNING.kIzone, RobotMap.TIMEOUT_MS);
-        m_masterRightMotor.configClosedLoopPeakOutput(RobotMap.SLOT_TURNING, RobotMap.GAINS_TURNING.kPeakOutput, RobotMap.TIMEOUT_MS);
-        m_masterRightMotor.configAllowableClosedloopError(RobotMap.SLOT_TURNING, 0, RobotMap.TIMEOUT_MS);
+        m_masterRightMotor.config_kP(1, RobotMap.GAINS_TURNING.kP, RobotMap.TIMEOUT_MS);
+		m_masterRightMotor.config_kI(1, RobotMap.GAINS_TURNING.kI, RobotMap.TIMEOUT_MS);
+		m_masterRightMotor.config_kD(1, RobotMap.GAINS_TURNING.kD, RobotMap.TIMEOUT_MS);
+		m_masterRightMotor.config_kF(1, RobotMap.GAINS_TURNING.kF, RobotMap.TIMEOUT_MS);
+		m_masterRightMotor.config_IntegralZone(1, RobotMap.GAINS_TURNING.kIzone, RobotMap.TIMEOUT_MS);
+		m_masterRightMotor.configClosedLoopPeakOutput(1, RobotMap.GAINS_TURNING.kPeakOutput, RobotMap.TIMEOUT_MS);
+		m_masterRightMotor.configAllowableClosedloopError(1, 0, RobotMap.TIMEOUT_MS);
 
-        /**
-         * 
-         * 1ms per loop. PID loop can be slowed down if need be.
-         * 
-         * For example,
-         * 
-         * - if sensor updates are too slow
-         * 
-         * - sensor deltas are very small per update, so derivative error never gets
-         * large enough to be useful.
-         * 
-         * - sensor movement is very slow causing the derivative error to be near zero.
-         * 
-         */
+        m_masterRightMotor.configClosedLoopPeriod(0, RobotMap.CLOSED_LOOP_TIME, RobotMap.TIMEOUT_MS);
+        m_masterRightMotor.configClosedLoopPeriod(1, RobotMap.CLOSED_LOOP_TIME, RobotMap.TIMEOUT_MS);
 
-        int closedLoopTimeMs = 10;
-
-        m_masterRightMotor.configClosedLoopPeriod(0, closedLoopTimeMs, RobotMap.TIMEOUT_MS);
-        m_masterRightMotor.configClosedLoopPeriod(1, closedLoopTimeMs, RobotMap.TIMEOUT_MS);
-
+        // Sets the status frame period to 10ms
+        m_masterRightMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_10_Targets, 10);
+       
         /**
          * 
          * configAuxPIDPolarity(boolean invert, int timeoutMs)
@@ -441,6 +439,9 @@ public class Drivetrain implements PIDOutput {
 
         m_masterRightMotor.configAuxPIDPolarity(false, RobotMap.TIMEOUT_MS);
 
+        // Sets profile slot for PID
+        m_masterRightMotor.selectProfileSlot(0, RobotMap.PID_PRIMARY);
+        m_masterRightMotor.selectProfileSlot(1, RobotMap.PID_TURN);
     }
 
     /**
@@ -492,6 +493,39 @@ public class Drivetrain implements PIDOutput {
         else {
             m_masterLeftMotor.set(ControlMode.PercentOutput, turn, DemandType.ArbitraryFeedForward, +forward);
             m_masterRightMotor.set(ControlMode.PercentOutput, turn, DemandType.ArbitraryFeedForward, -forward);
+        }
+    }
+
+    public boolean magicDriveToPosition(double distToTarget) {
+        // If the return value is valid, run needed calculation
+        if (m_mmDriveToPosFirstFlag) {
+            m_ticsToTarget = inToTics(distToTarget);
+            m_rightInitTics = getRightDriveEncoderPosition();
+            m_rightTargetTics = m_rightInitTics + m_ticsToTarget;
+            
+            m_mmDriveToPosFirstFlag = false;
+        }
+
+        m_masterRightMotor.set(ControlMode.MotionMagic, m_rightTargetTics, DemandType.AuxPID, 0);
+        m_masterLeftMotor.follow(m_masterRightMotor, FollowerType.AuxOutput1);
+
+        if  (m_rightTargetTics > m_rightInitTics) {
+            if (m_masterRightMotor.getSelectedSensorPosition(0) > m_rightTargetTics) {
+                m_mmDriveToPosFirstFlag = true;
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+        else {
+            if (m_masterRightMotor.getSelectedSensorPosition(0) < m_rightTargetTics) {
+                m_mmDriveToPosFirstFlag = true;
+                return true;
+            }
+            else {
+                return false;
+            }
         }
     }
 
