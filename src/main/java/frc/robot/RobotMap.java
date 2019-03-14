@@ -12,7 +12,7 @@ public class RobotMap {
     public static final boolean ULTRASONIC_TELEMETRY = false;
     public static final boolean DRIVETRAIN_TELEMETRY = false;
     public static final boolean ELEVATOR_TELEMETRY = false;
-    public static final boolean CLIMBER_TELEMETRY = true;
+    public static final boolean CLIMBER_TELEMETRY = false;
     public static final int SAMPLE_RATE = 50;
 
     public static final Gains GAINS = new Gains(0.3, 0.0, 0.0, 0.0, 100, 1.0);
