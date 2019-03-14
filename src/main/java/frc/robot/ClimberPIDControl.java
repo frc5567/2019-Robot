@@ -84,7 +84,7 @@ public class ClimberPIDControl {
 
 		// Motion Magic Config
 		m_driveClimber.m_climberMotor.configMotionAcceleration(2000, RobotMap.TIMEOUT_MS);
-		m_driveClimber.m_climberMotor.configMotionCruiseVelocity(4000, RobotMap.TIMEOUT_MS);
+		m_driveClimber.m_climberMotor.configMotionCruiseVelocity(6000, RobotMap.TIMEOUT_MS);
 
 		// PID Config
 		m_driveClimber.m_climberMotor.config_kP(0, RobotMap.GAINS.kP, RobotMap.TIMEOUT_MS);
@@ -115,7 +115,6 @@ public class ClimberPIDControl {
     }
 
     public void climberPIDDrive(int target) {
-		System.out.println("PIDTarget in tics: \t" + target);
         m_driveClimber.m_climberMotor.set(ControlMode.MotionMagic, target, DemandType.AuxPID, 0);
         m_frontClimber.m_climberMotor.follow(m_driveClimber.m_climberMotor, FollowerType.AuxOutput1);
 	}

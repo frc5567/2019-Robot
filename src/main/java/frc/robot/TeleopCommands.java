@@ -76,7 +76,7 @@ public class TeleopCommands {
      * Allows the drivers to control the drivetrain
      */
     public void controlDrivetrain() {
-        m_drivetrain.talonArcadeDrive((m_controller.getTriggerAxis(Hand.kRight) - m_controller.getTriggerAxis(Hand.kLeft)), m_controller.getX(Hand.kLeft));
+        m_drivetrain.talonArcadeDrive((m_controller.getTriggerAxis(Hand.kRight) - m_controller.getTriggerAxis(Hand.kLeft)), m_controller.getX(Hand.kLeft), true);
     }
 
     /**
@@ -91,8 +91,15 @@ public class TeleopCommands {
                 m_elevator.moveRaw(RobotMap.ELEVATOR_MOTOR_SPEED_DOWN);
             }
             else {
-                if (m_gamepad.getPickupHatchCargo()) {
-                    m_elevator.drivePID(State.LEVEL_ZERO);
+                if (m_gamepad.getManualLow()) {
+                    m_elevator.drivePID(State.HATCH_PICKUP);
+                }
+                else if (m_gamepad.getLevelZero()) {
+                    m_elevator.drivePID(State.LEVEL_ZERO);    
+                }
+                else if (m_gamepad.getPickupHatchCargo()) {
+                    m_elevator.drivePID(State.HATCH_PICKUP_2);
+                    m_hatchMech.m_servo.setPosition(RobotMap.HATCH_MECH_DIAGONAL_SERVO_POSITION);
                 }
                 else if (m_gamepad.getLowHatchCargo()) {
                     m_elevator.drivePID(State.HATCH_L1);
@@ -127,8 +134,18 @@ public class TeleopCommands {
                 innerRingLight.set(true);
 			    outerRingLight.set(true);
             }
+            else if (m_gamepad.getLevelZero()) {
+                m_elevator.drivePID(State.HATCH_PICKUP);
+            }
+            else if (m_gamepad.getManualLow()) {
+                m_elevator.drivePID(State.LEVEL_ZERO);    
+            }
+            else if (m_gamepad.getPickupHatchCargo()) {
+                m_elevator.drivePID(State.HATCH_PICKUP_2);
+                m_hatchMech.m_servo.setPosition(RobotMap.HATCH_MECH_DIAGONAL_SERVO_POSITION);
+            }
             else {
-                m_drivetrain.talonArcadeDrive(0, 0);
+                controlDrivetrain();
                 m_elevator.moveRaw(0.0);
                 m_pather.resetFlags();
                 innerRingLight.set(false);
@@ -166,17 +183,17 @@ public class TeleopCommands {
         // PID climber controls bound to pilot controller
 		if (m_controller.getAButton()) {
             m_climberPID.climberPIDDrive(RobotMap.CLIMBER_TARGET);
-            m_drivetrain.talonArcadeDrive(0, 0);
+            m_drivetrain.talonArcadeDrive(0, 0, false);
             m_driveClimberDeployed = true;
 		}
         else {
             if (m_controller.getBButton()) {
                 m_frontClimber.raiseClimber(RobotMap.FRONT_CLIMBER_SPEED_UP);
-                m_drivetrain.talonArcadeDrive(0, 0);
+                m_drivetrain.talonArcadeDrive(0, 0, false);
 		    }
             else if (m_controller.getBumper(Hand.kLeft)) {
                 m_frontClimber.lowerClimber(RobotMap.FRONT_CLIMBER_SPEED_DOWN);
-                m_drivetrain.talonArcadeDrive(0, 0);
+                m_drivetrain.talonArcadeDrive(0, 0, false);
             }
             else {
                 m_frontClimber.setClimber(0);
@@ -184,12 +201,18 @@ public class TeleopCommands {
             
             if (m_controller.getXButton()) {
                 m_backClimber.raiseClimber(RobotMap.BACK_CLIMBER_SPEED_UP);
-                m_drivetrain.talonArcadeDrive(0, 0);
+                m_drivetrain.talonArcadeDrive(0, 0, false);
                 m_driveClimberDeployed = false;
+            }
+            else if (m_controller.getStartButton()) {
+                // TODO: Make this a second const or comment
+                m_backClimber.raiseClimber(RobotMap.FRONT_CLIMBER_SPEED_UP);
+                m_drivetrain.talonArcadeDrive(0, 0, false);
+                m_driveClimberDeployed = true;
             }
             else if (m_controller.getBumper(Hand.kRight)) {
                 m_backClimber.lowerClimber(RobotMap.BACK_CLIMBER_SPEED_DOWN);
-                m_drivetrain.talonArcadeDrive(0, 0);
+                m_drivetrain.talonArcadeDrive(0, 0, false);
                 m_driveClimberDeployed = true;
             }
             else {
@@ -198,7 +221,7 @@ public class TeleopCommands {
         
 		    if (m_controller.getYButton() && m_driveClimberDeployed) {
                 m_backClimber.driveForward();
-                m_drivetrain.talonArcadeDrive(.2, 0);
+                m_drivetrain.talonArcadeDrive(.2, 0, false);
             }
             else {
                 m_backClimber.m_driveMotor.set(0);

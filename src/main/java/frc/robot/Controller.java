@@ -64,6 +64,7 @@ public class Controller extends XboxController {
      */
     public double getTriggerAxis(Hand hand) {
         double triggerValue;
+        // Deadband removed per request during testing
         // Checks if the trigger value is less than deadband
         // if (super.getTriggerAxis(hand) < RobotMap.CONTROLLER_TRIGGER_DEADBAND) {
         //     // If so, sets the trigger value to 0
