@@ -196,38 +196,38 @@ void calcDistToCenterLow()
   
   dA = ( 1 - ( avgR / avgL ) );
 
-  if ((abs(dA)) > maxDa)
-  {
-//	if (abs(dA) >= 1.0) 
+//  if ((abs(dA)) > maxDa)
+//  {
+////	if (abs(dA) >= 1.0) 
+////    {
+////      if (dA > 0)
+////      {
+////        dA = .9;
+////      }
+////      else {
+////        dA = -.9;
+////      }
+////    }
+//    if (!callToggle) 
 //    {
-//      if (dA > 0)
+//      if ( ((avgR + avgL) / 2) < 2000 )
 //      {
-//        dA = .9;
+//        adjAbsCenter = (int)(10 * dA) + absoluteCenter;
 //      }
-//      else {
-//        dA = -.9;
+//      else
+//      {
+//        adjAbsCenter = (int)(5 * dA) + absoluteCenter;
 //      }
 //    }
-    if (!callToggle) 
-    {
-      if ( ((avgR + avgL) / 2) < 2000 )
-      {
-        adjAbsCenter = (int)(10 * dA) + absoluteCenter;
-      }
-      else
-      {
-        adjAbsCenter = (int)(5 * dA) + absoluteCenter;
-      }
-    }
-    else 
-    {
-      adjAbsCenter = absoluteCenter;  
-    }
-  }
-  else
-  {
+//    else 
+//    {
+//      adjAbsCenter = absoluteCenter;  
+//    }
+//  }
+//  else
+//  {
     adjAbsCenter = absoluteCenter;
-  }
+//  }
 
 	xLOne = leftX - (leftWidth / 2);
 	xROne = rightX + (leftWidth / 2);
