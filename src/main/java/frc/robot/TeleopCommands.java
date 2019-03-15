@@ -86,7 +86,7 @@ public class TeleopCommands {
      * parameters set to true.
      */
     public void teleopModeCommands() {
-        if (m_gamepad.getManualMode()) {
+        if (m_gamepad.isManual()) {
             controlDrivetrain();
         }
         controlElevator();
@@ -105,7 +105,7 @@ public class TeleopCommands {
      * Allows the drivers to control the elevator
      */
     public void controlElevator() {
-        if (m_gamepad.getManualMode()) {
+        if (m_gamepad.isManual()) {
             if (m_gamepad.getRawAxis(1) == 1) {
                 m_elevator.moveRaw(RobotMap.ELEVATOR_MOTOR_SPEED_UP);
             }
@@ -227,8 +227,7 @@ public class TeleopCommands {
                 m_driveClimberDeployed = false;
             }
             else if (m_controller.getStartButton()) {
-                // TODO: Make this a second const or comment
-                m_backClimber.setClimberSpeed(RobotMap.FRONT_CLIMBER_SPEED_UP);
+                m_backClimber.setClimberSpeed(RobotMap.BACK_CLIMBER_SPEED_UP_FAST);
                 m_drivetrain.talonArcadeDrive(0, 0, false);
                 m_driveClimberDeployed = true;
             }

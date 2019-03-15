@@ -70,6 +70,7 @@ public class Robot extends TimedRobot {
 	// Declare PID control for the elevator
 	ClimberPIDControl climberPID;
 
+	// Declares the ringlights for the PixyCam. Declared as solenoids as we enable them via PCM.
 	// Solenoid innerRingLight;
 	// Solenoid outerRingLight;
 

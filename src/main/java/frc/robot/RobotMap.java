@@ -15,7 +15,14 @@ public class RobotMap {
     public static final boolean CLIMBER_TELEMETRY = false;
     public static final int SAMPLE_RATE = 50;
 
-    public static final Gains GAINS = new Gains(0.3, 0.0, 0.0, 0.0, 100, 1.0);
+    // Climber gains
+    public static final Gains CLIMBER_GAINS = new Gains(0.3, 0.0, 0.0, 0.0, 100, 1.0);
+
+    // Drivetrain gains
+    public static final Gains DRIVETRAIN_GAINS = new Gains(0.3, 0.0, 0.0, 0.0, 100, 1.0);
+
+    // Elevator gains
+    public static final Gains ELEVATOR_GAINS = new Gains(0.3, 0.0, 0.0, 0.0, 100, 1.0);
 
 	// NavX angle offset
     public static final int ANGLE_OFFSET = 180;
@@ -102,6 +109,7 @@ public class RobotMap {
     public static final double FRONT_CLIMBER_SPEED_DOWN = -0.9;
     
     public static final double BACK_CLIMBER_SPEED_UP = 0.35;
+    public static final double BACK_CLIMBER_SPEED_UP_FAST = 0.75;
     public static final double BACK_CLIMBER_SPEED_DOWN = -0.8;
 
     // Climber encoder target in tics
@@ -134,7 +142,6 @@ public class RobotMap {
 
     // Constants for climber targets
     public static final int RAISED_CLIMBER_POS = 0;
-    public static final int LOWERED_CLIMBER_POS = 4096; // TODO: Test value, replace
 
     // Stolen constants for sample code
 
@@ -147,6 +154,20 @@ public class RobotMap {
      * 
      */
     public final static double TURN_TRAVEL_UNITS_PER_ROTATION = 3600;
+
+    // Closed loop time of PID systems in milliseconds
+    public final static int CLOSED_LOOP_TIME = 10;
+
+    // Cruise and acceleration values for motion magic
+    // TODO: Update with testing
+    public final static int DRIVE_CRUISE_VELOCITY = 2000;
+    public final static int DRIVE_ACCELERATION = 2000;
+
+    public final static int CLIMB_CRUISE_VELOCITY = 6000;
+    public final static int CLIMB_ACCELERATION = 2000;
+
+    public final static int ELEVATOR_CRUISE_VELOCITY = 2000;
+    public final static int ELEVATOR_ACCELERATION = 2000;
 
     /**
      * Empirically measure what the difference between encoders per 360'

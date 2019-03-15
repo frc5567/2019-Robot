@@ -133,7 +133,7 @@ public class Elevator {
 		m_motor.setInverted(true);
 		m_motor.setSensorPhase(true);
 
-		// Set status frame period for data collection
+		// Set status frame period for data collection where 5 is period length in ms
 		m_motor.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 5, RobotMap.TIMEOUT_MS);
 
 		// Config neutral deadband
@@ -144,16 +144,16 @@ public class Elevator {
 		m_motor.configPeakOutputReverse(-RobotMap.PID_PEAK_OUTPUT, RobotMap.TIMEOUT_MS);
 
 		// Motion Magic Config
-		m_motor.configMotionAcceleration(2000, RobotMap.TIMEOUT_MS);
-		m_motor.configMotionCruiseVelocity(2000, RobotMap.TIMEOUT_MS);
+		m_motor.configMotionAcceleration(RobotMap.ELEVATOR_ACCELERATION, RobotMap.TIMEOUT_MS);
+		m_motor.configMotionCruiseVelocity(RobotMap.ELEVATOR_CRUISE_VELOCITY, RobotMap.TIMEOUT_MS);
 
 		// PID Config
-		m_motor.config_kP(0, RobotMap.GAINS.kP, RobotMap.TIMEOUT_MS);
-		m_motor.config_kI(0, RobotMap.GAINS.kI, RobotMap.TIMEOUT_MS);
-		m_motor.config_kD(0, RobotMap.GAINS.kD, RobotMap.TIMEOUT_MS);
-		m_motor.config_kF(0, RobotMap.GAINS.kF, RobotMap.TIMEOUT_MS);
-		m_motor.config_IntegralZone(0, RobotMap.GAINS.kIzone, RobotMap.TIMEOUT_MS);
-		m_motor.configClosedLoopPeakOutput(0, RobotMap.GAINS.kPeakOutput, RobotMap.TIMEOUT_MS);
+		m_motor.config_kP(0, RobotMap.ELEVATOR_GAINS.kP, RobotMap.TIMEOUT_MS);
+		m_motor.config_kI(0, RobotMap.ELEVATOR_GAINS.kI, RobotMap.TIMEOUT_MS);
+		m_motor.config_kD(0, RobotMap.ELEVATOR_GAINS.kD, RobotMap.TIMEOUT_MS);
+		m_motor.config_kF(0, RobotMap.ELEVATOR_GAINS.kF, RobotMap.TIMEOUT_MS);
+		m_motor.config_IntegralZone(0, RobotMap.ELEVATOR_GAINS.kIzone, RobotMap.TIMEOUT_MS);
+		m_motor.configClosedLoopPeakOutput(0, RobotMap.ELEVATOR_GAINS.kPeakOutput, RobotMap.TIMEOUT_MS);
 		m_motor.configAllowableClosedloopError(0, 0, RobotMap.TIMEOUT_MS);
 
 		// PID closed loop config
@@ -198,7 +198,7 @@ public class Elevator {
 	 * @param input Joystick/variable input.
 	 */
 	public void moveRaw(double input){
-			m_motor.set(ControlMode.PercentOutput, (input /* 0.4*/));
+			m_motor.set(ControlMode.PercentOutput, (input));
 	}
 	
 	/**
