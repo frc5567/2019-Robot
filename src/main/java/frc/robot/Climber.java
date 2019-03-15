@@ -22,24 +22,13 @@ public class Climber {
         m_topLimitSwitch = new DigitalInput(topLimitSwitchPort);
         m_bottomLimitSwitch = new DigitalInput(bottomLimitSwitchPort);
     }
-    
-    /**
-     * Raises climber at a constant speed while button is pressed and the limit switch is not reached
-     * (Button to be determined later).
-     */
-    public void raiseClimber(double speed) {
-        m_climberMotor.set(speed);
-    }
 
     /**
-     * Lowers climber at a constant speed when button is pressed (Button to be determined later).
+     * Manually sets the climber to a passed in speed [-1.0 ~ 1.0]
+     * @param speed Percent output to set the climber motor to
      */
-    public void lowerClimber(double speed){
-        m_climberMotor.set(speed);
-    }
-
-    public void setClimber(double input) {
-        m_climberMotor.set(ControlMode.PercentOutput, input);
+    public void setClimberSpeed(double speed) {
+        m_climberMotor.set(ControlMode.PercentOutput, speed);
     }
 
     /**

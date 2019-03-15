@@ -35,7 +35,7 @@ public class Drivetrain implements PIDOutput {
     PIDController m_rotController;
 
     // Delcares a flag for checking if this is the first time entering this method in a given run
-    boolean m_firstCall = true;
+    boolean m_firstCall;
 
     // Declares variables for current speed and rotate rate
     // Variables used for feedback in speed setter and rotate setter
@@ -69,7 +69,7 @@ public class Drivetrain implements PIDOutput {
     private double m_rightTargetTics;
     private double m_ticsToTarget;
 
-    private boolean m_firstCallTest = true;
+    private boolean m_firstCallTest;
 
     // Counter for buying time for the PID
     int m_counter;
@@ -128,6 +128,9 @@ public class Drivetrain implements PIDOutput {
         m_rotController.disable();
 
         m_counter = 0;
+
+        m_firstCall = true;
+        m_firstCallTest = true;
     }
 
     /**
@@ -235,17 +238,16 @@ public class Drivetrain implements PIDOutput {
         talonArcadeDrive(0, returnedRotate, false);
 
         // Checks to see if the the PID is finished or close enough
-        if ( ((returnedRotate < RobotMap.FINISHED_PID_THRESHOLD) && (returnedRotate > -RobotMap.FINISHED_PID_THRESHOLD)) && (m_counter > 10)) {
+        if (((returnedRotate < RobotMap.FINISHED_PID_THRESHOLD) && (returnedRotate > -RobotMap.FINISHED_PID_THRESHOLD)) && (m_counter > 10)) {
             isFinished = true;
             m_firstCall = true;
-            System.out.println("FINISHED");
         }
-
+        else if ((returnedRotate < RobotMap.FINISHED_PID_THRESHOLD) && (returnedRotate > -RobotMap.FINISHED_PID_THRESHOLD)) {
+            m_counter++;
+        }
+        
         if (isFinished) {
             m_counter = 0;
-        }
-        else {
-            m_counter++;
         }
 
         return isFinished;
@@ -295,6 +297,57 @@ public class Drivetrain implements PIDOutput {
 
         // isFinished acts as an exit flag once we have fulfilled the conditions desired
         return isFinished;
+    }
+
+    public boolean straightDrive(double targetDistance) {
+        // Flag for checking if the method is finished
+        boolean isFinished = false;
+        double currentAngle = m_gyro.getYaw();
+
+        if (m_firstCall) {
+            // Resets the error
+            m_rotController.reset();
+
+            // Enables the PID
+            m_rotController.enable();
+            // Prevents us from repeating the reset until we run the method again seperately
+            m_firstCall = false;
+            currentAngle = m_gyro.getYaw();
+        }
+
+        if (m_rotController.getSetpoint() != currentAngle) {
+            // Resets the error
+            m_rotController.reset();
+
+            // Enables the PID
+            m_rotController.enable();
+
+            // Sets the target to our target angle
+            m_rotController.setSetpoint(currentAngle);
+        }        
+
+        // Sets our rotate speed to the return of the PID
+        double returnedRotate = m_rotController.get();
+
+        // Runs the drivetrain with 0 speed and the rotate speed set by the PID
+        talonArcadeDrive(0 /*TODO: Set constant for speed*/, returnedRotate, false);
+
+        // Motion Magic is going to be used for this, 
+        // Leaving this for Josh for now as he has more experience in MotionMagic.
+        /*
+        if (ultraLeft.getRangeInches() > target && ultraRight.getRangeInches() > target) {
+            talonArcadeDrive(RobotMap.AUTO_SPEED, returnedRotate, false);
+            isFinished = false;
+        }
+        else {
+            talonArcadeDrive(0.2, 0, false);
+            isFinished = true;
+        }
+
+        // isFinished acts as an exit flag once we have fulfilled the conditions desired
+        return isFinished;
+        */
+        return false;
     }
 
     /**

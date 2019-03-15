@@ -25,17 +25,16 @@ public class GamePad extends GenericHID {
 		PICKUP_HATCH_CARGO(5),
 		// Toggle switches
 		HATCH_TO_CARGO(10),
-		MANUAL_TO_AUTO(9),
+		MANUAL_MODE(9),
 		// Buttons
 		OPEN_HATCH(2),
 		CLOSE_HATCH(1),
 		// Buttons
 		LIFT_HATCH_ARM(4),
 		DROP_HATCH_ARM(3),
-		MANUAL_LOW(12),
+		PICKUP_1(12),
 		ZERO_HATCH(11);
 
-		@SuppressWarnings("MemberName")
 		public final int value;
 
 		GamePadControls(int newValue) {
@@ -86,12 +85,20 @@ public class GamePad extends GenericHID {
 		return getY();
 	}
 
+	/**
+	 * Gets the status of the level zero button
+	 * @return If the level zero button is being pressed
+	 */
 	public boolean getLevelZero() {
 		return getGamePadButton(GamePadControls.ZERO_HATCH);
 	}
 
-	public boolean getManualLow() {
-		return getGamePadButton(GamePadControls.MANUAL_LOW);
+	/**
+	 * Gets the status of the low pickup button
+	 * @return If the low pickup button is being pressed
+	 */
+	public boolean getPickup1Button() {
+		return getGamePadButton(GamePadControls.PICKUP_1);
 	}
 
 	/**
@@ -138,13 +145,16 @@ public class GamePad extends GenericHID {
 	 * Gets the status of the manual to auto button
 	 * @return If the manual to auto button has been released
 	 */
-	public boolean getManualToAutoReleased() {
-		return getGamePadButtonReleased(GamePadControls.MANUAL_TO_AUTO);
+	public boolean getManualModeReleased() {
+		return getGamePadButtonReleased(GamePadControls.MANUAL_MODE);
 	}
 
-	// TODO: Rename function to save brains. Also rename switch. HINT: Name after ON value
-	public boolean getManualToAuto() {
-		return getGamePadButton(GamePadControls.MANUAL_TO_AUTO);
+	/**
+	 * Gets the status of the manual mode button
+	 * @return If the button is being pressed
+	 */
+	public boolean getManualMode() {
+		return getGamePadButton(GamePadControls.MANUAL_MODE);
 	}
 
 	/**
