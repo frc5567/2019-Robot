@@ -56,7 +56,7 @@ int centerPoint;
 const int absoluteCenter = 158;
 
 // Degrees per x pixel, used to convert 'distance to center' to 'angle to center'
-const double xPixToDeg = 60.0/315.0;
+const double xPixToDeg = 60.0/316.0;
 
 // The center adjusted based on compared area
 int adjAbsCenter;
@@ -229,10 +229,10 @@ void calcDistToCenterLow()
     adjAbsCenter = absoluteCenter;
 //  }
 
-	xLOne = leftX - (leftWidth / 2);
-	xROne = rightX + (leftWidth / 2);
-	xLTwo = leftX - (rightWidth / 2);
-	xRTwo = rightX + (rightWidth / 2);
+	xLOne = leftX + (leftWidth / 2);
+	xROne = rightX + (rightWidth / 2);
+	xLTwo = leftX - (leftWidth / 2);
+	xRTwo = rightX - (rightWidth / 2);
 	centerPoint = ((xLTwo - xROne) / 2) + xROne;
 	distToCenter = absoluteCenter - centerPoint;
 	angleToCenter = distToCenter * xPixToDeg;
