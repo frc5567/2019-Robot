@@ -118,7 +118,6 @@ public class Pathing {
         }
         // Runs the rotLowTarget method after all previous are finished and only if we see a target
         else if (!m_rotLowTargetFinished) {
-            System.out.println("Found target, driving");
             m_rotLowTargetFinished = rotLowTarget();
             return false;
         }
@@ -243,12 +242,13 @@ public class Pathing {
             // If the target is a valid number, assigns necesary target variables
             if(!m_angleToCenter.isNaN()) {
                 m_startingDegrees = m_gyro.getYaw();
-                m_absoluteDegToTarget = m_startingDegrees - m_angleToCenter;
+                m_absoluteDegToTarget = m_startingDegrees - (m_angleToCenter);
                 
                 // Reset the counter
                 m_lowDataCollectCounter = 0;
-                
-                System.out.println("degToTarget: \t" + m_angleToCenter);
+                System.out.print("starting deg: \t " + m_startingDegrees);
+                System.out.print(" degToTarget: \t" + m_angleToCenter);
+                System.out.println("Target angle for gyro: \t" + m_absoluteDegToTarget);
             }
         }
         else {
@@ -257,6 +257,7 @@ public class Pathing {
         }
         // if (!m_angleToCenter.isNaN()) {
             // Rotates until the method says that its done
+            
             if (m_drivetrain.driveToPositionAngle(24, m_absoluteDegToTarget, .35)) {
                 return true;
             }
