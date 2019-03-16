@@ -10,7 +10,7 @@ public class RobotMap {
 
     // Debug telmetry enable / disable constants
     public static final boolean ULTRASONIC_TELEMETRY = false;
-    public static final boolean DRIVETRAIN_TELEMETRY = false;
+    public static final boolean DRIVETRAIN_TELEMETRY = true;
     public static final boolean ELEVATOR_TELEMETRY = false;
     public static final boolean CLIMBER_TELEMETRY = false;
     public static final int SAMPLE_RATE = 50;
@@ -124,12 +124,19 @@ public class RobotMap {
 
     // PID Controller
     // Rotate Controller
-    public static final double P_ROTATE_CONTROLLER = 0.035;
+    public static final double P_ROTATE_CONTROLLER = 0.01;
     public static final double I_ROTATE_CONTROLLER = 0.00;
     public static final double D_ROTATE_CONTROLLER = 0.00;
     public static final double F_ROTATE_CONTROLLER = 0.00;
-    public static final double TOLERANCE_ROTATE_CONTROLLER = 2;
-    public static final double FINISHED_PID_THRESHOLD = 0.15;
+    public static final double TOLERANCE_ROTATE_CONTROLLER = 5;
+
+    public static final double P_ROTATE_DRIVE_CONTROLLER = 0.05;
+    public static final double I_ROTATE_DRIVE_CONTROLLER = 0.001;
+    public static final double D_ROTATE_DRIVE_CONTROLLER = 0.07;
+    public static final double F_ROTATE_DRIVE_CONTROLLER = 0.00;
+    public static final double TOLERANCE_ROTATE_DRIVE_CONTROLLER = 2;
+
+    public static final double FINISHED_PID_THRESHOLD = 0.1;
     public static final double PID_LOOP_TIME_S = 0.02;
     public static final double PID_INPUT_RANGE = 180.00;
     public static final double PID_OUTPUT_RANGE = 0.5;
@@ -138,7 +145,7 @@ public class RobotMap {
     public static final double DRIVE_TICS_PER_INCH = (4096 / (6*RobotMap.PI));
 
     // Speed of robot drive in autonomous functions
-    public static final double AUTO_SPEED = 0.2;
+    public static final double AUTO_SPEED = 0.35;
 
     // Constants for climber targets
     public static final int RAISED_CLIMBER_POS = 0;

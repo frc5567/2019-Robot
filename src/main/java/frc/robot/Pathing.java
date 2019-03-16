@@ -118,17 +118,18 @@ public class Pathing {
         }
         // Runs the rotLowTarget method after all previous are finished and only if we see a target
         else if (!m_rotLowTargetFinished) {
+            System.out.println("Found target, driving");
             m_rotLowTargetFinished = rotLowTarget();
             return false;
         }
         // Runs the driveLowTarget method after all previous are finished
-        else if (!m_lowDriveFinished) {
-            m_lowDriveFinished = driveLowTarget();
-            return false;
-        }
+        // else if (!m_lowDriveFinished) {
+        //     m_lowDriveFinished = driveLowTarget();
+        //     return false;
+        // }
         // Returns true after all are true
         else {
-            m_drivetrain.talonArcadeDrive(.17, 0, false);
+            m_drivetrain.talonArcadeDrive(.15, 0, false);
             return true;
         }
     }
@@ -252,21 +253,21 @@ public class Pathing {
         }
         else {
             // Increments the counter if we don't get data
-            m_lowDataCollectCounter++;
+            // m_lowDataCollectCounter++;
         }
-        if (!m_angleToCenter.isNaN()) {
+        // if (!m_angleToCenter.isNaN()) {
             // Rotates until the method says that its done
-            if (m_drivetrain.rotateDriveAngle(m_absoluteDegToTarget, 14)) {
+            if (m_drivetrain.driveToPositionAngle(24, m_absoluteDegToTarget, .35)) {
                 return true;
             }
             else {
                 return false;
             }
-        }
-        else {
-            m_drivetrain.talonArcadeDrive(0.0, 0, false);
-            return false;
-        }
+        // }
+        // else {
+        //     m_drivetrain.talonArcadeDrive(0.0, 0, false);
+        //     return false;
+        // }
     }
 
     /**

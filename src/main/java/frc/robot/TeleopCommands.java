@@ -38,8 +38,8 @@ public class TeleopCommands {
 
     Pathing m_pather;
     
-	Solenoid innerRingLight;
-	Solenoid outerRingLight;
+	// Solenoid innerRingLight;
+	// Solenoid outerRingLight;
 
     public TeleopCommands(Controller pilotController, GamePad copilotController, Drivetrain drivetrain, Elevator elevator, Climber frontClimber, DriveClimber backClimber, HatchMech hatchMech, ClimberPIDControl climberPID, Pathing pather) {
         m_controller = pilotController;
@@ -52,8 +52,8 @@ public class TeleopCommands {
         m_climberPID = climberPID;
         m_pather = pather;
 
-		innerRingLight = new Solenoid(20, 0);
-		outerRingLight = new Solenoid(20, 1);
+		// innerRingLight = new Solenoid(20, 0);
+		// outerRingLight = new Solenoid(20, 1);
 
         m_desiredElevatorState = State.LEVEL_ZERO;
     }
@@ -119,20 +119,20 @@ public class TeleopCommands {
             if (m_gamepad.getLowHatchCargo()) {
                 m_elevator.drivePID(State.HATCH_L1);
                 m_pather.secondHalfPath();    
-			    innerRingLight.set(true);
-			    outerRingLight.set(true);
+			    // innerRingLight.set(true);
+			    // outerRingLight.set(true);
             }
             else if (m_gamepad.getMediumHatchCargo()) {
                 m_elevator.drivePID(State.HATCH_L2);
                 m_pather.secondHalfPath();
-                innerRingLight.set(true);
-			    outerRingLight.set(true);
+                // innerRingLight.set(true);
+			    // outerRingLight.set(true);
             }
             else if (m_gamepad.getHighHatchCargo()) {
                 m_elevator.drivePID(State.HATCH_L3);
                 m_pather.secondHalfPath();
-                innerRingLight.set(true);
-			    outerRingLight.set(true);
+                // innerRingLight.set(true);
+			    // outerRingLight.set(true);
             }
             else if (m_gamepad.getLevelZero()) {
                 m_elevator.drivePID(State.HATCH_PICKUP);
@@ -148,8 +148,8 @@ public class TeleopCommands {
                 controlDrivetrain();
                 m_elevator.moveRaw(0.0);
                 m_pather.resetFlags();
-                innerRingLight.set(false);
-			    outerRingLight.set(false);
+                // innerRingLight.set(false);
+			    // outerRingLight.set(false);
             }
         }
     }
