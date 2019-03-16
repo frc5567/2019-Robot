@@ -21,6 +21,7 @@ import frc.robot.Elevator;
 import frc.robot.HatchMech;
 import frc.robot.AutoCommands;
 import frc.robot.TeleopCommands;
+import frc.robot.Elevator.State;
 import frc.robot.GamePad;
 import frc.robot.DriveClimber;
 /**
@@ -70,10 +71,22 @@ public class Robot extends TimedRobot {
 	// Declare PID control for the elevator
 	ClimberPIDControl climberPID;
 
-	// Solenoid innerRingLight;
-	// Solenoid outerRingLight;
+	Solenoid innerRingLight;
+	Solenoid outerRingLight;
 
 	int telemetryCounter;
+
+	// TODO: TEMP FLAGS REMOVE PLEASE
+	boolean backFlag = false;
+	boolean firstRotFlag = false;
+	boolean backFlagTwo = false;
+	boolean secondRotFlag = false;
+	boolean forwardFlag = false;
+	boolean leaveRocket = false;
+	boolean forwardFlag2 = false;
+	boolean forwardFlag3 = false;
+	boolean forwardFlag4 = false;
+	boolean hatchApproach = false;
 
 	Robot() {
 
@@ -121,8 +134,11 @@ public class Robot extends TimedRobot {
 		// Runs config for synced PID climbers
 		climberPID.climberPIDConfig();
 
-		m_autoCommands = new AutoCommands(m_drivetrain, m_gyro, m_elevator, m_frontClimber, m_backClimber, m_pather, m_teleopCommands);
+		m_autoCommands = new AutoCommands(m_drivetrain, m_gyro, m_elevator, m_frontClimber, m_backClimber, m_pather, m_teleopCommands, m_hatchMech);
 		m_teleopCommands = new TeleopCommands(m_controller, m_gamepad, m_drivetrain, m_elevator, m_frontClimber, m_backClimber, m_hatchMech, climberPID, m_pather);
+
+		innerRingLight = new Solenoid(20, 0);
+		outerRingLight = new Solenoid(20, 1);
 
 		// Sets up the camera and inits the camera server
 		// This needs the camera to be plugged in
@@ -145,6 +161,13 @@ public class Robot extends TimedRobot {
 	public void robotInit() {
 		m_drivetrain.talonDriveConfig();
 		m_hatchMech.openServo();
+		climberPID.climberPIDConfig();
+
+		// An attempt to force reset of position
+		climberPID.climberPIDConfig();
+
+		m_gyro.reset();
+		m_gyro.zeroYaw();
 	}
 
 	/**
@@ -205,6 +228,15 @@ public class Robot extends TimedRobot {
 	@Override
 	public void teleopPeriodic() {
 		m_teleopCommands.teleopModeCommands();
+		
+		// outerRingLight.set(true);
+		// innerRingLight.set(true);
+		// System.out.print(" Front Climber Enc Velocity: \t" + m_frontClimber.m_climberMotor.getSelectedSensorVelocity()); //getSelectedSensorVelocity());
+		// System.out.print(" Front Climber Enc Pos: \t"+ m_frontClimber.m_climberMotor.getSelectedSensorPosition());
+		// System.out.print(" Back Climber Enc Velocity: \t" + m_backClimber.m_climberMotor.getSelectedSensorVelocity(0)); //getSelectedSensorVelocity());
+		// System.out.println(" Back Climber Enc Pos: \t"+ m_backClimber.m_climberMotor.getSelectedSensorPosition(0));
+		System.out.print("Left Ultrasonics: \t" + m_drivetrain.getLeftUltra().getRangeInches());
+		System.out.println(" Right Ultrasonics: \t" + m_drivetrain.getRightUltra().getRangeInches());
 	}
 
 	/**
@@ -213,6 +245,8 @@ public class Robot extends TimedRobot {
 	@Override
 	public void testInit() {
 		telemetryCounter = 0;
+		m_gyro.reset();
+		m_gyro.zeroYaw();
 	}
 
 	/**
@@ -220,8 +254,62 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void testPeriodic() {
-		m_teleopCommands.teleopModeCommands();
-		
+		// m_teleopCommands.teleopModeCommands();
+		if (!backFlag) {
+			backFlag = m_drivetrain.driveToPositionAngle(-48, 0, .5);
+		}
+		// else if (!firstRotFlag) {
+		// 	firstRotFlag = m_drivetrain.rotateToAngle(-25);
+		// }
+		else if (!backFlagTwo) {
+			backFlagTwo = m_drivetrain.driveToPositionAngle(-185, -25, .9);
+		}
+		else if (!secondRotFlag) {
+			secondRotFlag = m_drivetrain.rotateToAngle(29);
+			m_hatchMech.armDown();
+			outerRingLight.set(true);
+			innerRingLight.set(true);
+		}
+		else if (!forwardFlag) {
+			m_hatchMech.setArm(0);
+			m_hatchMech.openServo();
+			forwardFlag = m_pather.secondHalfPath(6);
+			
+			if (m_drivetrain.ultraLeft.getRangeInches() < 40 && m_drivetrain.ultraRight.getRangeInches() < 40) {
+				m_elevator.drivePID(State.HATCH_L1);
+            }
+			 // m_drivetrain.driveToPositionAngle(24, 29, .35);
+		}
+		else if (!leaveRocket) {
+			leaveRocket = m_drivetrain.driveToPositionAngle(-36, 29, .9);
+			outerRingLight.set(false);
+			innerRingLight.set(false);
+		}
+		else if (!forwardFlag2) {
+			forwardFlag2 = m_drivetrain.driveToPositionAngle(130, 0, .9);
+		}
+		else if (!forwardFlag3) {
+			forwardFlag3 = m_drivetrain.driveToPositionAngle(48, 45, .5);
+		}
+		else if (!forwardFlag4) {
+			forwardFlag4 = m_drivetrain.driveToPositionAngle(60, 0, .75);
+			m_elevator.drivePID(State.HATCH_PICKUP);
+			m_pather.resetFlags();
+		}
+		else if (!hatchApproach) {
+			outerRingLight.set(true);
+			innerRingLight.set(true);
+			hatchApproach = m_pather.secondHalfPath(12);
+		}
+		// Not auton, drivestraight testing
+		// if (!backFlag) {
+		// 	backFlag = m_drivetrain.driveToPositionAngle(175, 25);
+		// }
+		else {
+			outerRingLight.set(false);
+			innerRingLight.set(false);
+			m_teleopCommands.teleopModeCommands();
+		}
 			// innerRingLight.set(true);
 			// outerRingLight.set(true);
 		
@@ -232,8 +320,9 @@ public class Robot extends TimedRobot {
 			}
 			
 			if (RobotMap.DRIVETRAIN_TELEMETRY) {
-				System.out.print("Drivetrain Enc Velocity: \t" + m_drivetrain.getLeftDriveEncoderVelocity() + "\t\t" + m_drivetrain.getRightDriveEncoderVelocity());
-				System.out.println(" Drivetrain Enc Pos: \t"+ m_drivetrain.getLeftDriveEncoderPosition() + "\t\t" + m_drivetrain.getRightDriveEncoderPosition());	
+				System.out.print("Gyro Yaw: \t" + m_gyro.getYaw());
+				System.out.print(" Drivetrain Enc Velocity: \t" + m_drivetrain.getLeftDriveEncoderVelocity() + "\t\t"  /*+ m_drivetrain.getRightDriveEncoderVelocity()*/);
+				System.out.println(" Drivetrain Enc Pos: \t"+ (6*RobotMap.PI) * (m_drivetrain.m_masterLeftMotor.getSelectedSensorPosition() / 4096) + "\t\t"/* + m_drivetrain.getRightDriveEncoderPosition()*/);	
 			}
 
 			if (RobotMap.ELEVATOR_TELEMETRY) {
