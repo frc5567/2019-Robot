@@ -41,8 +41,8 @@ public class ClimberPIDControl {
         m_driveClimber.m_climberMotor.setNeutralMode(NeutralMode.Brake);
 
 		// Configures sensor as quadrature encoder
-        m_frontClimber.m_climberMotor.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, RobotMap.PID_PRIMARY, RobotMap.TIMEOUT_MS);
-        
+		m_frontClimber.m_climberMotor.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, RobotMap.PID_PRIMARY, RobotMap.TIMEOUT_MS);
+		
         // Configures the remote sensor for the drive talon
         m_driveClimber.m_climberMotor.configRemoteFeedbackFilter(m_frontClimber.m_climberMotor.getDeviceID(), RemoteSensorSource.TalonSRX_SelectedSensor, RobotMap.REMOTE_0, RobotMap.TIMEOUT_MS);
 

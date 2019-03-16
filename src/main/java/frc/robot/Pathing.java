@@ -77,7 +77,7 @@ public class Pathing {
      * Super method for calling all of the helper methods in sequence that should path to target
      * @return Returns whether the method is finished (True if it is)
      */
-    public boolean pathToTarget() {
+    public boolean pathToTarget(int lastUltraDist) {
         // Runs the rotEndOfLine method
         if(!m_rotEndLineFinished) {
             m_rotEndLineFinished = rotEndOfLine();
@@ -100,7 +100,7 @@ public class Pathing {
         }
         // Runs the driveLowTarget method after all previous are finished
         else if (!m_lowDriveFinished) {
-            m_lowDriveFinished = driveLowTarget();
+            m_lowDriveFinished = driveLowTarget(lastUltraDist);
             return false;
         }
         // Returns true after all are true
@@ -110,7 +110,7 @@ public class Pathing {
         }
     }
 
-    public boolean secondHalfPath() {
+    public boolean secondHalfPath(int lastUltraDist) {
 
         if (!m_lowTargetFound) {
             m_lowTargetFound = checkForLowTarget();
@@ -118,15 +118,14 @@ public class Pathing {
         }
         // Runs the rotLowTarget method after all previous are finished and only if we see a target
         else if (!m_rotLowTargetFinished) {
-            System.out.println("Found target, driving");
             m_rotLowTargetFinished = rotLowTarget();
             return false;
         }
         // Runs the driveLowTarget method after all previous are finished
-        // else if (!m_lowDriveFinished) {
-        //     m_lowDriveFinished = driveLowTarget();
-        //     return false;
-        // }
+        else if (!m_lowDriveFinished) {
+            m_lowDriveFinished = driveLowTarget(lastUltraDist);
+            return false;
+        }
         // Returns true after all are true
         else {
             m_drivetrain.talonArcadeDrive(.15, 0, false);
@@ -243,12 +242,13 @@ public class Pathing {
             // If the target is a valid number, assigns necesary target variables
             if(!m_angleToCenter.isNaN()) {
                 m_startingDegrees = m_gyro.getYaw();
-                m_absoluteDegToTarget = m_startingDegrees - m_angleToCenter;
+                m_absoluteDegToTarget = m_startingDegrees - (m_angleToCenter);
                 
                 // Reset the counter
                 m_lowDataCollectCounter = 0;
-                
-                System.out.println("degToTarget: \t" + m_angleToCenter);
+                System.out.print("starting deg: \t " + m_startingDegrees);
+                System.out.print(" degToTarget: \t" + m_angleToCenter);
+                System.out.println("Target angle for gyro: \t" + m_absoluteDegToTarget);
             }
         }
         else {
@@ -257,6 +257,7 @@ public class Pathing {
         }
         // if (!m_angleToCenter.isNaN()) {
             // Rotates until the method says that its done
+            
             if (m_drivetrain.driveToPositionAngle(24, m_absoluteDegToTarget, .35)) {
                 return true;
             }
@@ -274,9 +275,9 @@ public class Pathing {
      * Method that drives to the low target
      * @return Returns whether the method is finished (True if it is)
      */
-    private boolean driveLowTarget() {
+    private boolean driveLowTarget(int distance) {
         // Drives forward until within certain distance of the wall
-        if(!m_drivetrain.driveToUltra(12)) {
+        if(!m_drivetrain.driveToUltra(distance)) {
             return false;
         }
         else {
