@@ -22,7 +22,7 @@ public class RobotMap {
     public static final Gains DRIVETRAIN_GAINS = new Gains(0.3, 0.0, 0.0, 0.0, 100, 1.0);
 
     // Elevator gains
-    public static final Gains ELEVATOR_GAINS = new Gains(0.3, 0.0, 0.0, 0.0, 100, 1.0);
+    public static final Gains ELEVATOR_GAINS = new Gains(0.7, 0.001, 0.0, 0.0, 2, 1.0);
 
 	// NavX angle offset
     public static final int ANGLE_OFFSET = 180;
@@ -124,15 +124,15 @@ public class RobotMap {
 
     // PID Controller
     // Rotate Controller
-    public static final double P_ROTATE_CONTROLLER = 0.01;
+    public static final double P_ROTATE_CONTROLLER = 0.02;
     public static final double I_ROTATE_CONTROLLER = 0.00;
     public static final double D_ROTATE_CONTROLLER = 0.00;
     public static final double F_ROTATE_CONTROLLER = 0.00;
     public static final double TOLERANCE_ROTATE_CONTROLLER = 5;
 
-    public static final double P_ROTATE_DRIVE_CONTROLLER = 0.05;
+    public static final double P_ROTATE_DRIVE_CONTROLLER = 0.04;
     public static final double I_ROTATE_DRIVE_CONTROLLER = 0.001;
-    public static final double D_ROTATE_DRIVE_CONTROLLER = 0.07;
+    public static final double D_ROTATE_DRIVE_CONTROLLER = 0.12;
     public static final double F_ROTATE_DRIVE_CONTROLLER = 0.00;
     public static final double TOLERANCE_ROTATE_DRIVE_CONTROLLER = 2;
 

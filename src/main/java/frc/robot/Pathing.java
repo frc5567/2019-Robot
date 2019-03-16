@@ -77,7 +77,7 @@ public class Pathing {
      * Super method for calling all of the helper methods in sequence that should path to target
      * @return Returns whether the method is finished (True if it is)
      */
-    public boolean pathToTarget() {
+    public boolean pathToTarget(int lastUltraDist) {
         // Runs the rotEndOfLine method
         if(!m_rotEndLineFinished) {
             m_rotEndLineFinished = rotEndOfLine();
@@ -100,7 +100,7 @@ public class Pathing {
         }
         // Runs the driveLowTarget method after all previous are finished
         else if (!m_lowDriveFinished) {
-            m_lowDriveFinished = driveLowTarget();
+            m_lowDriveFinished = driveLowTarget(lastUltraDist);
             return false;
         }
         // Returns true after all are true
@@ -110,7 +110,7 @@ public class Pathing {
         }
     }
 
-    public boolean secondHalfPath() {
+    public boolean secondHalfPath(int lastUltraDist) {
 
         if (!m_lowTargetFound) {
             m_lowTargetFound = checkForLowTarget();
@@ -123,10 +123,10 @@ public class Pathing {
             return false;
         }
         // Runs the driveLowTarget method after all previous are finished
-        // else if (!m_lowDriveFinished) {
-        //     m_lowDriveFinished = driveLowTarget();
-        //     return false;
-        // }
+        else if (!m_lowDriveFinished) {
+            m_lowDriveFinished = driveLowTarget(lastUltraDist);
+            return false;
+        }
         // Returns true after all are true
         else {
             m_drivetrain.talonArcadeDrive(.15, 0, false);
@@ -274,9 +274,9 @@ public class Pathing {
      * Method that drives to the low target
      * @return Returns whether the method is finished (True if it is)
      */
-    private boolean driveLowTarget() {
+    private boolean driveLowTarget(int distance) {
         // Drives forward until within certain distance of the wall
-        if(!m_drivetrain.driveToUltra(12)) {
+        if(!m_drivetrain.driveToUltra(distance)) {
             return false;
         }
         else {
