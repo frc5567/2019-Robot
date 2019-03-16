@@ -70,11 +70,17 @@ public class Robot extends TimedRobot {
 	// Declare PID control for the elevator
 	ClimberPIDControl climberPID;
 
-	// Declares the ringlights for the PixyCam. Declared as solenoids as we enable them via PCM.
-	// Solenoid innerRingLight;
-	// Solenoid outerRingLight;
+	Solenoid innerRingLight;
+	Solenoid outerRingLight;
 
 	int telemetryCounter;
+
+	// TODO: TEMP FLAGS REMOVE PLEASE
+	boolean backFlag = false;
+	boolean firstRotFlag = false;
+	boolean backFlagTwo = false;
+	boolean secondRotFlag = false;
+	boolean forwardFlag = false;
 
 	Robot() {
 
@@ -128,6 +134,9 @@ public class Robot extends TimedRobot {
 		m_autoCommands = new AutoCommands(m_drivetrain, m_gyro, m_elevator, m_frontClimber, m_backClimber, m_pather, m_teleopCommands);
 		m_teleopCommands = new TeleopCommands(m_controller, m_gamepad, m_drivetrain, m_elevator, m_frontClimber, m_backClimber, m_hatchMech, climberPID, m_pather);
 
+		innerRingLight = new Solenoid(20, 0);
+		outerRingLight = new Solenoid(20, 1);
+
 		// Sets up the camera and inits the camera server
 		// This needs the camera to be plugged in
 		try {
@@ -149,6 +158,8 @@ public class Robot extends TimedRobot {
 	public void robotInit() {
 		m_drivetrain.talonDriveConfig();
 		m_hatchMech.openServo();
+		m_gyro.reset();
+		m_gyro.zeroYaw();
 	}
 
 	/**
@@ -217,6 +228,8 @@ public class Robot extends TimedRobot {
 	@Override
 	public void testInit() {
 		telemetryCounter = 0;
+		m_gyro.reset();
+		m_gyro.zeroYaw();
 	}
 
 	/**
@@ -224,8 +237,38 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void testPeriodic() {
-		m_teleopCommands.teleopModeCommands();
-		
+		// m_teleopCommands.teleopModeCommands();
+		if (!backFlag) {
+			backFlag = m_drivetrain.driveToPositionAngle(-48, 0, .35);
+		}
+		else if (!firstRotFlag) {
+			firstRotFlag = m_drivetrain.rotateToAngle(-25);
+		}
+		else if (!backFlagTwo) {
+			backFlagTwo = m_drivetrain.driveToPositionAngle(-178, -25, .75);
+		}
+		else if (!secondRotFlag) {
+			secondRotFlag = m_drivetrain.rotateToAngle(29);
+			outerRingLight.set(true);
+			innerRingLight.set(true);
+		}
+		else if (!forwardFlag) {
+			forwardFlag = m_pather.secondHalfPath();
+			
+            if (m_drivetrain.ultraLeft.getRangeInches() < 8 && m_drivetrain.ultraRight.getRangeInches() < 8) {
+				m_hatchMech.openServo();
+            }
+			 // m_drivetrain.driveToPositionAngle(24, 29, .35);
+		}
+		// Not auton, drivestraight testing
+		// if (!backFlag) {
+		// 	backFlag = m_drivetrain.driveToPositionAngle(175, 25);
+		// }
+		else {
+			m_teleopCommands.teleopModeCommands();
+			outerRingLight.set(false);
+			innerRingLight.set(false);
+		}
 			// innerRingLight.set(true);
 			// outerRingLight.set(true);
 		
@@ -239,8 +282,9 @@ public class Robot extends TimedRobot {
 			
 			// If constant is set to tru,e prints telemetry for the drivetrain encoders
 			if (RobotMap.DRIVETRAIN_TELEMETRY) {
-				System.out.print("Drivetrain Enc Velocity: \t" + m_drivetrain.getLeftDriveEncoderVelocity() + "\t\t" + m_drivetrain.getRightDriveEncoderVelocity());
-				System.out.println(" Drivetrain Enc Pos: \t"+ m_drivetrain.getLeftDriveEncoderPosition() + "\t\t" + m_drivetrain.getRightDriveEncoderPosition());	
+				System.out.print("Gyro Yaw: \t" + m_gyro.getYaw());
+				System.out.print(" Drivetrain Enc Velocity: \t" + m_drivetrain.getLeftDriveEncoderVelocity() + "\t\t"  /*+ m_drivetrain.getRightDriveEncoderVelocity()*/);
+				System.out.println(" Drivetrain Enc Pos: \t"+ (6*RobotMap.PI) * (m_drivetrain.m_masterLeftMotor.getSelectedSensorPosition() / 4096) + "\t\t"/* + m_drivetrain.getRightDriveEncoderPosition()*/);	
 			}
 
 			// If constant is set to true, prints telemetry for the elevator encoders

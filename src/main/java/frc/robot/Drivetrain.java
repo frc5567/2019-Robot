@@ -36,6 +36,8 @@ public class Drivetrain implements PIDOutput {
     // Declares turn control PID
     PIDController m_rotController;
 
+    PIDController m_rotDriveController;
+
     // Delcares a flag for checking if this is the first time entering this method in a given run
     boolean m_firstCall;
 
@@ -61,8 +63,8 @@ public class Drivetrain implements PIDOutput {
     private DifferentialDrive m_drivetrain;
 
     // Declaration for ultrasonics
-    private Ultrasonic ultraLeft;
-    private Ultrasonic ultraRight;
+    public Ultrasonic ultraLeft;
+    public Ultrasonic ultraRight;
 
     // Declaration for tic tracking for drive to position
     private double m_leftInitTics;
@@ -124,11 +126,20 @@ public class Drivetrain implements PIDOutput {
         // Initializes rotate PID controller with the PIDF constants, the ahrs, the PID output, and the loop time (s)
         m_rotController = new PIDController(RobotMap.P_ROTATE_CONTROLLER, RobotMap.I_ROTATE_CONTROLLER, RobotMap.D_ROTATE_CONTROLLER, RobotMap.F_ROTATE_CONTROLLER, m_gyro, this, RobotMap.PID_LOOP_TIME_S);
         m_rotController.setInputRange(-RobotMap.PID_INPUT_RANGE, RobotMap.PID_INPUT_RANGE);
+
+        m_rotDriveController = new PIDController(RobotMap.P_ROTATE_DRIVE_CONTROLLER, RobotMap.I_ROTATE_DRIVE_CONTROLLER, RobotMap.D_ROTATE_DRIVE_CONTROLLER, RobotMap.F_ROTATE_DRIVE_CONTROLLER, m_gyro, this, RobotMap.PID_LOOP_TIME_S);
+        m_rotDriveController.setInputRange(-RobotMap.PID_INPUT_RANGE, RobotMap.PID_INPUT_RANGE);
+        
         // These values are temporary and need to be changed based on testing
         m_rotController.setOutputRange(-RobotMap.PID_OUTPUT_RANGE, RobotMap.PID_OUTPUT_RANGE);
         m_rotController.setAbsoluteTolerance(RobotMap.TOLERANCE_ROTATE_CONTROLLER);
         m_rotController.setContinuous();
         m_rotController.disable();
+
+        m_rotDriveController.setOutputRange(-RobotMap.PID_OUTPUT_RANGE, RobotMap.PID_OUTPUT_RANGE);
+        m_rotDriveController.setAbsoluteTolerance(RobotMap.TOLERANCE_ROTATE_CONTROLLER);
+        m_rotDriveController.setContinuous();
+        m_rotDriveController.disable();
 
         m_counter = 0;
 
@@ -248,7 +259,7 @@ public class Drivetrain implements PIDOutput {
         else if ((returnedRotate < RobotMap.FINISHED_PID_THRESHOLD) && (returnedRotate > -RobotMap.FINISHED_PID_THRESHOLD)) {
             m_counter++;
         }
-        
+
         if (isFinished) {
             m_counter = 0;
         }
@@ -262,27 +273,27 @@ public class Drivetrain implements PIDOutput {
 
         if (m_firstCall) {
             // Resets the error
-            m_rotController.reset();
+            m_rotDriveController.reset();
 
             // Enables the PID
-            m_rotController.enable();
+            m_rotDriveController.enable();
             // Prevents us from repeating the reset until we run the method again seperately
             m_firstCall = false;
         }
 
-        if (m_rotController.getSetpoint() != targetAngle) {
+        if (m_rotDriveController.getSetpoint() != targetAngle) {
             // Resets the error
-            m_rotController.reset();
+            m_rotDriveController.reset();
 
             // Enables the PID
-            m_rotController.enable();
+            m_rotDriveController.enable();
 
             // Sets the target to our target angle
-            m_rotController.setSetpoint(targetAngle);
+            m_rotDriveController.setSetpoint(targetAngle);
         }        
 
         // Sets our rotate speed to the return of the PID
-        double returnedRotate = m_rotController.get();
+        double returnedRotate = m_rotDriveController.get();
 
         System.out.println("Returned Rotate: \t" + returnedRotate);
 
@@ -495,6 +506,10 @@ public class Drivetrain implements PIDOutput {
         // Sets profile slot for PID
         m_masterRightMotor.selectProfileSlot(0, RobotMap.PID_PRIMARY);
         m_masterRightMotor.selectProfileSlot(1, RobotMap.PID_TURN);
+
+        m_masterLeftMotor.setSelectedSensorPosition(0);
+        m_masterRightMotor.setSelectedSensorPosition(0, 0, RobotMap.TIMEOUT_MS);
+        m_masterRightMotor.setSelectedSensorPosition(0, 1, RobotMap.TIMEOUT_MS);
     }
 
     /**
@@ -578,6 +593,60 @@ public class Drivetrain implements PIDOutput {
             }
             else {
                 return false;
+            }
+        }
+    }
+
+    public boolean driveToPositionAngle(double distToTarget, double targetAngle, double speed) {
+        // If the return value is valid, run needed calculation
+       double absSpeed = Math.abs(speed);
+        if (m_firstCallTest) {
+            m_ticsToTarget = inToTics(distToTarget);
+            m_leftInitTics = getLeftDriveEncoderPosition();
+            m_rightInitTics = getRightDriveEncoderPosition();
+            m_leftTargetTics = m_leftInitTics - m_ticsToTarget;
+            m_rightTargetTics = m_rightInitTics - m_ticsToTarget;
+            
+            // Resets the error
+            m_rotDriveController.reset();
+
+            // Enables the PID
+            m_rotDriveController.enable();
+            
+            // Sets the target to our target angle
+            m_rotDriveController.setSetpoint(targetAngle);
+            m_firstCallTest = false;
+            return false;
+        }
+        else {
+            // Sets our rotate speed to the return of the PID
+            double returnedRotate = m_rotDriveController.get();
+
+            if (m_leftTargetTics <= m_leftInitTics) {
+                // Drives straight if we have not reached our target
+                if (m_leftTargetTics < getLeftDriveEncoderPosition()/* && m_rightTargetTics < getLeftDriveEncoderPosition() */) {
+                    talonArcadeDrive(absSpeed, returnedRotate, false);
+                    return false;
+                }
+                else {
+                    // Stops the arcade drive otherwise
+                    m_firstCallTest = true;
+                    talonArcadeDrive(0, 0, false);
+                    return true;
+                }
+            }
+            else {
+                // Drives straight if we have not reached our target
+                if (m_leftTargetTics > getLeftDriveEncoderPosition()/* && m_rightTargetTics > getLeftDriveEncoderPosition() */) {
+                    talonArcadeDrive(-absSpeed, returnedRotate, false);
+                    return false;
+                }
+                else {
+                    // Stops the arcade drive otherwise
+                    m_firstCallTest = true;
+                    talonArcadeDrive(0, 0, false);
+                    return true;
+                }
             }
         }
     }
