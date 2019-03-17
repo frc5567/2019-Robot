@@ -207,7 +207,7 @@ public class Elevator {
 	 * @return The elevator's current height
 	 */
 	public double getPosition(){
-		double positionInches = (m_encoder.getQuadraturePosition() * (RobotMap.DRUM_CIRCUMFERENCE / RobotMap.TICKS_PER_REVOLUTION));
+		double positionInches = (m_motor.getSelectedSensorPosition() * (RobotMap.DRUM_CIRCUMFERENCE / RobotMap.TICKS_PER_REVOLUTION));
 		//position = RobotMap.DRUM_CIRCUMFERENCE * numRevolutions;
 		currentState = getState(positionInches);
 		return positionInches;

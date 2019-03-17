@@ -1,6 +1,7 @@
 package frc.robot;
 
 import frc.robot.Elevator.State;
+import edu.wpi.first.wpilibj.Solenoid;
 
 /**
  * This class is to be able to command the robot via autonomous and auto assist
@@ -29,7 +30,10 @@ public class AutoCommands {
     boolean partTwoAssist;
     boolean partThreeAssist;
 
-    public AutoCommands(Drivetrain drivetrain, NavX ahrs, Elevator elevator, Climber frontClimber, Climber backClimber, Pathing pathing, TeleopCommands teleopCommands, HatchMech hatchMech) {
+    Solenoid outerRingLight;
+    Solenoid innerRingLight;
+
+    public AutoCommands(Drivetrain drivetrain, NavX ahrs, Elevator elevator, Climber frontClimber, Climber backClimber, Pathing pathing, TeleopCommands teleopCommands, HatchMech hatchMech, Solenoid outerLight, Solenoid innerLight) {
         m_drivetrain = drivetrain;
         m_gyro = ahrs;
         m_elevator = elevator;
@@ -38,6 +42,8 @@ public class AutoCommands {
         m_pathing = pathing;
         m_teleopCommands = teleopCommands;
         m_hatchMech = hatchMech;
+        outerRingLight = outerLight;
+        innerRingLight = innerLight;
 
         stage1 = false;
         stage2 = false;
@@ -63,20 +69,30 @@ public class AutoCommands {
         }
     }
 
-    public void driverAssist() {
+    public void pickupAssist() {
         if (!partOneAssist) {
+		    outerRingLight.set(true);
+		    innerRingLight.set(true);
+            m_hatchMech.openServo();
             m_elevator.drivePID(State.HATCH_PICKUP);
             partOneAssist = m_pathing.secondHalfPath(12);
         }
         else if (!partTwoAssist) {
-            partTwoAssist = (m_elevator.getPosition() == State.HATCH_PICKUP_2.getDeltaHeight());
+            m_hatchMech.closeServo();
             m_elevator.drivePID(State.HATCH_PICKUP_2);
+            partTwoAssist = ((m_elevator.m_motor.getSelectedSensorVelocity() < 10) && (m_elevator.getPosition() > (State.HATCH_L1.getDeltaHeight() + 1)));
+            outerRingLight.set(false);
+            innerRingLight.set(false);
         }
         else if (!partThreeAssist) {
-            m_hatchMech.closeServo();
-            m_drivetrain.driveToPositionAngle(-20, 0, 0.5);
+            m_elevator.moveRaw(0);
+            // m_hatchMech.armUp();
+            m_drivetrain.driveToPositionAngle(-20, 0, 0.2);
         }
-
+        else {
+            // m_hatchMech.setArm(0);
+            m_drivetrain.talonArcadeDrive(0, 0, false);
+        }
     }
 
     public void resetFlags() {

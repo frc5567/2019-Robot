@@ -37,11 +37,12 @@ public class TeleopCommands {
     State m_desiredElevatorState;
 
     Pathing m_pather;
-    
+
+    AutoCommands m_autoCommands;
 	// Solenoid innerRingLight;
 	// Solenoid outerRingLight;
 
-    public TeleopCommands(Controller pilotController, GamePad copilotController, Drivetrain drivetrain, Elevator elevator, Climber frontClimber, DriveClimber backClimber, HatchMech hatchMech, ClimberPIDControl climberPID, Pathing pather) {
+    public TeleopCommands(Controller pilotController, GamePad copilotController, Drivetrain drivetrain, Elevator elevator, Climber frontClimber, DriveClimber backClimber, HatchMech hatchMech, ClimberPIDControl climberPID, Pathing pather, AutoCommands autoCommands) {
         m_controller = pilotController;
         m_gamepad = copilotController;
         m_drivetrain = drivetrain;
@@ -51,6 +52,7 @@ public class TeleopCommands {
         m_hatchMech = hatchMech;
         m_climberPID = climberPID;
         m_pather = pather;
+        m_autoCommands = autoCommands;
 
 		// innerRingLight = new Solenoid(20, 0);
 		// outerRingLight = new Solenoid(20, 1);
@@ -65,14 +67,22 @@ public class TeleopCommands {
      */
     public void teleopModeCommands() {
         if (m_controller.getBackButton()) {
-            
+            m_autoCommands.pickupAssist();
         }
-        if (m_gamepad.isManual()) {
-            controlDrivetrain();
+        else if (m_controller.getBackButtonReleased()) {
+            m_autoCommands.outerRingLight.set(false);
+            m_autoCommands.innerRingLight.set(false);
         }
-        controlElevator();
-        controlHatchMech();
-        controlClimbers();
+        else {
+            m_autoCommands.resetFlags();
+            m_pather.resetFlags();
+            if (m_gamepad.isManual()) {
+                controlDrivetrain();
+            }
+            controlElevator();
+            controlHatchMech();
+            controlClimbers();
+        }
     }
 
     /**
