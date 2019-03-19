@@ -31,7 +31,7 @@ public class RobotMap {
     // Encoder ticks / revolution
     public static final int TICKS_PER_REVOLUTION = 4096;
     // Controller deadbands
-    public static final double CONTROLLER_STICK_DEADBAND = 0.1;
+    public static final double CONTROLLER_STICK_DEADBAND = 0.15;
     public static final double CONTROLLER_TRIGGER_DEADBAND = 0.1;
     // Elevator drum measurements
     public static final double DRUM_CIRCUMFERENCE = 8.1875;

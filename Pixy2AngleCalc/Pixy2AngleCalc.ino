@@ -132,6 +132,8 @@ const char GET_AVG_AREA = '5';
 int callCounter = 0;
 boolean callToggle = false;
 
+boolean badFlag = false;
+
 //  This is the return for the position according to the lowPixy, where 1 is left, 2 is center, and 3 is right. -1 is no blocks
 int lowPosition = -1;
 
@@ -156,6 +158,16 @@ double degToRad(double degInput)
 
 void calcDistToCenterLow()
 {
+  if (lowPixy.ccc.blocks[0].m_x == 0){
+    badFlag = true;
+  }
+  else if (lowPixy.ccc.blocks[1].m_x) {
+    badFlag = true;
+  }
+  else {
+    badFlag = false;
+  }
+  
 	if (lowPixy.ccc.blocks[0].m_x < lowPixy.ccc.blocks[1].m_x)
 	{
 		leftX = lowPixy.ccc.blocks[0].m_x;
