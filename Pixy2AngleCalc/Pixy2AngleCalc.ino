@@ -56,7 +56,7 @@ int centerPoint;
 const int absoluteCenter = 158;
 
 // Degrees per x pixel, used to convert 'distance to center' to 'angle to center'
-const double xPixToDeg = 0.189873;
+const double xPixToDeg = 60.0/316.0;
 
 // The center adjusted based on compared area
 int adjAbsCenter;
@@ -132,6 +132,8 @@ const char GET_AVG_AREA = '5';
 int callCounter = 0;
 boolean callToggle = false;
 
+boolean badFlag = false;
+
 //  This is the return for the position according to the lowPixy, where 1 is left, 2 is center, and 3 is right. -1 is no blocks
 int lowPosition = -1;
 
@@ -156,6 +158,16 @@ double degToRad(double degInput)
 
 void calcDistToCenterLow()
 {
+  if (lowPixy.ccc.blocks[0].m_x == 0){
+    badFlag = true;
+  }
+  else if (lowPixy.ccc.blocks[1].m_x) {
+    badFlag = true;
+  }
+  else {
+    badFlag = false;
+  }
+  
 	if (lowPixy.ccc.blocks[0].m_x < lowPixy.ccc.blocks[1].m_x)
 	{
 		leftX = lowPixy.ccc.blocks[0].m_x;
@@ -230,13 +242,67 @@ void calcDistToCenterLow()
 	{
 		adjAbsCenter = absoluteCenter;
 	}
+  arrL[2] = arrL[1];
+  arrL[1] = arrL[0];
+  arrL[0] = aL;
+  int iL;
+  float lSum = 0;
+  for(iL = 0; iL < 3; iL++) {
+    lSum += arrL[iL];
+  }
+  avgL = lSum / 3;
+  
+  arrR[2] = arrR[1];
+  arrR[1] = arrR[0];
+  arrR[0] = aR;
+  int iR;
+  float rSum = 0;
+  for(iR = 0; iR < 3; iR++) {
+    rSum += arrR[iR];
+  }
+  avgR = rSum / 3;
+  
+  dA = ( 1 - ( avgR / avgL ) );
 
-	xLOne = leftX - (leftWidth / 2);
-	xROne = rightX + (leftWidth / 2);
-	xLTwo = leftX - (rightWidth / 2);
-	xRTwo = rightX + (rightWidth / 2);
+//  if ((abs(dA)) > maxDa)
+//  {
+////	if (abs(dA) >= 1.0) 
+////    {
+////      if (dA > 0)
+////      {
+////        dA = .9;
+////      }
+////      else {
+////        dA = -.9;
+////      }
+////    }
+//    if (!callToggle) 
+//    {
+//      if ( ((avgR + avgL) / 2) < 2000 )
+//      {
+//        adjAbsCenter = (int)(10 * dA) + absoluteCenter;
+//      }
+//      else
+//      {
+//        adjAbsCenter = (int)(5 * dA) + absoluteCenter;
+//      }
+//    }
+//    else 
+//    {
+//      adjAbsCenter = absoluteCenter;  
+//    }
+//  }
+//  else
+//  {
+    adjAbsCenter = absoluteCenter;
+//  }
+
+	xLOne = leftX + (leftWidth / 2);
+	xROne = rightX + (rightWidth / 2);
+	xLTwo = leftX - (leftWidth / 2);
+	xRTwo = rightX - (rightWidth / 2);
 	centerPoint = ((xLTwo - xROne) / 2) + xROne;
-	distToCenter = adjAbsCenter - centerPoint;
+	distToCenter = absoluteCenter - centerPoint;
 	angleToCenter = distToCenter * xPixToDeg;
 }
 

@@ -39,6 +39,9 @@ public class Robot extends TimedRobot {
 	// Declare Pilot XBox Controller
 	Controller m_controller;
 
+	// Declare test controller, not for comp
+	Controller m_testController;
+
 	// Declare Copilot Gamepad
 	GamePad m_gamepad;
 
@@ -93,6 +96,8 @@ public class Robot extends TimedRobot {
 		// Instanciates drivetrain, driver controllers, climbers, and elevator
 		m_controller = new Controller(RobotMap.PILOT_CONTROLLER_PORT);
 
+		m_testController = new Controller(2);
+
 		m_elevator = new Elevator();
 		
 		m_gamepad = new GamePad(RobotMap.COPILOT_CONTROLLER_PORT);
@@ -136,11 +141,8 @@ public class Robot extends TimedRobot {
 		// Runs config for synced PID climbers
 		climberPID.climberPIDConfig();
 
-		// Instanciates teleop and auto Command classes with the robot's subsystems passed in
-		m_autoCommands = new AutoCommands(m_drivetrain, m_gyro, m_elevator, m_frontClimber, m_backClimber, m_pather, m_teleopCommands, m_hatchMech, outerRingLight, innerRingLight);
-		m_teleopCommands = new TeleopCommands(m_controller, m_gamepad, m_drivetrain, m_elevator, m_frontClimber, m_backClimber, m_hatchMech, climberPID, m_pather);
-
-		innerRingLight = new Solenoid(20, 0);
+		// For comp, this needs to be 0,1 not 2,1
+		innerRingLight = new Solenoid(20, 2);
 		outerRingLight = new Solenoid(20, 1);
 
 		m_autoCommands = new AutoCommands(m_drivetrain, m_gyro, m_elevator, m_frontClimber, m_backClimber, m_pather, m_teleopCommands, m_hatchMech, outerRingLight, innerRingLight);
@@ -155,8 +157,6 @@ public class Robot extends TimedRobot {
 		} catch (Exception e) {
 			System.out.println("Camera failed to instantiate");
 		}
-
-		
 	}
 
 	/**
@@ -233,8 +233,21 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
-		m_teleopCommands.teleopModeCommands();
-		// System.out.println("Drivetrain enc value: \t" + m_drivetrain.getLeftDriveEncoderPosition());
+		if (m_testController.getAButton()) {
+			m_drivetrain.rotateToAngle(30);
+		}
+		else if (m_testController.getBButton()) {
+			m_drivetrain.rotateToAngle(15);
+		}
+		else if (m_testController.getXButton()) {
+			m_drivetrain.rotateToAngle(5);
+		}
+		else {
+			m_teleopCommands.teleopModeCommands();
+		}
+		System.out.println("Current Heading:\t" + m_gyro.getYaw() + "\tTarget Heading:\t" + m_drivetrain.m_rotController.getSetpoint());
+		outerRingLight.set(true);
+		innerRingLight.set(true);
 		// System.out.print(" Front Climber Enc Velocity: \t" + m_frontClimber.m_climberMotor.getSelectedSensorVelocity()); //getSelectedSensorVelocity());
 		// System.out.print(" Front Climber Enc Pos: \t"+ m_frontClimber.m_climberMotor.getSelectedSensorPosition());
 		// System.out.print(" Back Climber Enc Velocity: \t" + m_backClimber.m_climberMotor.getSelectedSensorVelocity(0)); //getSelectedSensorVelocity());
