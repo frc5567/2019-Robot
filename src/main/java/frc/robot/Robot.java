@@ -12,6 +12,8 @@ import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import frc.robot.Drivetrain;
 import frc.robot.Controller;
@@ -63,6 +65,9 @@ public class Robot extends TimedRobot {
 	// Declare Dashboard and Dashboard data bus
 	DashboardData m_dataStream;
 	CustomDashboard m_roboDash;
+	
+	SendableChooser<String> m_autoChooser;
+	private String m_autoSelected;
 
 	// Declaring the USB Camera
 	UsbCamera camera;
@@ -148,6 +153,9 @@ public class Robot extends TimedRobot {
 		m_autoCommands = new AutoCommands(m_drivetrain, m_gyro, m_elevator, m_frontClimber, m_backClimber, m_pather, m_teleopCommands, m_hatchMech, outerRingLight, innerRingLight);
 		m_teleopCommands = new TeleopCommands(m_controller, m_gamepad, m_drivetrain, m_elevator, m_frontClimber, m_backClimber, m_hatchMech, climberPID, m_pather, m_autoCommands);
 
+		// Instantiates the SendableChooser used for setting auton mode
+		m_autoChooser = new SendableChooser<>();
+
 		// Sets up the camera and inits the camera server
 		// This needs the camera to be plugged in
 		try {
@@ -174,6 +182,12 @@ public class Robot extends TimedRobot {
 
 		m_gyro.reset();
 		m_gyro.zeroYaw();
+
+		// Setting up SendableChooser options used in auton.
+		m_autoChooser.setDefaultOption("Teleop / Manual", RobotMap.TELEOP);
+		m_autoChooser.addOption("Right Auton", RobotMap.RIGHT_AUTO);
+		m_autoChooser.addOption("Left Auton", RobotMap.LEFT_AUTO);
+		SmartDashboard.putData("Auto Choices", m_autoChooser);
 	}
 
 	/**
@@ -207,6 +221,9 @@ public class Robot extends TimedRobot {
 		if (m_pather != null) {
 			m_pather.resetFlags();
 		}
+
+		// Getting the selected auton
+		m_autoSelected = m_autoChooser.getSelected();
 	}
 
 	/**
@@ -214,7 +231,18 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void autonomousPeriodic() {
-		m_teleopCommands.teleopModeCommands();
+		switch (m_autoSelected) {
+			case RobotMap.TELEOP:
+				m_teleopCommands.teleopModeCommands();
+				break;
+			case RobotMap.RIGHT_AUTO:
+				// Right auton code goes here
+				break;
+			case RobotMap.LEFT_AUTO:
+				// Left auton code goes here
+				break;
+
+		}
 	}
 
 	/**
@@ -243,8 +271,14 @@ public class Robot extends TimedRobot {
 			m_drivetrain.rotateToAngle(5);
 		}
 		else {
-			m_teleopCommands.teleopModeCommands();
+			m_drivetrain.talonArcadeDrive(0, 0, false);
+			//m_teleopCommands.teleopModeCommands();
 		}
+
+		if (m_testController.getAButtonReleased() || m_testController.getBButtonReleased() || m_testController.getXButtonReleased()) {
+			m_drivetrain.m_rotController.reset();
+		}
+		
 		System.out.println("Current Heading:\t" + m_gyro.getYaw() + "\tTarget Heading:\t" + m_drivetrain.m_rotController.getSetpoint());
 		outerRingLight.set(true);
 		innerRingLight.set(true);

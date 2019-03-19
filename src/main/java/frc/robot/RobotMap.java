@@ -19,6 +19,11 @@ public class RobotMap {
     public static final boolean CLIMBER_TELEMETRY = false;
     public static final int SAMPLE_RATE = 50;
 
+    //Auton SendableChooser constants
+    public static final String LEFT_AUTO = "Left Auton";
+    public static final String RIGHT_AUTO = "Right Auton";
+    public static final String TELEOP = "Teleop / Manual";
+
     // Climber gains
     public static final Gains CLIMBER_GAINS = new Gains(0.3, 0.0, 0.0, 0.0, 100, 1.0);
 
@@ -128,11 +133,11 @@ public class RobotMap {
 
     // PID Controller
     // Rotate Controller
-    public static final double P_ROTATE_CONTROLLER = 0.017;
-    public static final double I_ROTATE_CONTROLLER = 0.00;
-    public static final double D_ROTATE_CONTROLLER = 0.00;
+    public static final double P_ROTATE_CONTROLLER = 0.03;
+    public static final double I_ROTATE_CONTROLLER = 0.0002;
+    public static final double D_ROTATE_CONTROLLER = 0.07;
     public static final double F_ROTATE_CONTROLLER = 0.00;
-    public static final double TOLERANCE_ROTATE_CONTROLLER = 3;
+    public static final double TOLERANCE_ROTATE_CONTROLLER = .5;
 
     public static final double P_ROTATE_DRIVE_CONTROLLER = 0.04;
     public static final double I_ROTATE_DRIVE_CONTROLLER = 0.001;
