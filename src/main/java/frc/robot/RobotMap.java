@@ -10,7 +10,7 @@ public class RobotMap {
 
     // Debug telmetry enable / disable constants
     public static final boolean ULTRASONIC_TELEMETRY = false;
-    public static final boolean DRIVETRAIN_TELEMETRY = true;
+    public static final boolean DRIVETRAIN_TELEMETRY = false;
     public static final boolean ELEVATOR_TELEMETRY = false;
     public static final boolean CLIMBER_TELEMETRY = false;
     public static final int SAMPLE_RATE = 50;
@@ -124,11 +124,11 @@ public class RobotMap {
 
     // PID Controller
     // Rotate Controller
-    public static final double P_ROTATE_CONTROLLER = 0.02;
+    public static final double P_ROTATE_CONTROLLER = 0.017;
     public static final double I_ROTATE_CONTROLLER = 0.00;
     public static final double D_ROTATE_CONTROLLER = 0.00;
     public static final double F_ROTATE_CONTROLLER = 0.00;
-    public static final double TOLERANCE_ROTATE_CONTROLLER = 5;
+    public static final double TOLERANCE_ROTATE_CONTROLLER = 3;
 
     public static final double P_ROTATE_DRIVE_CONTROLLER = 0.04;
     public static final double I_ROTATE_DRIVE_CONTROLLER = 0.001;
