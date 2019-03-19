@@ -28,6 +28,7 @@ public class Pathing {
     private boolean breakFlag = true;
     private boolean lowAutoBreak = true;
     private boolean foundFlag = false;
+    private boolean gyroSetpointReset = false;
 
     private int cycleCounter = 5;
 
@@ -70,6 +71,14 @@ public class Pathing {
     }
 
     public boolean secondHalfPath(int lastUltraDist) {
+
+        
+        if(Math.abs(m_absoluteDegToTarget - m_gyro.getYaw()) > RobotMap.STRAIGHT_ANGLE_THRESHOLD) {
+            m_rotLowTargetFinished = false;
+            foundFlag = false;
+            m_lowDataCollectCounter  = 15;
+            gyroSetpointReset = false;
+        }
 
         if (!m_lowTargetFound) {
             m_lowTargetFound = checkForLowTarget();
@@ -171,23 +180,15 @@ public class Pathing {
      * @return Returns whether the method is finished (True if it is)
      */
     private boolean driveLowTarget(int distance) {
-        // Drives forward until within certain distance of the wall
-        if (cycleCounter >= 5) {
-            m_angleToCenter = m_duinoToRio.getAngleToCenter();
 
             // If the target is a valid number, assigns necesary target variables
-            if(!m_angleToCenter.isNaN()) {
+            if(!gyroSetpointReset) {
                 m_startingDegrees = m_gyro.getYaw();
                 m_absoluteDegToTarget = m_startingDegrees - (m_angleToCenter);
                 
-                // Reset the counter
-                cycleCounter = 0;
-                foundFlag = true;
+                foundFlag = true; //Does not seemed to be used, delete if this the case
+                gyroSetpointReset = true;
             }
-        }
-        else {
-            cycleCounter++;
-        }
         m_drivetrain.driveToPositionAngle(100, m_absoluteDegToTarget, .2);
         if(m_drivetrain.getLeftUltra().getRangeInches() < distance || m_drivetrain.getRightUltra().getRangeInches() < distance) {
             m_drivetrain.m_firstCallTest = true;

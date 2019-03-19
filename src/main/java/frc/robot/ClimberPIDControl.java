@@ -21,6 +21,11 @@ public class ClimberPIDControl {
     Climber m_frontClimber;
     DriveClimber m_driveClimber;
 
+	/**
+	 * Constructor for the PID Control Configuration class for the climbing motor PIDs
+	 * @param frontClimber The front climber instance
+	 * @param backClimber The back climber instance
+	 */
     public ClimberPIDControl(Climber frontClimber, DriveClimber backClimber) {
         m_frontClimber = frontClimber;
         m_driveClimber = backClimber;
@@ -41,26 +46,30 @@ public class ClimberPIDControl {
         // Configures the remote sensor for the drive talon
         m_driveClimber.m_climberMotor.configRemoteFeedbackFilter(m_frontClimber.m_climberMotor.getDeviceID(), RemoteSensorSource.TalonSRX_SelectedSensor, RobotMap.REMOTE_0, RobotMap.TIMEOUT_MS);
 
+		// Adds the encoder values together and takes the average of them.
         m_driveClimber.m_climberMotor.configSensorTerm(SensorTerm.Sum0, FeedbackDevice.RemoteSensor0, RobotMap.TIMEOUT_MS);				// Feedback Device of Remote Talon
 		m_driveClimber.m_climberMotor.configSensorTerm(SensorTerm.Sum1, FeedbackDevice.CTRE_MagEncoder_Relative, RobotMap.TIMEOUT_MS);	// Quadrature Encoder of current Talon
-
         m_driveClimber.m_climberMotor.configSensorTerm(SensorTerm.Diff1, FeedbackDevice.RemoteSensor0, RobotMap.TIMEOUT_MS);
 		m_driveClimber.m_climberMotor.configSensorTerm(SensorTerm.Diff0, FeedbackDevice.CTRE_MagEncoder_Relative, RobotMap.TIMEOUT_MS);
-        
+		
+		// Sets the encoder the primary climber PID listens to for input
         m_driveClimber.m_climberMotor.configSelectedFeedbackSensor(FeedbackDevice.SensorSum, RobotMap.PID_PRIMARY, RobotMap.TIMEOUT_MS);
         m_driveClimber.m_climberMotor.configSelectedFeedbackCoefficient(0.5, RobotMap.PID_PRIMARY, RobotMap.TIMEOUT_MS);
 
+		// Sets the encoder the "turning" climber PID listens to for input
         m_driveClimber.m_climberMotor.configSelectedFeedbackSensor(FeedbackDevice.SensorDifference, RobotMap.PID_TURN, RobotMap.TIMEOUT_MS);
 		m_driveClimber.m_climberMotor.configSelectedFeedbackCoefficient(1, RobotMap.PID_TURN, RobotMap.TIMEOUT_MS);
 		
+		// Zeroes the encoders on the climbers
 		m_driveClimber.m_climberMotor.setSelectedSensorPosition(0, 0, RobotMap.TIMEOUT_MS);
 		m_driveClimber.m_climberMotor.setSelectedSensorPosition(0, 1, RobotMap.TIMEOUT_MS);
 		m_frontClimber.m_climberMotor.setSelectedSensorPosition(0);
 		
-		// Config sensor and motor direction
+		// Config sensor and motor direction for the back climber motor
 		m_driveClimber.m_climberMotor.setInverted(true);
 		m_driveClimber.m_climberMotor.setSensorPhase(true);
 
+		// Config sensor and motor direction for the front climber motor
         m_frontClimber.m_climberMotor.setInverted(true);
 		m_frontClimber.m_climberMotor.setSensorPhase(true);
 
@@ -86,7 +95,7 @@ public class ClimberPIDControl {
 		m_driveClimber.m_climberMotor.configMotionAcceleration(RobotMap.CLIMB_ACCELERATION, RobotMap.TIMEOUT_MS);
 		m_driveClimber.m_climberMotor.configMotionCruiseVelocity(RobotMap.CLIMB_CRUISE_VELOCITY, RobotMap.TIMEOUT_MS);
 
-		// PID Config
+		// PID Config for the primary climber PID
 		m_driveClimber.m_climberMotor.config_kP(0, RobotMap.CLIMBER_GAINS.kP, RobotMap.TIMEOUT_MS);
 		m_driveClimber.m_climberMotor.config_kI(0, RobotMap.CLIMBER_GAINS.kI, RobotMap.TIMEOUT_MS);
 		m_driveClimber.m_climberMotor.config_kD(0, RobotMap.CLIMBER_GAINS.kD, RobotMap.TIMEOUT_MS);
@@ -94,7 +103,8 @@ public class ClimberPIDControl {
 		m_driveClimber.m_climberMotor.config_IntegralZone(0, RobotMap.CLIMBER_GAINS.kIzone, RobotMap.TIMEOUT_MS);
 		m_driveClimber.m_climberMotor.configClosedLoopPeakOutput(0, RobotMap.CLIMBER_GAINS.kPeakOutput, RobotMap.TIMEOUT_MS);
         m_driveClimber.m_climberMotor.configAllowableClosedloopError(0, 0, RobotMap.TIMEOUT_MS);
-        
+		
+		// PID Config for the "turning" climber PID
         m_driveClimber.m_climberMotor.config_kP(1, RobotMap.GAINS_TURNING.kP, RobotMap.TIMEOUT_MS);
 		m_driveClimber.m_climberMotor.config_kI(1, RobotMap.GAINS_TURNING.kI, RobotMap.TIMEOUT_MS);
 		m_driveClimber.m_climberMotor.config_kD(1, RobotMap.GAINS_TURNING.kD, RobotMap.TIMEOUT_MS);
@@ -107,7 +117,7 @@ public class ClimberPIDControl {
         m_driveClimber.m_climberMotor.configClosedLoopPeriod(0, RobotMap.CLOSED_LOOP_TIME, RobotMap.TIMEOUT_MS);
         m_driveClimber.m_climberMotor.configClosedLoopPeriod(1, RobotMap.CLOSED_LOOP_TIME, RobotMap.TIMEOUT_MS);
 
-		// Sets a status frame period to 10ms
+		// Sets the frame period for how fast the PID runs to 10 ms
         m_driveClimber.m_climberMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_10_Targets, 10);
 
 		// Sets profile slot for PID
@@ -115,6 +125,10 @@ public class ClimberPIDControl {
         m_driveClimber.m_climberMotor.selectProfileSlot(1, RobotMap.PID_TURN);
     }
 
+	/**
+	 * Sets the climbers to a set target for the PID to guide the climbers to go to
+	 * @param target The target distance the PID goes to (in ticks)
+	 */
     public void climberPIDDrive(int target) {
         m_driveClimber.m_climberMotor.set(ControlMode.MotionMagic, target, DemandType.AuxPID, 0);
         m_frontClimber.m_climberMotor.follow(m_driveClimber.m_climberMotor, FollowerType.AuxOutput1);

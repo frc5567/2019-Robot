@@ -8,7 +8,6 @@ package frc.robot;
  * 
  * @author Patrick Philbin, Issac Liimatta
  */
-
 public class DashboardData{
 
     double m_rawElevatorHeight;
