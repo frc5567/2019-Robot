@@ -120,6 +120,8 @@ public class Robot extends TimedRobot {
 		// Instantiates hatch arm class 
 		m_hatchMech = new HatchMech();
 
+		// Trys to instanciate the Nav-x on the RoboRIO
+		// Will throw an error telling us if the Nav-x was not instanciated
 		try {
 			m_gyro = new NavX(SPI.Port.kMXP);
 		} catch (RuntimeException ex) {
@@ -362,25 +364,26 @@ public class Robot extends TimedRobot {
 			// innerRingLight.set(true);
 			// outerRingLight.set(true);
 		
+			// Checks if the telemetryCounter has reached the 50th cycle
 		if ((telemetryCounter % RobotMap.SAMPLE_RATE) == 0) {
-			System.out.print("Left Ultrasonics: \t" + m_drivetrain.getLeftUltra().getRangeInches());
-			System.out.println(" Right Ultrasonics: \t" + m_drivetrain.getRightUltra().getRangeInches());
 			if (RobotMap.ULTRASONIC_TELEMETRY) {
 				System.out.print("Left Ultrasonics: \t" + m_drivetrain.getLeftUltra().getRangeInches());
-				System.out.println(" Right Ultrasonics: \t" + m_drivetrain.getRightUltra().getRangeInches());
 			}
 			
+			// If constant is set to tru,e prints telemetry for the drivetrain encoders
 			if (RobotMap.DRIVETRAIN_TELEMETRY) {
 				System.out.print("Gyro Yaw: \t" + m_gyro.getYaw());
 				System.out.print(" Drivetrain Enc Velocity: \t" + m_drivetrain.getLeftDriveEncoderVelocity() + "\t\t"  /*+ m_drivetrain.getRightDriveEncoderVelocity()*/);
 				System.out.println(" Drivetrain Enc Pos: \t"+ (6*RobotMap.PI) * (m_drivetrain.m_masterLeftMotor.getSelectedSensorPosition() / 4096) + "\t\t"/* + m_drivetrain.getRightDriveEncoderPosition()*/);	
 			}
 
+			// If constant is set to true, prints telemetry for the elevator encoders
 			if (RobotMap.ELEVATOR_TELEMETRY) {
 				System.out.print("Elevator Enc Velocity: \t" + m_elevator.m_motor.getSelectedSensorVelocity());
 				System.out.println(" Elevator Enc Pos: \t"+ m_elevator.m_motor.getSelectedSensorPosition());
 			}
 
+			// If constant is set to true, prints telemetry for the climber encoders
 			if (RobotMap.CLIMBER_TELEMETRY) {
 				System.out.print(" Front Climber Enc Velocity: \t" + m_frontClimber.m_climberMotor.getSelectedSensorVelocity()); //getSelectedSensorVelocity());
 				System.out.print(" Front Climber Enc Pos: \t"+ m_frontClimber.m_climberMotor.getSelectedSensorPosition());
@@ -388,6 +391,7 @@ public class Robot extends TimedRobot {
 				System.out.println(" Back Climber Enc Pos: \t"+ m_backClimber.m_climberMotor.getSelectedSensorPosition());
 			}
 		}
+		// Increments the telemetry counter
 		telemetryCounter++;
 		
 	}
