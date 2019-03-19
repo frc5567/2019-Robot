@@ -9,8 +9,6 @@ import edu.wpi.first.wpilibj.GenericHID.Hand;
  */
 public class Pathing {
     // Doubles for storing the return from the arduino
-	private Double m_degToTarget = Double.NaN;
-	private Double m_distToTarget = Double.NaN;
 	private Double m_angleToCenter = Double.NaN;
     private Double m_lowPosition = Double.NaN;
 
@@ -24,11 +22,6 @@ public class Pathing {
     private double m_ticsToTarget;
     
     // Flags for running through the code
-    private boolean m_foundTarget = false;
-    private boolean m_foundLowTarget = false;
-    private boolean m_rotEndLineFinished = false;
-    private boolean m_foundDistTarget = false;
-    private boolean m_driveEndLineFinished = false;
     private boolean m_lowTargetFound = false;
     private boolean m_rotLowTargetFinished = false;
     private boolean m_lowDriveFinished = false;
@@ -48,7 +41,7 @@ public class Pathing {
     // Declares a drivetrain to use in the auto movement
     Drivetrain m_drivetrain;
 
-    // Counter so that we only get angle while turning every 5th cycle.
+    // Counter so that we only get angle while turning every 15th cycle.
     // Starts at 15 so we collect data the first time through
     private int m_lowDataCollectCounter = 15;
 
@@ -74,43 +67,6 @@ public class Pathing {
         m_drivetrain.talonDriveConfig();
 
         m_rotateExitCounter = 0;
-    }
-
-    /**
-     * Super method for calling all of the helper methods in sequence that should path to target
-     * @return Returns whether the method is finished (True if it is)
-     */
-    public boolean pathToTarget(int lastUltraDist) {
-        // Runs the rotEndOfLine method
-        if(!m_rotEndLineFinished) {
-            m_rotEndLineFinished = rotEndOfLine();
-            return false;
-        }
-        // Runs the driveToLineEnd method after the rotEndLine is finished
-        else if (!m_driveEndLineFinished) {
-            m_driveEndLineFinished = driveToLineEnd();
-            return false;
-        }
-        // Runs the checkForLowTarget method after all previous are finished
-        else if (!m_lowTargetFound) {
-            m_lowTargetFound = checkForLowTarget();
-            return false;
-        }
-        // Runs the rotLowTarget method after all previous are finished and only if we see a target
-        else if (!m_rotLowTargetFinished) {
-            m_rotLowTargetFinished = rotLowTarget();
-            return false;
-        }
-        // Runs the driveLowTarget method after all previous are finished
-        else if (!m_lowDriveFinished) {
-            m_lowDriveFinished = driveLowTarget(lastUltraDist);
-            return false;
-        }
-        // Returns true after all are true
-        else {
-            System.out.println("finished");
-            return true;
-        }
     }
 
     public boolean secondHalfPath(int lastUltraDist) {
@@ -143,74 +99,6 @@ public class Pathing {
      */
     private double inToTics(double inches) {
          return inches*RobotMap.DRIVE_TICS_PER_INCH;
-    }
-
-    /**
-     * Helper method to rotate to face the end of the line
-     * @return Returns whether the method is finished (True if it is)
-     */
-    private boolean rotEndOfLine() {
-        // Gets data off the arduino only if we haven't found data
-        if (!m_foundTarget) {
-            // Assigns data from the duino to a storage double
-            m_degToTarget = m_duinoToRio.getDegToTarget();
-
-            // Assigns the target for rotation if we have a valid number
-            if (m_degToTarget == -180) {
-            }
-            else if (!m_degToTarget.isNaN()) {
-                m_startingDegrees = m_gyro.getYaw();
-                m_absoluteDegToTarget = m_startingDegrees + m_degToTarget;
-                m_foundTarget = true;
-            }
-            return false;
-        }
-        else {
-            // Returns true if the drive is finished
-            m_drivetrain.rotateToAngle(m_absoluteDegToTarget);
-            if ((m_rotateExitCounter > 25) && ((m_drivetrain.m_rotController.get() < RobotMap.FINISHED_PID_THRESHOLD) && (m_drivetrain.m_rotController.get() > -RobotMap.FINISHED_PID_THRESHOLD))) {
-                return true;
-            }
-            else {
-                m_rotateExitCounter++;
-                return false;
-            }
-        }
-    }
-
-    /**
-     * Helper method that drives to the end of the line
-     * @return Returns whether the method is finished (True if it is)
-     */
-    private boolean driveToLineEnd() {
-        // Gets data off of the arduino only if there is none already
-        if (!m_foundDistTarget) {
-            // Assigns data from the duino to a storage double
-            m_distToTarget = Math.abs(m_duinoToRio.getDistToTarget());
-
-            // If the return value is valid, run needed calculation
-            if (!m_distToTarget.isNaN()) {
-                m_foundDistTarget = true;
-                m_ticsToTarget = inToTics(m_distToTarget);
-                m_leftInitTics = m_drivetrain.getLeftDriveEncoderPosition();
-                m_rightInitTics = m_drivetrain.getRightDriveEncoderPosition();
-                m_leftTargetTics = m_leftInitTics - m_ticsToTarget;
-                m_rightTargetTics = m_rightInitTics - m_ticsToTarget;
-            }
-            return false;
-        }
-        else {
-            // Drives straight if we have not reached our target
-            if (m_leftTargetTics < m_drivetrain.getLeftDriveEncoderPosition() && m_rightTargetTics < m_drivetrain.getLeftDriveEncoderPosition()) {
-                m_drivetrain.talonArcadeDrive(RobotMap.AUTO_SPEED, 0, false);
-                return false;
-            }
-            else {
-                // Stops the arcade drive otherwise
-                m_drivetrain.talonArcadeDrive(0, 0, false);
-                return true;
-            }
-        }
     }
 
     /**
@@ -314,11 +202,6 @@ public class Pathing {
      * Resets all sequence flags
      */
     public void resetFlags() {
-        m_foundTarget = false;
-        m_foundLowTarget = false;
-        m_rotEndLineFinished = false;
-        m_foundDistTarget = false;
-        m_driveEndLineFinished = false;
         m_lowTargetFound = false;
         m_rotLowTargetFinished = false;
         m_lowDriveFinished = false;
