@@ -241,8 +241,14 @@ public class Robot extends TimedRobot {
 			m_drivetrain.rotateToAngle(5);
 		}
 		else {
-			m_teleopCommands.teleopModeCommands();
+			m_drivetrain.talonArcadeDrive(0, 0, false);
+			//m_teleopCommands.teleopModeCommands();
 		}
+
+		if (m_testController.getAButtonReleased() || m_testController.getBButtonReleased() || m_testController.getXButtonReleased()) {
+			m_drivetrain.m_rotController.reset();
+		}
+		
 		System.out.println("Current Heading:\t" + m_gyro.getYaw() + "\tTarget Heading:\t" + m_drivetrain.m_rotController.getSetpoint());
 		outerRingLight.set(true);
 		innerRingLight.set(true);

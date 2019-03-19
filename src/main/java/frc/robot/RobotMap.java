@@ -124,11 +124,11 @@ public class RobotMap {
 
     // PID Controller
     // Rotate Controller
-    public static final double P_ROTATE_CONTROLLER = 0.017;
-    public static final double I_ROTATE_CONTROLLER = 0.00;
-    public static final double D_ROTATE_CONTROLLER = 0.00;
+    public static final double P_ROTATE_CONTROLLER = 0.03;
+    public static final double I_ROTATE_CONTROLLER = 0.0002;
+    public static final double D_ROTATE_CONTROLLER = 0.07;
     public static final double F_ROTATE_CONTROLLER = 0.00;
-    public static final double TOLERANCE_ROTATE_CONTROLLER = 3;
+    public static final double TOLERANCE_ROTATE_CONTROLLER = .5;
 
     public static final double P_ROTATE_DRIVE_CONTROLLER = 0.04;
     public static final double I_ROTATE_DRIVE_CONTROLLER = 0.001;
