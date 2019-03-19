@@ -8,6 +8,10 @@ package frc.robot;
  */
 public class RobotMap {
 
+    // How far off course the robot can go while moving
+    // straight before running its rotate method again
+    public static final int STRAIGHT_ANGLE_THRESHOLD = 5;
+
     // Debug telmetry enable / disable constants
     public static final boolean ULTRASONIC_TELEMETRY = false;
     public static final boolean DRIVETRAIN_TELEMETRY = false;
