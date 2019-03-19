@@ -34,6 +34,9 @@ public class Pathing {
     private boolean m_lowDriveFinished = false;
     private boolean breakFlag = true;
     private boolean lowAutoBreak = true;
+    private boolean foundFlag = false;
+
+    private int cycleCounter = 5;
 
 	// Declare our duino communication port
 	DuinoToRioComms m_duinoToRio;
@@ -246,24 +249,28 @@ public class Pathing {
                 
                 // Reset the counter
                 m_lowDataCollectCounter = 0;
+                foundFlag = true;
                 System.out.print("starting deg: \t " + m_startingDegrees);
                 System.out.print(" degToTarget: \t" + m_angleToCenter);
                 System.out.println("Target angle for gyro: \t" + m_absoluteDegToTarget);
             }
         }
         else {
-            // Increments the counter if we don't get data
-            // m_lowDataCollectCounter++;
+            m_lowDataCollectCounter++;
         }
         // if (!m_angleToCenter.isNaN()) {
             // Rotates until the method says that its done
-            
-            if (m_drivetrain.driveToPositionAngle(24, m_absoluteDegToTarget, .35)) {
+        if (foundFlag) {    
+            if (m_drivetrain.rotateToAngle(m_absoluteDegToTarget)/*m_drivetrain.driveToPositionAngle(24, m_absoluteDegToTarget, .3)*/) {
                 return true;
             }
             else {
                 return false;
             }
+        }
+        else {
+            return false;
+        }
         // }
         // else {
         //     m_drivetrain.talonArcadeDrive(0.0, 0, false);
@@ -277,11 +284,29 @@ public class Pathing {
      */
     private boolean driveLowTarget(int distance) {
         // Drives forward until within certain distance of the wall
-        if(!m_drivetrain.driveToUltra(distance)) {
-            return false;
+        if (cycleCounter >= 5) {
+            m_angleToCenter = m_duinoToRio.getAngleToCenter();
+
+            // If the target is a valid number, assigns necesary target variables
+            if(!m_angleToCenter.isNaN()) {
+                m_startingDegrees = m_gyro.getYaw();
+                m_absoluteDegToTarget = m_startingDegrees - (m_angleToCenter);
+                
+                // Reset the counter
+                cycleCounter = 0;
+                foundFlag = true;
+            }
         }
         else {
+            cycleCounter++;
+        }
+        m_drivetrain.driveToPositionAngle(100, m_absoluteDegToTarget, .2);
+        if(m_drivetrain.getLeftUltra().getRangeInches() < distance || m_drivetrain.getRightUltra().getRangeInches() < distance) {
+            m_drivetrain.m_firstCallTest = true;
             return true;
+        }
+        else {
+            return false;
         }
     }
 
@@ -298,6 +323,10 @@ public class Pathing {
         m_rotLowTargetFinished = false;
         m_lowDriveFinished = false;
 
+        foundFlag = false;
+        m_angleToCenter = Double.NaN;
+
+        cycleCounter = 5;
         m_lowDataCollectCounter = 15;
         m_rotateExitCounter = 0;
     }

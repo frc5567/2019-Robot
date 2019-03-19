@@ -139,12 +139,12 @@ public class Robot extends TimedRobot {
 		// Runs config for synced PID climbers
 		climberPID.climberPIDConfig();
 
-		m_autoCommands = new AutoCommands(m_drivetrain, m_gyro, m_elevator, m_frontClimber, m_backClimber, m_pather, m_teleopCommands, m_hatchMech);
-		m_teleopCommands = new TeleopCommands(m_controller, m_gamepad, m_drivetrain, m_elevator, m_frontClimber, m_backClimber, m_hatchMech, climberPID, m_pather);
-
 		// For comp, this needs to be 0,1 not 2,1
 		innerRingLight = new Solenoid(20, 2);
 		outerRingLight = new Solenoid(20, 1);
+
+		m_autoCommands = new AutoCommands(m_drivetrain, m_gyro, m_elevator, m_frontClimber, m_backClimber, m_pather, m_teleopCommands, m_hatchMech, outerRingLight, innerRingLight);
+		m_teleopCommands = new TeleopCommands(m_controller, m_gamepad, m_drivetrain, m_elevator, m_frontClimber, m_backClimber, m_hatchMech, climberPID, m_pather, m_autoCommands);
 
 		// Sets up the camera and inits the camera server
 		// This needs the camera to be plugged in
@@ -250,8 +250,8 @@ public class Robot extends TimedRobot {
 		// System.out.print(" Front Climber Enc Pos: \t"+ m_frontClimber.m_climberMotor.getSelectedSensorPosition());
 		// System.out.print(" Back Climber Enc Velocity: \t" + m_backClimber.m_climberMotor.getSelectedSensorVelocity(0)); //getSelectedSensorVelocity());
 		// System.out.println(" Back Climber Enc Pos: \t"+ m_backClimber.m_climberMotor.getSelectedSensorPosition(0));
-		System.out.print("Left Ultrasonics: \t" + m_drivetrain.getLeftUltra().getRangeInches());
-		System.out.println(" Right Ultrasonics: \t" + m_drivetrain.getRightUltra().getRangeInches());
+		// System.out.print("Left Ultrasonics: \t" + m_drivetrain.getLeftUltra().getRangeInches());
+		// System.out.println(" Right Ultrasonics: \t" + m_drivetrain.getRightUltra().getRangeInches());
 	}
 
 	/**
@@ -278,25 +278,25 @@ public class Robot extends TimedRobot {
 		// }
 		else if (!backFlagTwo) {
 			backFlagTwo = m_drivetrain.driveToPositionAngle(-185, -25, .9);
+			m_elevator.drivePID(State.HATCH_PICKUP);
+			m_hatchMech.armDown();
+			m_hatchMech.closeServo();
+
 		}
 		else if (!secondRotFlag) {
 			secondRotFlag = m_drivetrain.rotateToAngle(29);
-			m_hatchMech.armDown();
+			m_hatchMech.setArm(0);
 			outerRingLight.set(true);
 			innerRingLight.set(true);
 		}
 		else if (!forwardFlag) {
-			m_hatchMech.setArm(0);
 			m_hatchMech.openServo();
-			forwardFlag = m_pather.secondHalfPath(6);
-			
-			if (m_drivetrain.ultraLeft.getRangeInches() < 40 && m_drivetrain.ultraRight.getRangeInches() < 40) {
-				m_elevator.drivePID(State.HATCH_L1);
-            }
+			forwardFlag = m_pather.secondHalfPath(7);
 			 // m_drivetrain.driveToPositionAngle(24, 29, .35);
 		}
 		else if (!leaveRocket) {
-			leaveRocket = m_drivetrain.driveToPositionAngle(-36, 29, .9);
+			leaveRocket = m_drivetrain.driveToPositionAngle(-36, 29, .3);
+			System.out.println("Trying to leave");
 			outerRingLight.set(false);
 			innerRingLight.set(false);
 		}
@@ -329,6 +329,8 @@ public class Robot extends TimedRobot {
 			// outerRingLight.set(true);
 		
 		if ((telemetryCounter % RobotMap.SAMPLE_RATE) == 0) {
+			System.out.print("Left Ultrasonics: \t" + m_drivetrain.getLeftUltra().getRangeInches());
+			System.out.println(" Right Ultrasonics: \t" + m_drivetrain.getRightUltra().getRangeInches());
 			if (RobotMap.ULTRASONIC_TELEMETRY) {
 				System.out.print("Left Ultrasonics: \t" + m_drivetrain.getLeftUltra().getRangeInches());
 				System.out.println(" Right Ultrasonics: \t" + m_drivetrain.getRightUltra().getRangeInches());

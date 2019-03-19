@@ -73,7 +73,7 @@ public class Drivetrain implements PIDOutput {
     private double m_rightTargetTics;
     private double m_ticsToTarget;
 
-    private boolean m_firstCallTest = true;
+    boolean m_firstCallTest = true;
     private boolean m_mmDriveToPosFirstFlag = true;
 
     // Counter for buying time for the PID
@@ -458,6 +458,7 @@ public class Drivetrain implements PIDOutput {
         m_masterRightMotor.setSelectedSensorPosition(0, 0, RobotMap.TIMEOUT_MS);
         m_masterRightMotor.setSelectedSensorPosition(0, 1, RobotMap.TIMEOUT_MS);
 
+        // Sets VictorSPXs to follow TalonSRXs output
         m_slaveLeftMotor.follow(m_masterLeftMotor);
         m_slaveRightMotor.follow(m_masterRightMotor);
     }
@@ -549,13 +550,15 @@ public class Drivetrain implements PIDOutput {
 
     public boolean driveToPositionAngle(double distToTarget, double targetAngle, double speed) {
         // If the return value is valid, run needed calculation
-       double absSpeed = Math.abs(speed);
+        System.out.println("Enter Drive to pos");
+       double absSpeed = speed;
         if (m_firstCallTest) {
             m_ticsToTarget = inToTics(distToTarget);
             m_leftInitTics = getLeftDriveEncoderPosition();
             m_rightInitTics = getRightDriveEncoderPosition();
             m_leftTargetTics = m_leftInitTics - m_ticsToTarget;
             m_rightTargetTics = m_rightInitTics - m_ticsToTarget;
+            System.out.println("m_ticsToTarget: \t" + m_ticsToTarget + " \t m_leftInitTics: \t " + m_leftInitTics);
             
             // Resets the error
             m_rotDriveController.reset();
