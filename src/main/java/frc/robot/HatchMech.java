@@ -72,7 +72,6 @@ public class HatchMech{
      * Raises the Hatch Mech arm to its high position when called
      */
     public boolean armUp(){
-       System.out.println("here");
         // if (m_hatchMechEncoder.get() <= RobotMap.HATCH_MECH_UP_STOP_POSITION) {
             m_hatchArmMotor.set(RobotMap.HATCH_MECH_ARM_UP_MOTOR_SPEED);
             // return false;

@@ -25,13 +25,15 @@ public class GamePad extends GenericHID {
 		PICKUP_HATCH_CARGO(5),
 		// Toggle switches
 		HATCH_TO_CARGO(10),
-		MANUAL_TO_AUTO(9),
+		MANUAL_SWITCH(9),
 		// Buttons
 		OPEN_HATCH(2),
 		CLOSE_HATCH(1),
 		// Buttons
 		LIFT_HATCH_ARM(4),
-		DROP_HATCH_ARM(3);
+		DROP_HATCH_ARM(3),
+		MANUAL_LOW(12),
+		ZERO_HATCH(11);
 
 		@SuppressWarnings("MemberName")
 		public final int value;
@@ -73,7 +75,6 @@ public class GamePad extends GenericHID {
 	 * @return The value of the x axis
 	 */
 	public double getX(Hand hand) {
-		System.out.println("Get X: \t" + getX());
 		return getX();
 	}
 
@@ -82,8 +83,15 @@ public class GamePad extends GenericHID {
 	 * @return The value of the y axis
 	 */
 	public double getY(Hand hand) {
-		System.out.println("Get Y: \t" + getY());
 		return getY();
+	}
+
+	public boolean getLevelZero() {
+		return getGamePadButton(GamePadControls.ZERO_HATCH);
+	}
+
+	public boolean getManualLow() {
+		return getGamePadButton(GamePadControls.MANUAL_LOW);
 	}
 
 	/**
@@ -126,16 +134,12 @@ public class GamePad extends GenericHID {
 		return getGamePadButtonReleased(GamePadControls.HATCH_TO_CARGO);
 	}
 
-	/**
-	 * Gets the status of the manual to auto button
-	 * @return If the manual to auto button has been released
-	 */
-	public boolean getManualToAutoReleased() {
-		return getGamePadButtonReleased(GamePadControls.MANUAL_TO_AUTO);
-	}
-
-	public boolean getManualToAuto() {
-		return getGamePadButton(GamePadControls.MANUAL_TO_AUTO);
+	/** 
+	 * Gets the current state of the manual or auto mode switch, where true is manual
+	 * @return Whether the robot is in manual mode
+	*/ 
+	public boolean isManual() {
+		return getGamePadButton(GamePadControls.MANUAL_SWITCH);
 	}
 
 	/**

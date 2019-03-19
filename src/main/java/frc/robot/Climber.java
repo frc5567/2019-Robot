@@ -28,24 +28,14 @@ public class Climber {
      * (Button to be determined later).
      */
     public void raiseClimber(double speed) {
-        if(!m_bottomLimitSwitch.get()) {
-            m_climberMotor.set(speed);
-        }
-        else{
-            m_climberMotor.set(0.0);
-        }
+        m_climberMotor.set(speed);
     }
 
     /**
      * Lowers climber at a constant speed when button is pressed (Button to be determined later).
      */
     public void lowerClimber(double speed){
-        if(!m_topLimitSwitch.get()){
-            m_climberMotor.set(speed);
-        }
-        else{
-            m_climberMotor.set(0.0);
-        }
+        m_climberMotor.set(speed);
     }
 
     public void setClimber(double input) {
@@ -54,6 +44,7 @@ public class Climber {
 
     /**
      * Used to get the status of the top break beam.
+     * Limit Switch not mounted, this should not be used or called
      * 
      * @return True if the top break beam is closed.
      */
@@ -63,6 +54,7 @@ public class Climber {
 
     /**
      * Used to get the status of the bottom break beam.
+     * Limit Switch not mounted, this should not be used or called
      * 
      * @return True if the bottim break beam is closed.
      */

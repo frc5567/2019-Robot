@@ -15,7 +15,14 @@ public class RobotMap {
     public static final boolean CLIMBER_TELEMETRY = false;
     public static final int SAMPLE_RATE = 50;
 
-    public static final Gains GAINS = new Gains(0.3, 0.0, 0.0, 0.0, 100, 1.0);
+    // Climber gains
+    public static final Gains CLIMBER_GAINS = new Gains(0.3, 0.0, 0.0, 0.0, 100, 1.0);
+
+    // Drivetrain gains
+    public static final Gains DRIVETRAIN_GAINS = new Gains(0.3, 0.0, 0.0, 0.0, 100, 1.0);
+
+    // Elevator gains
+    public static final Gains ELEVATOR_GAINS = new Gains(0.7, 0.001, 0.0, 0.0, 2, 1.0);
 
 	// NavX angle offset
     public static final int ANGLE_OFFSET = 180;
@@ -77,18 +84,17 @@ public class RobotMap {
 
     // Servo PWM ports
     // HatchMech
-    public static final int HATCH_MECH_SERVO_PORT = 0;
+    public static final int HATCH_MECH_SERVO_PORT = 2;
 
     // Position constants
     // HatchMech servo positions
-    public static final double HATCH_MECH_OPEN_SERVO_POSITION = 0.6;
-    public static final double HATCH_MECH_CLOSE_SERVO_POSITION = 0.3;
+    public static final double HATCH_MECH_OPEN_SERVO_POSITION = 0.3;
+    public static final double HATCH_MECH_CLOSE_SERVO_POSITION = 0.69;
+    public static final double HATCH_MECH_DIAGONAL_SERVO_POSITION = 0.5;
     // HatchMech motor encoder limits
     public static final int HATCH_MECH_UP_STOP_POSITION = 50000;
     public static final int HATCH_MECH_DOWN_STOP_POSITION = 25000;
     public static final int HATCH_MECH_MOTOR_PORT = 15;
-    // Elevator height
-    public static final double MAX_ELEVATOR_HEIGHT = 5.0;   //TODO: Update this?
 
     // Motor speed constants
     // Drivetrain
@@ -99,30 +105,38 @@ public class RobotMap {
     public static final double HATCH_MECH_ARM_DOWN_MOTOR_SPEED = -0.3;  // Check Speed
     public static final double HATCH_MECH_STOP_MOTOR_SPEED = 0.0;
     // Climber motor speeds
-    public static final double FRONT_CLIMBER_SPEED_UP = 0.5;      //UPDATE THIS VALUE
-    public static final double FRONT_CLIMBER_SPEED_DOWN = -0.5;       //UPDATE THIS VALUE
+    public static final double FRONT_CLIMBER_SPEED_UP = 0.75; 
+    public static final double FRONT_CLIMBER_SPEED_DOWN = -0.9;
     
-    public static final double BACK_CLIMBER_SPEED_UP = 0.5;      //UPDATE THIS VALUE
-    public static final double BACK_CLIMBER_SPEED_DOWN = -0.5;
+    public static final double BACK_CLIMBER_SPEED_UP = 0.35;
+    public static final double BACK_CLIMBER_SPEED_UP_FAST = 0.75;
+    public static final double BACK_CLIMBER_SPEED_DOWN = -0.8;
 
     // Climber encoder target in tics
-    public static final int CLIMBER_TARGET = -450000; // TODO: This is an arbitrary number
+    public static final int CLIMBER_TARGET = -550000;
 
     // Elevator Motor Speed
-    public static final double ELEVATOR_MOTOR_SPEED_UP = -0.4;
-    public static final double ELEVATOR_MOTOR_SPEED_DOWN = 0.4;
+    public static final double ELEVATOR_MOTOR_SPEED_UP = 0.4;
+    public static final double ELEVATOR_MOTOR_SPEED_DOWN = -0.4;
     // Climber back motor speed settings
     public static final double CLIMBER_DRIVE_SPEED_FOREWARD = 0.4;
     public static final double CLIMBER_DRIVE_SPEED_BACKWARD = -0.4;
 
     // PID Controller
     // Rotate Controller
-    public static final double P_ROTATE_CONTROLLER = 0.035;
+    public static final double P_ROTATE_CONTROLLER = 0.017;
     public static final double I_ROTATE_CONTROLLER = 0.00;
     public static final double D_ROTATE_CONTROLLER = 0.00;
     public static final double F_ROTATE_CONTROLLER = 0.00;
-    public static final double TOLERANCE_ROTATE_CONTROLLER = 2;
-    public static final double FINISHED_PID_THRESHOLD = 0.15;
+    public static final double TOLERANCE_ROTATE_CONTROLLER = 3;
+
+    public static final double P_ROTATE_DRIVE_CONTROLLER = 0.04;
+    public static final double I_ROTATE_DRIVE_CONTROLLER = 0.001;
+    public static final double D_ROTATE_DRIVE_CONTROLLER = 0.12;
+    public static final double F_ROTATE_DRIVE_CONTROLLER = 0.00;
+    public static final double TOLERANCE_ROTATE_DRIVE_CONTROLLER = 2;
+
+    public static final double FINISHED_PID_THRESHOLD = 0.1;
     public static final double PID_LOOP_TIME_S = 0.02;
     public static final double PID_INPUT_RANGE = 180.00;
     public static final double PID_OUTPUT_RANGE = 0.5;
@@ -131,11 +145,10 @@ public class RobotMap {
     public static final double DRIVE_TICS_PER_INCH = (4096 / (6*RobotMap.PI));
 
     // Speed of robot drive in autonomous functions
-    public static final double AUTO_SPEED = 0.2;
+    public static final double AUTO_SPEED = 0.35;
 
     // Constants for climber targets
     public static final int RAISED_CLIMBER_POS = 0;
-    public static final int LOWERED_CLIMBER_POS = 4096; // TODO: Test value, replace
 
     // Stolen constants for sample code
 
@@ -148,6 +161,20 @@ public class RobotMap {
      * 
      */
     public final static double TURN_TRAVEL_UNITS_PER_ROTATION = 3600;
+
+    // Closed loop time of PID systems in milliseconds
+    public final static int CLOSED_LOOP_TIME = 10;
+
+    // Cruise and acceleration values for motion magic
+    // TODO: Update with testing
+    public final static int DRIVE_CRUISE_VELOCITY = 2000;
+    public final static int DRIVE_ACCELERATION = 2000;
+
+    public final static int CLIMB_CRUISE_VELOCITY = 6000;
+    public final static int CLIMB_ACCELERATION = 2000;
+
+    public final static int ELEVATOR_CRUISE_VELOCITY = 2000;
+    public final static int ELEVATOR_ACCELERATION = 2000;
 
     /**
      * Empirically measure what the difference between encoders per 360'
@@ -166,9 +193,6 @@ public class RobotMap {
     /**
      * PID Gains may have to be adjusted based on the responsiveness of control
      * loop.
-     * 
-     * kF: 1023 represents output value to Talon at 100%, 6800 represents Velocity
-     * units at 100% output
      * 
      * Not all set of Gains are used in this project and may be removed as desired.
      * kP kI kD kF Iz PeakOut

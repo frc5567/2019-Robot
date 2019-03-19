@@ -22,12 +22,14 @@ public class Elevator {
 		state in String form.
 		*/
 		LEVEL_ZERO(0.0, 1.0, 1.0 , "Initial State"),
+		HATCH_PICKUP(8.0, 0.90, 0.50, "Hatch Pickup"), // TODO: Increase through testing, seemed to be too low
 		//	CARGO_L1(16.75, 0.80, 0.50 , "Cargo level 1"),
 		//	CARGO_L2(44.75, 0.60, 0.30 , "Cargo Level 2"),
 		//	CARGO_L3(72.75, 0.40, 0.20 , "Cargo Level 3"),
-		HATCH_L1(7.87, 0.90, 0.50 , "Hatch Level 1"),
+		HATCH_L1(9.0, 0.90, 0.50 , "Hatch Level 1"),
 		HATCH_L2(40.65, 0.65, 0.30 , "Hatch Level 2"),
-		HATCH_L3(66.125, 0.45, 0.20 , "Hatch Level 3");
+		HATCH_L3(66.125, 0.45, 0.20 , "Hatch Level 3"),
+		HATCH_PICKUP_2(11.87, 0.90, 0.50, "Hatch Pickup 2");
 
 		private double deltaInches;
 		private double maxSpeedPercent;
@@ -131,7 +133,7 @@ public class Elevator {
 		m_motor.setInverted(true);
 		m_motor.setSensorPhase(true);
 
-		// Set status frame period for data collection
+		// Set status frame period for data collection where 5 is period length in ms
 		m_motor.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 5, RobotMap.TIMEOUT_MS);
 
 		// Config neutral deadband
@@ -142,16 +144,16 @@ public class Elevator {
 		m_motor.configPeakOutputReverse(-RobotMap.PID_PEAK_OUTPUT, RobotMap.TIMEOUT_MS);
 
 		// Motion Magic Config
-		m_motor.configMotionAcceleration(2000, RobotMap.TIMEOUT_MS);
-		m_motor.configMotionCruiseVelocity(2000, RobotMap.TIMEOUT_MS);
+		m_motor.configMotionAcceleration(RobotMap.ELEVATOR_ACCELERATION, RobotMap.TIMEOUT_MS);
+		m_motor.configMotionCruiseVelocity(RobotMap.ELEVATOR_CRUISE_VELOCITY, RobotMap.TIMEOUT_MS);
 
 		// PID Config
-		m_motor.config_kP(0, RobotMap.GAINS.kP, RobotMap.TIMEOUT_MS);
-		m_motor.config_kI(0, RobotMap.GAINS.kI, RobotMap.TIMEOUT_MS);
-		m_motor.config_kD(0, RobotMap.GAINS.kD, RobotMap.TIMEOUT_MS);
-		m_motor.config_kF(0, RobotMap.GAINS.kF, RobotMap.TIMEOUT_MS);
-		m_motor.config_IntegralZone(0, RobotMap.GAINS.kIzone, RobotMap.TIMEOUT_MS);
-		m_motor.configClosedLoopPeakOutput(0, RobotMap.GAINS.kPeakOutput, RobotMap.TIMEOUT_MS);
+		m_motor.config_kP(0, RobotMap.ELEVATOR_GAINS.kP, RobotMap.TIMEOUT_MS);
+		m_motor.config_kI(0, RobotMap.ELEVATOR_GAINS.kI, RobotMap.TIMEOUT_MS);
+		m_motor.config_kD(0, RobotMap.ELEVATOR_GAINS.kD, RobotMap.TIMEOUT_MS);
+		m_motor.config_kF(0, RobotMap.ELEVATOR_GAINS.kF, RobotMap.TIMEOUT_MS);
+		m_motor.config_IntegralZone(0, RobotMap.ELEVATOR_GAINS.kIzone, RobotMap.TIMEOUT_MS);
+		m_motor.configClosedLoopPeakOutput(0, RobotMap.ELEVATOR_GAINS.kPeakOutput, RobotMap.TIMEOUT_MS);
 		m_motor.configAllowableClosedloopError(0, 0, RobotMap.TIMEOUT_MS);
 
 		// PID closed loop config
@@ -163,9 +165,6 @@ public class Elevator {
 
 	public boolean drivePID(State state) {
 		double target = (state.deltaInches) * (RobotMap.TICKS_PER_REVOLUTION / RobotMap.DRUM_CIRCUMFERENCE);
-		System.out.println("PIDTarget in tics: \t" + target);
-		System.out.println("Current Position in tics: \t" + m_motor.getSelectedSensorPosition());
-		System.out.println("State: \t" + state);
 		m_motor.set(ControlMode.MotionMagic, target);
 
 		if(getEncoderVelocity() > 100){
@@ -199,7 +198,7 @@ public class Elevator {
 	 * @param input Joystick/variable input.
 	 */
 	public void moveRaw(double input){
-			m_motor.set(ControlMode.PercentOutput, (input /* 0.4*/));
+			m_motor.set(ControlMode.PercentOutput, (input));
 	}
 	
 	/**
@@ -208,7 +207,7 @@ public class Elevator {
 	 * @return The elevator's current height
 	 */
 	public double getPosition(){
-		double positionInches = (m_encoder.getQuadraturePosition() * (RobotMap.DRUM_CIRCUMFERENCE / RobotMap.TICKS_PER_REVOLUTION));
+		double positionInches = (m_motor.getSelectedSensorPosition() * (RobotMap.DRUM_CIRCUMFERENCE / RobotMap.TICKS_PER_REVOLUTION));
 		//position = RobotMap.DRUM_CIRCUMFERENCE * numRevolutions;
 		currentState = getState(positionInches);
 		return positionInches;
