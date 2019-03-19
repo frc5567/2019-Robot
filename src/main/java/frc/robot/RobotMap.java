@@ -15,6 +15,11 @@ public class RobotMap {
     public static final boolean CLIMBER_TELEMETRY = false;
     public static final int SAMPLE_RATE = 50;
 
+    //Auton SendableChooser constants
+    public static final String LEFT_AUTO = "Left Auton";
+    public static final String RIGHT_AUTO = "Right Auton";
+    public static final String TELEOP = "Teleop / Manual";
+
     // Climber gains
     public static final Gains CLIMBER_GAINS = new Gains(0.3, 0.0, 0.0, 0.0, 100, 1.0);
 
