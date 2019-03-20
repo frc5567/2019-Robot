@@ -22,12 +22,6 @@ public class AutoCommands {
     TeleopCommands m_teleopCommands;
     HatchMech m_hatchMech;
 
-    // boolean mainStages[];
-    // boolean stage1Steps[];
-    // boolean stage2Steps[];
-    // boolean stage3Steps[];
-    // boolean stage4Steps[];
-
     boolean stage1;
     boolean stage2;
     boolean stage3;
@@ -52,12 +46,6 @@ public class AutoCommands {
         outerRingLight = outerLight;
         innerRingLight = innerLight;
 
-        // mainStages = new boolean[] { false, false, false, false };
-        // stage1Steps = new boolean[] { false, false, false, false };
-        // stage2Steps = new boolean[] { false, false, false, false, false, false, false };
-        // stage3Steps = new boolean[] { false, false, false };
-        // stage4Steps = new boolean[] { false, false, false };
-
         stage1 = false;
         stage2 = false;
         stage3 = false;
@@ -67,83 +55,6 @@ public class AutoCommands {
         partThreeAssist = false;
 
     }
-
-/*
-    public void AutoDrive() {
-        if (!mainStages[0]) {
-            if (!stage1Steps[0]) {
-                stage1Steps[0] = driveStraight(-0);
-            }
-            else if (!stage1Steps[1]) {
-                stage1Steps[1] = driveCurve(-0, 0);
-            }
-            else if (!stage1Steps[2]) {
-                stage1Steps[2] = driveRotate(0);
-            }
-            else if (!stage1Steps[3]) {
-                // Vision pathing to place hatch
-            }
-            else {
-                mainStages[0] = true;
-            }
-        }
-        else if (!mainStages[1]) {
-            if (!stage2Steps[0]) {
-                stage2Steps[0] = driveStraight(-0);
-            }
-            else if (!stage2Steps[1]) {
-                stage2Steps[1] = driveRotate(0);
-            }
-            else if (!stage2Steps[2]) {
-                stage2Steps[2] = driveStraight(+0);
-            }
-            else if (!stage2Steps[3]) {
-                stage2Steps[3] = driveCurve(+0, 0);
-            }
-            else if (!stage2Steps[4]) {
-                stage2Steps[4] = driveCurve(+0, 0);
-            }
-            else if (!stage2Steps[5]) {
-                stage2Steps[5] = driveStraight(+0);
-            }
-            else if (!stage2Steps[6]) {
-                // Vision pathing to retrieve hatch
-            }
-            else {
-                mainStages[1] = true;
-            }
-        }
-        else if (!mainStages[2]) {
-            if (!stage3Steps[0]) {
-                stage3Steps[0] = driveStraight(-0);
-            } 
-            else if (!stage3Steps[1]) {
-                stage3Steps[1] = driveRotate(0);
-            }
-            else if (!stage3Steps[2]) {
-                // Vision pathing to place hatch
-            }
-            else {
-                mainStages[2] = true;
-            }
-        } else if (!mainStages[3]) {
-            if (!stage4Steps[0]) {
-                stage4Steps[0] = driveStraight(-0);
-            }
-            else if (!stage4Steps[1]) {
-                stage4Steps[1] = driveRotate(0);
-            }
-            else if (!stage4Steps[2]) {
-                stage4Steps[2] = driveStraight(+0);
-            }
-            else {
-                mainStages[3] = true;
-            }
-        } else {
-
-        }
-    }
-*/
 
     public void pickupAssist() {
         if (!partOneAssist) {
@@ -171,19 +82,6 @@ public class AutoCommands {
         }
     }
 
-    /**
-     * This method is for driving the robot at an angle
-     * 
-     * @param distance The distance the robot will travel
-     * @param angle    The angle at which the robot will travel
-     * @return Returns true if finished, false if it is not finished
-     */
-/*
-    public boolean driveCurve(int distance, int angle) {
-        return false;
-    }
-*/
-
     public void resetFlags() {
         stage1 = false;
         stage2 = false;
@@ -193,54 +91,4 @@ public class AutoCommands {
         partTwoAssist = false;
         partThreeAssist = false;
     }
-
-/*
-    public void driveStraight(int distance, int angle) {
-
-    }
-*/
-
-    /**
-     * Rotates the robot in place
-     * 
-     * @param angle The angle the robot will rotate to
-     * @return Returns true if finished, false if it is not finished
-     */
-/*
-    public boolean driveRotate(int angle) {
-        return m_drivetrain.rotateToAngle(angle);
-    }
-*/
-
-    /**
-     * Drives the robot straight for a specified distance
-     * 
-     * @param distance The distance the robot will travel
-     * @return Returns true if finished, false if it is not finished
-     */
-/*
-    public boolean driveStraight(int distance) {
-        return false;
-    }
-
-    public void elevatorMove(Elevator.State state) {
-
-    }
-
-    public void frontClimberRise() {
-
-    }
-
-    public void frontClimberLower() {
-
-    }
-
-    public void backClimberRise() {
-
-    }
-
-    public void backClimberLower() {
-
-    }
-*/
 }
