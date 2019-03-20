@@ -7,6 +7,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
 public class DriveClimber extends Climber {
 
+    // Declares a VictorSPX for the drive motor on the climber
     WPI_VictorSPX m_driveMotor;
 
     /**

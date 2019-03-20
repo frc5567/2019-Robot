@@ -12,6 +12,8 @@ import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import frc.robot.Drivetrain;
 import frc.robot.Controller;
@@ -34,6 +36,8 @@ import frc.robot.DriveClimber;
 public class Robot extends TimedRobot {
 	// Declare drivetrain
 	Drivetrain m_drivetrain;
+
+	// Declare pather for vision targeting
 	Pathing m_pather;
 
 	// Declare Pilot XBox Controller
@@ -57,12 +61,17 @@ public class Robot extends TimedRobot {
 
 	// Declare Auto Commands class for auto and auto assist commands
 	AutoCommands m_autoCommands;
+
 	// Declare Teleop commands for pilot controller methods
 	TeleopCommands m_teleopCommands;
 
 	// Declare Dashboard and Dashboard data bus
 	DashboardData m_dataStream;
 	CustomDashboard m_roboDash;
+	
+	// Sendable chooser for selecting auton on the dashboard
+	SendableChooser<String> m_autoChooser;
+	private String m_autoSelected;
 
 	// Declaring the USB Camera
 	UsbCamera camera;
@@ -74,12 +83,15 @@ public class Robot extends TimedRobot {
 	// Declare PID control for the elevator
 	ClimberPIDControl climberPID;
 
+	// Declare ringlights for control via PCM
 	Solenoid innerRingLight;
 	Solenoid outerRingLight;
 
+	// Counter for telemetry so we don't print every cycle
 	int telemetryCounter;
 
 	// TODO: TEMP FLAGS REMOVE PLEASE
+	// Flags for running through auton sequence, currently in test
 	boolean backFlag = false;
 	boolean firstRotFlag = false;
 	boolean backFlagTwo = false;
@@ -93,7 +105,7 @@ public class Robot extends TimedRobot {
 
 	Robot() {
 
-		// Instanciates drivetrain, driver controllers, climbers, and elevator
+		// Instantiates drivetrain, driver controllers, climbers, and elevator
 		m_controller = new Controller(RobotMap.PILOT_CONTROLLER_PORT);
 
 		m_testController = new Controller(2);
@@ -139,12 +151,14 @@ public class Robot extends TimedRobot {
 		// Runs config for synced PID climbers
 		climberPID.climberPIDConfig();
 
-		// For comp, this needs to be 0,1 not 2,1
-		innerRingLight = new Solenoid(20, 2);
+		innerRingLight = new Solenoid(20, 0);
 		outerRingLight = new Solenoid(20, 1);
 
 		m_autoCommands = new AutoCommands(m_drivetrain, m_gyro, m_elevator, m_frontClimber, m_backClimber, m_pather, m_teleopCommands, m_hatchMech, outerRingLight, innerRingLight);
 		m_teleopCommands = new TeleopCommands(m_controller, m_gamepad, m_drivetrain, m_elevator, m_frontClimber, m_backClimber, m_hatchMech, climberPID, m_pather, m_autoCommands);
+
+		// Instantiates the SendableChooser used for setting auton mode
+		m_autoChooser = new SendableChooser<>();
 
 		// Sets up the camera and inits the camera server
 		// This needs the camera to be plugged in
@@ -172,6 +186,14 @@ public class Robot extends TimedRobot {
 
 		m_gyro.reset();
 		m_gyro.zeroYaw();
+
+		// Setting up SendableChooser options used in auton.
+		m_autoChooser.setDefaultOption("Teleop / Manual", RobotMap.TELEOP);
+		m_autoChooser.addOption("Right Auton", RobotMap.RIGHT_AUTO);
+		m_autoChooser.addOption("Left Auton", RobotMap.LEFT_AUTO);
+
+		// TODO: Put this on the LiveWindow in shuffleboard instead of the SmartDashboard
+		SmartDashboard.putData("Auto Choices", m_autoChooser);
 	}
 
 	/**
@@ -205,6 +227,9 @@ public class Robot extends TimedRobot {
 		if (m_pather != null) {
 			m_pather.resetFlags();
 		}
+
+		// Getting the selected auton
+		m_autoSelected = m_autoChooser.getSelected();
 	}
 
 	/**
@@ -212,7 +237,18 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void autonomousPeriodic() {
-		m_teleopCommands.teleopModeCommands();
+		switch (m_autoSelected) {
+			case RobotMap.TELEOP:
+				m_teleopCommands.teleopModeCommands();
+				break;
+			case RobotMap.RIGHT_AUTO:
+				// Right auton code goes here
+				break;
+			case RobotMap.LEFT_AUTO:
+				// Left auton code goes here
+				break;
+
+		}
 	}
 
 	/**
@@ -231,27 +267,7 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
-		if (m_testController.getAButton()) {
-			m_drivetrain.rotateToAngle(30);
-		}
-		else if (m_testController.getBButton()) {
-			m_drivetrain.rotateToAngle(15);
-		}
-		else if (m_testController.getXButton()) {
-			m_drivetrain.rotateToAngle(5);
-		}
-		else {
-			m_teleopCommands.teleopModeCommands();
-		}
-		System.out.println("Current Heading:\t" + m_gyro.getYaw() + "\tTarget Heading:\t" + m_drivetrain.m_rotController.getSetpoint());
-		outerRingLight.set(true);
-		innerRingLight.set(true);
-		// System.out.print(" Front Climber Enc Velocity: \t" + m_frontClimber.m_climberMotor.getSelectedSensorVelocity()); //getSelectedSensorVelocity());
-		// System.out.print(" Front Climber Enc Pos: \t"+ m_frontClimber.m_climberMotor.getSelectedSensorPosition());
-		// System.out.print(" Back Climber Enc Velocity: \t" + m_backClimber.m_climberMotor.getSelectedSensorVelocity(0)); //getSelectedSensorVelocity());
-		// System.out.println(" Back Climber Enc Pos: \t"+ m_backClimber.m_climberMotor.getSelectedSensorPosition(0));
-		// System.out.print("Left Ultrasonics: \t" + m_drivetrain.getLeftUltra().getRangeInches());
-		// System.out.println(" Right Ultrasonics: \t" + m_drivetrain.getRightUltra().getRangeInches());
+		m_teleopCommands.teleopModeCommands();
 	}
 
 	/**
@@ -291,7 +307,7 @@ public class Robot extends TimedRobot {
 		}
 		else if (!forwardFlag) {
 			m_hatchMech.openServo();
-			forwardFlag = m_pather.secondHalfPath(7);
+			forwardFlag = m_pather.driveToTarget(7);
 			 // m_drivetrain.driveToPositionAngle(24, 29, .35);
 		}
 		else if (!leaveRocket) {
@@ -314,20 +330,14 @@ public class Robot extends TimedRobot {
 		else if (!hatchApproach) {
 			outerRingLight.set(true);
 			innerRingLight.set(true);
-			hatchApproach = m_pather.secondHalfPath(12);
+			hatchApproach = m_pather.driveToTarget(12);
 		}
-		// Not auton, drivestraight testing
-		// if (!backFlag) {
-		// 	backFlag = m_drivetrain.driveToPositionAngle(175, 25);
-		// }
 		else {
 			outerRingLight.set(false);
 			innerRingLight.set(false);
 			m_teleopCommands.teleopModeCommands();
 		}
-			// innerRingLight.set(true);
-			// outerRingLight.set(true);
-		
+
 		if ((telemetryCounter % RobotMap.SAMPLE_RATE) == 0) {
 			System.out.print("Left Ultrasonics: \t" + m_drivetrain.getLeftUltra().getRangeInches());
 			System.out.println(" Right Ultrasonics: \t" + m_drivetrain.getRightUltra().getRangeInches());

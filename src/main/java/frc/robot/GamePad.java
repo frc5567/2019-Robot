@@ -32,10 +32,9 @@ public class GamePad extends GenericHID {
 		// Buttons
 		LIFT_HATCH_ARM(4),
 		DROP_HATCH_ARM(3),
-		MANUAL_LOW(12),
+		PICKUP_1(12),
 		ZERO_HATCH(11);
 
-		@SuppressWarnings("MemberName")
 		public final int value;
 
 		GamePadControls(int newValue) {
@@ -86,12 +85,20 @@ public class GamePad extends GenericHID {
 		return getY();
 	}
 
+	/**
+	 * Gets the status of the level zero button
+	 * @return If the level zero button is being pressed
+	 */
 	public boolean getLevelZero() {
 		return getGamePadButton(GamePadControls.ZERO_HATCH);
 	}
 
-	public boolean getManualLow() {
-		return getGamePadButton(GamePadControls.MANUAL_LOW);
+	/**
+	 * Gets the status of the low pickup button
+	 * @return If the low pickup button is being pressed
+	 */
+	public boolean getPickup1Button() {
+		return getGamePadButton(GamePadControls.PICKUP_1);
 	}
 
 	/**
