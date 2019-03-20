@@ -11,7 +11,6 @@ public class Pathing {
     // Doubles for storing the return from the arduino
     private Double m_angleToCenter = Double.NaN;
     private Double m_compareAngleToCenter = Double.NaN;
-    private Double m_lowPosition = Double.NaN;
 
     // Doubles for storing calcs using the arduino
     private double m_startingDegrees = Double.NaN;
@@ -24,10 +23,6 @@ public class Pathing {
     private boolean foundFlag = false;
     private boolean lastCorrectionFlag = false;
 
-    private boolean gyroSetpointReset = false;
-
-    private int cycleCounter = 5;
-
 	// Declare our duino communication port
 	DuinoToRioComms m_duinoToRio;
     private DuinoCommStorage m_pkt;
@@ -38,12 +33,9 @@ public class Pathing {
     // Declares a drivetrain to use in the auto movement
     Drivetrain m_drivetrain;
 
-    // Counter so that we only get angle while turning every 15th cycle.
-    // Starts at 15 so we collect data the first time through
-    private int m_lowDataCollectCounter = 15;
+    // Counter so we sample data from the duino rather than constantly grab data
     private int m_angleToCenterCompareCounter = 0;
 
-    private int m_rotateExitCounter;
     Controller m_pilotControl;
 
     private boolean m_onTargetTest = false;
@@ -67,8 +59,6 @@ public class Pathing {
 
         // Configs the talon PIDs
         m_drivetrain.talonDriveConfig();
-
-        m_rotateExitCounter = 0;
     }
 
     /**
@@ -83,7 +73,6 @@ public class Pathing {
         if (m_rotLowTargetFinished && (m_angleToCenterCompareCounter >= 25)) {
             m_compareAngleToCenter = m_duinoToRio.getAngleToCenter();
             m_angleToCenterCompareCounter = 0;
-            System.out.println("Compare angle to center: \t" + m_compareAngleToCenter);
         }
         else {
             m_angleToCenterCompareCounter++;
@@ -100,10 +89,8 @@ public class Pathing {
 
         if((Math.abs(m_compareAngleToCenter) > RobotMap.STRAIGHT_ANGLE_THRESHOLD) && !m_compareAngleToCenter.isNaN() && m_rotLowTargetFinished) {
             if (!lastCorrectionFlag) {
-                System.out.println("Resetting for new rotate");
                 m_rotLowTargetFinished = false;
                 foundFlag = false;
-                gyroSetpointReset = false;
                 m_drivetrain.m_firstCallTest = true;
                 m_compareAngleToCenter = Double.NaN;
             }
@@ -124,7 +111,6 @@ public class Pathing {
             if ( (m_drivetrain.ultraLeft.getRangeInches() < (lastUltraDist + 10) || m_drivetrain.ultraRight.getRangeInches() < (lastUltraDist + 10)) && !lastCorrectionFlag) {
                 m_rotLowTargetFinished = false;
                 foundFlag = false;
-                gyroSetpointReset = false;
                 m_drivetrain.m_firstCallTest = true;
                 m_compareAngleToCenter = Double.NaN;
                 lastCorrectionFlag = true;
@@ -136,15 +122,6 @@ public class Pathing {
             m_drivetrain.talonArcadeDrive(0, 0, false);
             return true;
         }
-    }
-
-    /**
-     * Converts inches to drive encoder tics
-     * @param inches The inches we want to convert
-     * @return Returns the resultant tips
-     */
-    private double inToTics(double inches) {
-         return inches*RobotMap.DRIVE_TICS_PER_INCH;
     }
 
     /**
@@ -177,11 +154,13 @@ public class Pathing {
 
             // If the target is a valid number, assigns necesary target variables
             if(!m_angleToCenter.isNaN()) {
-                    m_startingDegrees = m_gyro.getYaw();
-                    m_absoluteDegToTarget = m_startingDegrees - (m_angleToCenter);
-                    foundFlag = true;
+                m_startingDegrees = m_gyro.getYaw();
+                m_absoluteDegToTarget = m_startingDegrees - (m_angleToCenter);
+                foundFlag = true;
             }
-            System.out.println("Looking for target");
+            else {
+                System.out.println("Looking for target");
+            }
             m_onTargetTest = false;
         }
 
@@ -199,11 +178,6 @@ public class Pathing {
         else {
             return false;
         }
-        // }
-        // else {
-        //     m_drivetrain.talonArcadeDrive(0.0, 0, false);
-        //     return false;
-        // }
     }
 
     /**
@@ -238,10 +212,7 @@ public class Pathing {
         
         m_angleToCenter = Double.NaN;
         m_compareAngleToCenter = Double.NaN;
-        m_lowPosition = Double.NaN;
 
-        cycleCounter = 5;
-        m_rotateExitCounter = 0;
         m_angleToCenterCompareCounter = 0;
     }
 }
