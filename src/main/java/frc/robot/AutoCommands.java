@@ -45,7 +45,7 @@ public class AutoCommands {
         m_hatchMech = hatchMech;
         outerRingLight = outerLight;
         innerRingLight = innerLight;
-
+    
         stage1 = false;
         stage2 = false;
         stage3 = false;
@@ -62,7 +62,7 @@ public class AutoCommands {
 		    innerRingLight.set(true);
             m_hatchMech.openServo();
             m_elevator.drivePID(State.HATCH_PICKUP);
-            partOneAssist = m_pathing.secondHalfPath(12);
+            partOneAssist = m_pathing.driveToTarget(12);
         }
         else if (!partTwoAssist) {
             m_hatchMech.closeServo();
