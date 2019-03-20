@@ -36,6 +36,8 @@ import frc.robot.DriveClimber;
 public class Robot extends TimedRobot {
 	// Declare drivetrain
 	Drivetrain m_drivetrain;
+
+	// Declare pather for vision targeting
 	Pathing m_pather;
 
 	// Declare Pilot XBox Controller
@@ -59,6 +61,7 @@ public class Robot extends TimedRobot {
 
 	// Declare Auto Commands class for auto and auto assist commands
 	AutoCommands m_autoCommands;
+
 	// Declare Teleop commands for pilot controller methods
 	TeleopCommands m_teleopCommands;
 
@@ -66,6 +69,7 @@ public class Robot extends TimedRobot {
 	DashboardData m_dataStream;
 	CustomDashboard m_roboDash;
 	
+	// Sendable chooser for selecting auton on the dashboard
 	SendableChooser<String> m_autoChooser;
 	private String m_autoSelected;
 
@@ -79,12 +83,15 @@ public class Robot extends TimedRobot {
 	// Declare PID control for the elevator
 	ClimberPIDControl climberPID;
 
+	// Declare ringlights for control via PCM
 	Solenoid innerRingLight;
 	Solenoid outerRingLight;
 
+	// Counter for telemetry so we don't print every cycle
 	int telemetryCounter;
 
 	// TODO: TEMP FLAGS REMOVE PLEASE
+	// Flags for running through auton sequence, currently in test
 	boolean backFlag = false;
 	boolean firstRotFlag = false;
 	boolean backFlagTwo = false;
@@ -98,7 +105,7 @@ public class Robot extends TimedRobot {
 
 	Robot() {
 
-		// Instanciates drivetrain, driver controllers, climbers, and elevator
+		// Instantiates drivetrain, driver controllers, climbers, and elevator
 		m_controller = new Controller(RobotMap.PILOT_CONTROLLER_PORT);
 
 		m_testController = new Controller(2);
@@ -120,8 +127,6 @@ public class Robot extends TimedRobot {
 		// Instantiates hatch arm class 
 		m_hatchMech = new HatchMech();
 
-		// Trys to instanciate the Nav-x on the RoboRIO
-		// Will throw an error telling us if the Nav-x was not instanciated
 		try {
 			m_gyro = new NavX(SPI.Port.kMXP);
 		} catch (RuntimeException ex) {
@@ -146,8 +151,7 @@ public class Robot extends TimedRobot {
 		// Runs config for synced PID climbers
 		climberPID.climberPIDConfig();
 
-		// For comp, this needs to be 0,1 not 2,1
-		innerRingLight = new Solenoid(20, 2);
+		innerRingLight = new Solenoid(20, 0);
 		outerRingLight = new Solenoid(20, 1);
 
 		m_autoCommands = new AutoCommands(m_drivetrain, m_gyro, m_elevator, m_frontClimber, m_backClimber, m_pather, m_teleopCommands, m_hatchMech, outerRingLight, innerRingLight);
@@ -187,6 +191,8 @@ public class Robot extends TimedRobot {
 		m_autoChooser.setDefaultOption("Teleop / Manual", RobotMap.TELEOP);
 		m_autoChooser.addOption("Right Auton", RobotMap.RIGHT_AUTO);
 		m_autoChooser.addOption("Left Auton", RobotMap.LEFT_AUTO);
+
+		// TODO: Put this on the LiveWindow in shuffleboard instead of the SmartDashboard
 		SmartDashboard.putData("Auto Choices", m_autoChooser);
 	}
 
@@ -261,33 +267,7 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
-		if (m_testController.getAButton()) {
-			m_drivetrain.rotateToAngle(30);
-		}
-		else if (m_testController.getBButton()) {
-			m_drivetrain.rotateToAngle(15);
-		}
-		else if (m_testController.getXButton()) {
-			m_drivetrain.rotateToAngle(5);
-		}
-		else {
-			m_drivetrain.talonArcadeDrive(0, 0, false);
-			//m_teleopCommands.teleopModeCommands();
-		}
-
-		if (m_testController.getAButtonReleased() || m_testController.getBButtonReleased() || m_testController.getXButtonReleased()) {
-			m_drivetrain.m_rotController.reset();
-		}
-		
-		System.out.println("Current Heading:\t" + m_gyro.getYaw() + "\tTarget Heading:\t" + m_drivetrain.m_rotController.getSetpoint());
-		outerRingLight.set(true);
-		innerRingLight.set(true);
-		// System.out.print(" Front Climber Enc Velocity: \t" + m_frontClimber.m_climberMotor.getSelectedSensorVelocity()); //getSelectedSensorVelocity());
-		// System.out.print(" Front Climber Enc Pos: \t"+ m_frontClimber.m_climberMotor.getSelectedSensorPosition());
-		// System.out.print(" Back Climber Enc Velocity: \t" + m_backClimber.m_climberMotor.getSelectedSensorVelocity(0)); //getSelectedSensorVelocity());
-		// System.out.println(" Back Climber Enc Pos: \t"+ m_backClimber.m_climberMotor.getSelectedSensorPosition(0));
-		// System.out.print("Left Ultrasonics: \t" + m_drivetrain.getLeftUltra().getRangeInches());
-		// System.out.println(" Right Ultrasonics: \t" + m_drivetrain.getRightUltra().getRangeInches());
+		m_teleopCommands.teleopModeCommands();
 	}
 
 	/**
@@ -327,7 +307,7 @@ public class Robot extends TimedRobot {
 		}
 		else if (!forwardFlag) {
 			m_hatchMech.openServo();
-			forwardFlag = m_pather.secondHalfPath(7);
+			forwardFlag = m_pather.driveToTarget(7);
 			 // m_drivetrain.driveToPositionAngle(24, 29, .35);
 		}
 		else if (!leaveRocket) {
@@ -350,40 +330,33 @@ public class Robot extends TimedRobot {
 		else if (!hatchApproach) {
 			outerRingLight.set(true);
 			innerRingLight.set(true);
-			hatchApproach = m_pather.secondHalfPath(12);
+			hatchApproach = m_pather.driveToTarget(12);
 		}
-		// Not auton, drivestraight testing
-		// if (!backFlag) {
-		// 	backFlag = m_drivetrain.driveToPositionAngle(175, 25);
-		// }
 		else {
 			outerRingLight.set(false);
 			innerRingLight.set(false);
 			m_teleopCommands.teleopModeCommands();
 		}
-			// innerRingLight.set(true);
-			// outerRingLight.set(true);
 		
-			// Checks if the telemetryCounter has reached the 50th cycle
 		if ((telemetryCounter % RobotMap.SAMPLE_RATE) == 0) {
+			System.out.print("Left Ultrasonics: \t" + m_drivetrain.getLeftUltra().getRangeInches());
+			System.out.println(" Right Ultrasonics: \t" + m_drivetrain.getRightUltra().getRangeInches());
 			if (RobotMap.ULTRASONIC_TELEMETRY) {
 				System.out.print("Left Ultrasonics: \t" + m_drivetrain.getLeftUltra().getRangeInches());
+				System.out.println(" Right Ultrasonics: \t" + m_drivetrain.getRightUltra().getRangeInches());
 			}
 			
-			// If constant is set to tru,e prints telemetry for the drivetrain encoders
 			if (RobotMap.DRIVETRAIN_TELEMETRY) {
 				System.out.print("Gyro Yaw: \t" + m_gyro.getYaw());
 				System.out.print(" Drivetrain Enc Velocity: \t" + m_drivetrain.getLeftDriveEncoderVelocity() + "\t\t"  /*+ m_drivetrain.getRightDriveEncoderVelocity()*/);
 				System.out.println(" Drivetrain Enc Pos: \t"+ (6*RobotMap.PI) * (m_drivetrain.m_masterLeftMotor.getSelectedSensorPosition() / 4096) + "\t\t"/* + m_drivetrain.getRightDriveEncoderPosition()*/);	
 			}
 
-			// If constant is set to true, prints telemetry for the elevator encoders
 			if (RobotMap.ELEVATOR_TELEMETRY) {
 				System.out.print("Elevator Enc Velocity: \t" + m_elevator.m_motor.getSelectedSensorVelocity());
 				System.out.println(" Elevator Enc Pos: \t"+ m_elevator.m_motor.getSelectedSensorPosition());
 			}
 
-			// If constant is set to true, prints telemetry for the climber encoders
 			if (RobotMap.CLIMBER_TELEMETRY) {
 				System.out.print(" Front Climber Enc Velocity: \t" + m_frontClimber.m_climberMotor.getSelectedSensorVelocity()); //getSelectedSensorVelocity());
 				System.out.print(" Front Climber Enc Pos: \t"+ m_frontClimber.m_climberMotor.getSelectedSensorPosition());
@@ -391,7 +364,6 @@ public class Robot extends TimedRobot {
 				System.out.println(" Back Climber Enc Pos: \t"+ m_backClimber.m_climberMotor.getSelectedSensorPosition());
 			}
 		}
-		// Increments the telemetry counter
 		telemetryCounter++;
 		
 	}
