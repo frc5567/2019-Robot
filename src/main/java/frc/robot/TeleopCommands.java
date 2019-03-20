@@ -152,19 +152,19 @@ public class TeleopCommands {
         else {
             if (m_gamepad.getLowHatchCargo()) {
                 m_elevator.drivePID(State.HATCH_L1);
-                m_pather.secondHalfPath(6);    
+                m_pather.driveToTarget(6);    
 			    // innerRingLight.set(true);
 			    // outerRingLight.set(true);
             }
             else if (m_gamepad.getMediumHatchCargo()) {
                 m_elevator.drivePID(State.HATCH_L2);
-                m_pather.secondHalfPath(6);
+                m_pather.driveToTarget(6);
                 // innerRingLight.set(true);
 			    // outerRingLight.set(true);
             }
             else if (m_gamepad.getHighHatchCargo()) {
                 m_elevator.drivePID(State.HATCH_L3);
-                m_pather.secondHalfPath(6);
+                m_pather.driveToTarget(6);
                 // innerRingLight.set(true);
 			    // outerRingLight.set(true);
             }

@@ -62,7 +62,7 @@ public class AutoCommands {
 		    innerRingLight.set(true);
             m_hatchMech.openServo();
             m_elevator.drivePID(State.HATCH_PICKUP);
-            partOneAssist = m_pathing.secondHalfPath(12);
+            partOneAssist = m_pathing.driveToTarget(12);
         }
         else if (!partTwoAssist) {
             m_hatchMech.closeServo();
