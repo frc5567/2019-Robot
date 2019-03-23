@@ -108,12 +108,13 @@ public class Pathing {
         // Runs the driveLowTarget method after all previous are finished
         else if (!m_lowDriveFinished) {
             m_lowDriveFinished = driveLowTarget(lastUltraDist);
-            if ( (m_drivetrain.ultraLeft.getRangeInches() < (lastUltraDist + 10) || m_drivetrain.ultraRight.getRangeInches() < (lastUltraDist + 10)) && !lastCorrectionFlag) {
+            if ( (m_drivetrain.ultraRight.getRangeInches() < (lastUltraDist + 10)) && !lastCorrectionFlag) {
                 m_rotLowTargetFinished = false;
                 foundFlag = false;
                 m_drivetrain.m_firstCallTest = true;
                 m_compareAngleToCenter = Double.NaN;
                 lastCorrectionFlag = true;
+                System.out.println("Last Correction");
             }
             return false;
         }
@@ -148,6 +149,7 @@ public class Pathing {
      * @return Returns whether the method is finished (True if it is)
      */
     private boolean rotLowTarget() {
+        // System.out.println("Current Heading \t" + m_gyro.getYaw() + "\t Target Heading \t" + m_drivetrain.m_rotController.getSetpoint());
         if (!foundFlag) {
             // Assigns data from duino to a variable
             m_angleToCenter = m_duinoToRio.getAngleToCenter();
@@ -187,7 +189,7 @@ public class Pathing {
     private boolean driveLowTarget(int distance) {
         // Drives forward until within certain distance of the wall
         m_drivetrain.driveToPositionAngle(100, m_absoluteDegToTarget, .2);
-        if (m_drivetrain.getLeftUltra().getRangeInches() < distance || m_drivetrain.getRightUltra().getRangeInches() < distance) {
+        if (m_drivetrain.getRightUltra().getRangeInches() < distance) {
             m_drivetrain.m_firstCallTest = true;
             return true;
         }

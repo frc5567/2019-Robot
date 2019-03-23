@@ -104,7 +104,7 @@ public class Drivetrain implements PIDOutput {
         
         // Initializes the drivetrain with the TalonSRX  as the Motors (VictorSPX follows TalonSRX output)
         m_drivetrain = new DifferentialDrive(m_masterLeftMotor, m_masterRightMotor);
-
+        m_drivetrain.setSafetyEnabled(false);
         // Initializes feedback variables for speed setter and rotate setter
         // Setters use variables as feedback in order to "ramp" the output gradually
         m_currentSpeed = 0;
@@ -566,6 +566,8 @@ public class Drivetrain implements PIDOutput {
             m_masterLeftMotor.set(ControlMode.PercentOutput, turn, DemandType.ArbitraryFeedForward, +forward);
             m_masterRightMotor.set(ControlMode.PercentOutput, turn, DemandType.ArbitraryFeedForward, -forward);
         }
+        m_slaveLeftMotor.follow(m_masterLeftMotor);
+        m_slaveRightMotor.follow(m_masterRightMotor);
     }
 
     public boolean magicDriveToPosition(double distToTarget) {
@@ -603,7 +605,7 @@ public class Drivetrain implements PIDOutput {
 
     public boolean driveToPositionAngle(double distToTarget, double targetAngle, double speed) {
         // If the return value is valid, run needed calculation
-        System.out.println("Enter Drive to pos");
+        //System.out.println("Enter Drive to pos");
        double absSpeed = speed;
         if (m_firstCallTest) {
             m_ticsToTarget = inToTics(distToTarget);
