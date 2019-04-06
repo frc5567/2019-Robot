@@ -39,7 +39,7 @@ public class Drivetrain implements PIDOutput {
     PIDController m_rotDriveController;
 
     // Delcares a flag for checking if this is the first time entering this method in a given run
-    boolean m_firstCall = true;
+    boolean m_firstCall;
 
     // Declares variables for current speed and rotate rate
     // Variables used for feedback in speed setter and rotate setter
@@ -104,7 +104,7 @@ public class Drivetrain implements PIDOutput {
         
         // Initializes the drivetrain with the TalonSRX  as the Motors (VictorSPX follows TalonSRX output)
         m_drivetrain = new DifferentialDrive(m_masterLeftMotor, m_masterRightMotor);
-
+        m_drivetrain.setSafetyEnabled(false);
         // Initializes feedback variables for speed setter and rotate setter
         // Setters use variables as feedback in order to "ramp" the output gradually
         m_currentSpeed = 0;
@@ -142,6 +142,9 @@ public class Drivetrain implements PIDOutput {
         m_rotDriveController.disable();
 
         m_counter = 0;
+
+        m_firstCall = true;
+        m_firstCallTest = true;
     }
 
     /**
@@ -249,10 +252,9 @@ public class Drivetrain implements PIDOutput {
         talonArcadeDrive(0, returnedRotate, false);
 
         // Checks to see if the the PID is finished or close enough
-        if ( ((returnedRotate < RobotMap.FINISHED_PID_THRESHOLD) && (returnedRotate > -RobotMap.FINISHED_PID_THRESHOLD)) && (m_counter > 10)) {
+        if (((returnedRotate < RobotMap.FINISHED_PID_THRESHOLD) && (returnedRotate > -RobotMap.FINISHED_PID_THRESHOLD)) && (m_counter > 10)) {
             isFinished = true;
             m_firstCall = true;
-            System.out.println("FINISHED");
         }
         else if ((returnedRotate < RobotMap.FINISHED_PID_THRESHOLD) && (returnedRotate > -RobotMap.FINISHED_PID_THRESHOLD)) {
             m_counter++;
@@ -311,6 +313,57 @@ public class Drivetrain implements PIDOutput {
         return isFinished;
     }
 
+    public boolean straightDrive(double targetDistance) {
+        // Flag for checking if the method is finished
+        boolean isFinished = false;
+        double currentAngle = m_gyro.getYaw();
+
+        if (m_firstCall) {
+            // Resets the error
+            m_rotController.reset();
+
+            // Enables the PID
+            m_rotController.enable();
+            // Prevents us from repeating the reset until we run the method again seperately
+            m_firstCall = false;
+            currentAngle = m_gyro.getYaw();
+        }
+
+        if (m_rotController.getSetpoint() != currentAngle) {
+            // Resets the error
+            m_rotController.reset();
+
+            // Enables the PID
+            m_rotController.enable();
+
+            // Sets the target to our target angle
+            m_rotController.setSetpoint(currentAngle);
+        }        
+
+        // Sets our rotate speed to the return of the PID
+        double returnedRotate = m_rotController.get();
+
+        // Runs the drivetrain with 0 speed and the rotate speed set by the PID
+        talonArcadeDrive(0 /*TODO: Set constant for speed*/, returnedRotate, false);
+
+        // Motion Magic is going to be used for this, 
+        // Leaving this for Josh for now as he has more experience in MotionMagic.
+        /*
+        if (ultraLeft.getRangeInches() > target && ultraRight.getRangeInches() > target) {
+            talonArcadeDrive(RobotMap.AUTO_SPEED, returnedRotate, false);
+            isFinished = false;
+        }
+        else {
+            talonArcadeDrive(0.2, 0, false);
+            isFinished = true;
+        }
+
+        // isFinished acts as an exit flag once we have fulfilled the conditions desired
+        return isFinished;
+        */
+        return false;
+    }
+
     /**
      * Method for driving a specific distance in auton
      * @param stopDistance Inches away from the target we want to stop
@@ -355,11 +408,11 @@ public class Drivetrain implements PIDOutput {
         m_masterRightMotor.configSensorTerm(SensorTerm.Sum0, FeedbackDevice.RemoteSensor1, RobotMap.TIMEOUT_MS); 
 
         // Quadrature Encoder of current Talon
-        m_masterRightMotor.configSensorTerm(SensorTerm.Sum1, FeedbackDevice.QuadEncoder, RobotMap.TIMEOUT_MS); 
+        m_masterRightMotor.configSensorTerm(SensorTerm.Sum1, FeedbackDevice.CTRE_MagEncoder_Relative, RobotMap.TIMEOUT_MS); 
 
         // Setup Difference signal to be used for Turn
         m_masterRightMotor.configSensorTerm(SensorTerm.Diff1, FeedbackDevice.RemoteSensor1, RobotMap.TIMEOUT_MS);
-        m_masterRightMotor.configSensorTerm(SensorTerm.Diff0, FeedbackDevice.QuadEncoder, RobotMap.TIMEOUT_MS);
+        m_masterRightMotor.configSensorTerm(SensorTerm.Diff0, FeedbackDevice.CTRE_MagEncoder_Relative, RobotMap.TIMEOUT_MS);
 
         // Configure Sum [Sum of both QuadEncoders] to be used for Primary PID Index
         m_masterRightMotor.configSelectedFeedbackSensor(FeedbackDevice.SensorSum, RobotMap.PID_PRIMARY, RobotMap.TIMEOUT_MS);
@@ -506,21 +559,15 @@ public class Drivetrain implements PIDOutput {
             else {
                 m_currentRotate = turn;
             }
-            /*
-            if (m_currentRotate < 0) {
-                m_currentRotate = -(m_currentRotate * m_currentRotate);
-            }
-            else {
-                m_currentRotate = m_currentRotate * m_currentRotate;
-            }
-            */
-            m_masterLeftMotor.set(ControlMode.PercentOutput, m_currentRotate, DemandType.ArbitraryFeedForward, +m_currentSpeed);
-            m_masterRightMotor.set(ControlMode.PercentOutput, m_currentRotate, DemandType.ArbitraryFeedForward, -m_currentSpeed);
+            m_masterLeftMotor.set(ControlMode.PercentOutput, m_currentRotate, DemandType.ArbitraryFeedForward, +(m_currentSpeed));
+            m_masterRightMotor.set(ControlMode.PercentOutput, m_currentRotate, DemandType.ArbitraryFeedForward, -(m_currentSpeed));
         }
         else {
             m_masterLeftMotor.set(ControlMode.PercentOutput, turn, DemandType.ArbitraryFeedForward, +forward);
             m_masterRightMotor.set(ControlMode.PercentOutput, turn, DemandType.ArbitraryFeedForward, -forward);
         }
+        m_slaveLeftMotor.follow(m_masterLeftMotor);
+        m_slaveRightMotor.follow(m_masterRightMotor);
     }
 
     public boolean magicDriveToPosition(double distToTarget) {
@@ -558,7 +605,7 @@ public class Drivetrain implements PIDOutput {
 
     public boolean driveToPositionAngle(double distToTarget, double targetAngle, double speed) {
         // If the return value is valid, run needed calculation
-        System.out.println("Enter Drive to pos");
+        //System.out.println("Enter Drive to pos");
        double absSpeed = speed;
         if (m_firstCallTest) {
             m_ticsToTarget = inToTics(distToTarget);

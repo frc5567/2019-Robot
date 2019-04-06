@@ -1,6 +1,3 @@
-/**
- * Defines the mechanism that picks up cargo to put it in the cargo ships and rockets.
- */
 package frc.robot;
 
 import edu.wpi.first.wpilibj.SpeedController;
@@ -8,6 +5,9 @@ import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.Encoder;
 
+/**
+ * Defines the mechanism that picks up cargo to put it in the cargo ships and rockets.
+ */
 public class BallGrabber {
 
 
