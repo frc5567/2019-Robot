@@ -8,6 +8,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.cscore.UsbCamera;
@@ -102,6 +103,8 @@ public class Robot extends TimedRobot {
 	boolean forwardFlag3 = false;
 	boolean forwardFlag4 = false;
 	boolean hatchApproach = false;
+
+	boolean sandstormControl = false;
 
 	Robot() {
 
@@ -237,17 +240,126 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void autonomousPeriodic() {
-		switch (m_autoSelected) {
-			case RobotMap.TELEOP:
-				m_teleopCommands.teleopModeCommands();
-				break;
-			case RobotMap.RIGHT_AUTO:
-				// Right auton code goes here
-				break;
-			case RobotMap.LEFT_AUTO:
-				// Left auton code goes here
-				break;
+		if (m_gamepad.getLevelZero()){
+			sandstormControl = true;
+			innerRingLight.set(false);
+			outerRingLight.set(false);
+		}
 
+		if (sandstormControl) {
+			m_teleopCommands.teleopModeCommands();
+			return;
+		}
+
+		else {
+			// TODO: This auton is based on test. Until it is thourghly tested ,we should always default to TELEOP
+			switch (m_autoSelected) {
+				case RobotMap.TELEOP:
+					m_teleopCommands.teleopModeCommands();
+					break;
+				case RobotMap.RIGHT_AUTO:
+					// Right auton code goes here
+					if (!backFlag) {
+						backFlag = m_drivetrain.driveToPositionAngle(-48, 0, .5);
+					}
+					else if (!backFlagTwo) {
+						backFlagTwo = m_drivetrain.driveToPositionAngle(-140, 25, .9);
+						m_elevator.drivePID(State.HATCH_PICKUP);
+						m_hatchMech.armDown();
+						m_hatchMech.closeServo();
+			
+					}
+					else if (!secondRotFlag) {
+						secondRotFlag = m_drivetrain.rotateToAngle(-29);
+						m_hatchMech.armDown();
+						outerRingLight.set(true);
+						innerRingLight.set(true);
+					}
+					else if (!forwardFlag) {
+						m_hatchMech.openServo();
+						m_hatchMech.setArm(0);
+						forwardFlag = m_pather.driveToTarget(7);
+					}
+					else if (!leaveRocket) {
+						leaveRocket = m_drivetrain.driveToPositionAngle(-36, -29, .3);
+						System.out.println("Trying to leave");
+						outerRingLight.set(false);
+						innerRingLight.set(false);
+					}
+					else if (!forwardFlag2) {
+						forwardFlag2 = m_drivetrain.driveToPositionAngle(130, 0, .9);
+					}
+					else if (!forwardFlag3) {
+						forwardFlag3 = m_drivetrain.driveToPositionAngle(48, -45, .5);
+					}
+					else if (!forwardFlag4) {
+						forwardFlag4 = m_drivetrain.driveToPositionAngle(60, 0, .75);
+						m_elevator.drivePID(State.HATCH_PICKUP);
+						m_pather.resetFlags();
+					}
+					else if (!hatchApproach) {
+						outerRingLight.set(true);
+						innerRingLight.set(true);
+						hatchApproach = m_pather.driveToTarget(12);
+					}
+					else {
+						outerRingLight.set(false);
+						innerRingLight.set(false);
+						m_teleopCommands.teleopModeCommands();
+					}
+					break;
+				case RobotMap.LEFT_AUTO:
+					// Left auton code goes here
+					if (!backFlag) {
+						backFlag = m_drivetrain.driveToPositionAngle(-48, 0, .5);
+					}
+					else if (!backFlagTwo) {
+						backFlagTwo = m_drivetrain.driveToPositionAngle(-147, -25, .9);
+						m_elevator.drivePID(State.HATCH_PICKUP);
+						m_hatchMech.armDown();
+						m_hatchMech.closeServo();
+			
+					}
+					else if (!secondRotFlag) {
+						secondRotFlag = m_drivetrain.rotateToAngle(29);
+						m_hatchMech.armDown();
+						outerRingLight.set(true);
+						innerRingLight.set(true);
+					}
+					else if (!forwardFlag) {
+						m_hatchMech.setArm(0);
+						m_hatchMech.openServo();
+						forwardFlag = m_pather.driveToTarget(7);
+					}
+					else if (!leaveRocket) {
+						leaveRocket = m_drivetrain.driveToPositionAngle(-36, 29, .3);
+						System.out.println("Trying to leave");
+						outerRingLight.set(false);
+						innerRingLight.set(false);
+					}
+					else if (!forwardFlag2) {
+						forwardFlag2 = m_drivetrain.driveToPositionAngle(130, 0, .9);
+					}
+					else if (!forwardFlag3) {
+						forwardFlag3 = m_drivetrain.driveToPositionAngle(48, 45, .5);
+					}
+					else if (!forwardFlag4) {
+						forwardFlag4 = m_drivetrain.driveToPositionAngle(60, 0, .75);
+						m_elevator.drivePID(State.HATCH_PICKUP);
+						m_pather.resetFlags();
+					}
+					else if (!hatchApproach) {
+						outerRingLight.set(true);
+						innerRingLight.set(true);
+						hatchApproach = m_pather.driveToTarget(12);
+					}
+					else {
+						outerRingLight.set(false);
+						innerRingLight.set(false);
+						m_teleopCommands.teleopModeCommands();
+					}
+					break;
+			}
 		}
 	}
 
@@ -260,6 +372,9 @@ public class Robot extends TimedRobot {
 		if (m_pather != null) {
 			m_pather.resetFlags();
 		}
+		
+		innerRingLight.set(false);
+		outerRingLight.set(false);
 	}
 
 	/**
@@ -285,71 +400,41 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void testPeriodic() {
-		// m_teleopCommands.teleopModeCommands();
-		if (!backFlag) {
-			backFlag = m_drivetrain.driveToPositionAngle(-48, 0, .5);
-		}
-		// else if (!firstRotFlag) {
-		// 	firstRotFlag = m_drivetrain.rotateToAngle(-25);
-		// }
-		else if (!backFlagTwo) {
-			backFlagTwo = m_drivetrain.driveToPositionAngle(-185, -25, .9);
-			m_elevator.drivePID(State.HATCH_PICKUP);
-			m_hatchMech.armDown();
-			m_hatchMech.closeServo();
-
-		}
-		else if (!secondRotFlag) {
-			secondRotFlag = m_drivetrain.rotateToAngle(29);
-			m_hatchMech.setArm(0);
-			outerRingLight.set(true);
-			innerRingLight.set(true);
-		}
-		else if (!forwardFlag) {
-			m_hatchMech.openServo();
-			forwardFlag = m_pather.driveToTarget(7);
-			 // m_drivetrain.driveToPositionAngle(24, 29, .35);
-		}
-		else if (!leaveRocket) {
-			leaveRocket = m_drivetrain.driveToPositionAngle(-36, 29, .3);
-			System.out.println("Trying to leave");
-			outerRingLight.set(false);
-			innerRingLight.set(false);
-		}
-		else if (!forwardFlag2) {
-			forwardFlag2 = m_drivetrain.driveToPositionAngle(130, 0, .9);
-		}
-		else if (!forwardFlag3) {
-			forwardFlag3 = m_drivetrain.driveToPositionAngle(48, 45, .5);
-		}
-		else if (!forwardFlag4) {
-			forwardFlag4 = m_drivetrain.driveToPositionAngle(60, 0, .75);
-			m_elevator.drivePID(State.HATCH_PICKUP);
-			m_pather.resetFlags();
-		}
-		else if (!hatchApproach) {
-			outerRingLight.set(true);
-			innerRingLight.set(true);
-			hatchApproach = m_pather.driveToTarget(12);
-		}
-		else {
-			outerRingLight.set(false);
-			innerRingLight.set(false);
-			m_teleopCommands.teleopModeCommands();
-		}
 		
+		// if(m_testController.getAButton()) {
+		// 	m_drivetrain.rotateToAngle(30);
+		// }
+		// else if(m_testController.getBButton()) {
+		// 	m_drivetrain.rotateToAngle(15);
+		// }
+		// else if (m_testController.getXButton()) {
+		// 	m_drivetrain.rotateToAngle(5);
+		// }
+		// else if (m_testController.getYButton()) {
+		// 	m_drivetrain.driveToPositionAngle(100, 20, 1);
+		// } 
+		// else {
+			 m_teleopCommands.teleopModeCommands();
+			//m_drivetrain.talonArcadeDrive(0, 0, false);
+			//m_drivetrain.m_firstCall = true;
+		// }
+		// System.out.println("Current Heading \t" + m_gyro.getYaw() + "\t Target Heading \t" + m_drivetrain.m_rotController.getSetpoint());
+
+		/*
+		innerRingLight.set(true);
+		outerRingLight.set(true);
+		*/
 		if ((telemetryCounter % RobotMap.SAMPLE_RATE) == 0) {
-			System.out.print("Left Ultrasonics: \t" + m_drivetrain.getLeftUltra().getRangeInches());
-			System.out.println(" Right Ultrasonics: \t" + m_drivetrain.getRightUltra().getRangeInches());
 			if (RobotMap.ULTRASONIC_TELEMETRY) {
 				System.out.print("Left Ultrasonics: \t" + m_drivetrain.getLeftUltra().getRangeInches());
 				System.out.println(" Right Ultrasonics: \t" + m_drivetrain.getRightUltra().getRangeInches());
 			}
 			
 			if (RobotMap.DRIVETRAIN_TELEMETRY) {
-				System.out.print("Gyro Yaw: \t" + m_gyro.getYaw());
-				System.out.print(" Drivetrain Enc Velocity: \t" + m_drivetrain.getLeftDriveEncoderVelocity() + "\t\t"  /*+ m_drivetrain.getRightDriveEncoderVelocity()*/);
-				System.out.println(" Drivetrain Enc Pos: \t"+ (6*RobotMap.PI) * (m_drivetrain.m_masterLeftMotor.getSelectedSensorPosition() / 4096) + "\t\t"/* + m_drivetrain.getRightDriveEncoderPosition()*/);	
+				//System.out.print("Gyro Yaw: \t" + m_gyro.getYaw());
+				//System.out.print(" Drivetrain Enc Velocity: \t" + m_drivetrain.getLeftDriveEncoderVelocity() + "\t\t"  + m_drivetrain.getRightDriveEncoderVelocity());
+				//System.out.println(" Drivetrain = Pos: \t"+ (6*RobotMap.PI) * (m_drivetrain.m_masterLeftMotor.getSelectedSensorPosition() / 4096) + "\t\t" + m_drivetrain.getRightDriveEncoderPosition());	
+				System.out.println(" Enc Pos: \t\t" + m_drivetrain.getLeftDriveEncoderPosition() + "\t\t" +m_drivetrain.getRightDriveEncoderPosition());
 			}
 
 			if (RobotMap.ELEVATOR_TELEMETRY) {

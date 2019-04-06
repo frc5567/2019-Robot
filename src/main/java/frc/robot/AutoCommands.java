@@ -72,6 +72,7 @@ public class AutoCommands {
             innerRingLight.set(false);
         }
         else if (!partThreeAssist) {
+            System.out.println("Pickup complete");
             m_elevator.moveRaw(0);
             // m_hatchMech.armUp();
             m_drivetrain.driveToPositionAngle(-20, 0, 0.2);

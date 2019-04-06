@@ -253,7 +253,7 @@ public class TeleopCommands {
             }
         
             // Back climber only can be turned on if the Y Button is held AND the climber is not retracted in the robot
-		    if (m_controller.getYButton() && m_driveClimberDeployed) {
+		    if (m_controller.getYButton() ) {
                 m_backClimber.driveForward();
                 m_drivetrain.talonArcadeDrive(.2, 0, false);
             }

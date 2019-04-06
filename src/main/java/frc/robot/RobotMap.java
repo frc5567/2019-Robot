@@ -13,7 +13,7 @@ public class RobotMap {
     public static final int STRAIGHT_ANGLE_THRESHOLD = 1;
 
     // Debug telmetry enable / disable constants
-    public static final boolean ULTRASONIC_TELEMETRY = false;
+    public static final boolean ULTRASONIC_TELEMETRY = true;
     public static final boolean DRIVETRAIN_TELEMETRY = false;
     public static final boolean ELEVATOR_TELEMETRY = false;
     public static final boolean CLIMBER_TELEMETRY = false;
@@ -115,11 +115,11 @@ public class RobotMap {
     public static final double HATCH_MECH_STOP_MOTOR_SPEED = 0.0;
     // Climber motor speeds
     public static final double FRONT_CLIMBER_SPEED_UP = 0.75; 
-    public static final double FRONT_CLIMBER_SPEED_DOWN = -0.9;
+    public static final double FRONT_CLIMBER_SPEED_DOWN = -0.93;
     
     public static final double BACK_CLIMBER_SPEED_UP = 0.35;
     public static final double BACK_CLIMBER_SPEED_UP_FAST = 0.75;
-    public static final double BACK_CLIMBER_SPEED_DOWN = -0.8;
+    public static final double BACK_CLIMBER_SPEED_DOWN = -0.73;
 
     // Climber encoder target in tics
     public static final int CLIMBER_TARGET = -550000;
@@ -133,9 +133,10 @@ public class RobotMap {
 
     // PID Controller
     // Rotate Controller
-    public static final double P_ROTATE_CONTROLLER = 0.03;
-    public static final double I_ROTATE_CONTROLLER = 0.0002;
-    public static final double D_ROTATE_CONTROLLER = 0.07;
+    // End of comp values : P: 0.05 I: 0.001 D: 0.0725
+    public static final double P_ROTATE_CONTROLLER = 0.02;
+    public static final double I_ROTATE_CONTROLLER = 0.0;
+    public static final double D_ROTATE_CONTROLLER = 0.082;
     public static final double F_ROTATE_CONTROLLER = 0.00;
     public static final double TOLERANCE_ROTATE_CONTROLLER = .5;
 
