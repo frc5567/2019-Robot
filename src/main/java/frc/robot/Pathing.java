@@ -135,7 +135,7 @@ public class Pathing {
             return false;
         }
         else if (m_duinoToRio.getLowPosition() >= 1 && m_duinoToRio.getLowPosition() <= 3) {
-            // Returns false if the value returned is expected and seen
+            // Returns true if the value returned is expected and seen
             return true;
         }
         else {
@@ -188,7 +188,13 @@ public class Pathing {
      */
     private boolean driveLowTarget(int distance) {
         // Drives forward until within certain distance of the wall
-        m_drivetrain.driveToPositionAngle(100, m_absoluteDegToTarget, .2);
+        if (m_drivetrain.ultraLeft.getRangeInches() < 24 || m_drivetrain.ultraRight.getRangeInches() < 24) {
+            m_drivetrain.driveToPositionAngle(100, m_absoluteDegToTarget, .2);
+        }
+        else {
+            m_drivetrain.driveToPositionAngle(100, m_absoluteDegToTarget, .25);
+        }
+
         if (m_drivetrain.getLeftUltra().getRangeInches() < distance || m_drivetrain.getRightUltra().getRangeInches() < distance) {
             m_drivetrain.m_firstCallTest = true;
             return true;

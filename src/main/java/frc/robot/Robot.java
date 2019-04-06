@@ -149,13 +149,13 @@ public class Robot extends TimedRobot {
 		m_drivetrain.talonDriveConfig();
 
 		// Instantiates PID control
-		climberPID = new ClimberPIDControl(m_frontClimber, m_backClimber);
+		climberPID = new ClimberPIDControl(m_frontClimber, m_backClimber, m_gyro);
 
 		// Runs config for synced PID climbers
 		climberPID.climberPIDConfig();
 
-		innerRingLight = new Solenoid(20, 0);
-		outerRingLight = new Solenoid(20, 1);
+		innerRingLight = new Solenoid(RobotMap.PCM_PORT, RobotMap.INNER_RINGLIGHT_PORT);
+		outerRingLight = new Solenoid(RobotMap.PCM_PORT, RobotMap.OUTER_RINGLIGHT_PORT);
 
 		m_autoCommands = new AutoCommands(m_drivetrain, m_gyro, m_elevator, m_frontClimber, m_backClimber, m_pather, m_teleopCommands, m_hatchMech, outerRingLight, innerRingLight);
 		m_teleopCommands = new TeleopCommands(m_controller, m_gamepad, m_drivetrain, m_elevator, m_frontClimber, m_backClimber, m_hatchMech, climberPID, m_pather, m_autoCommands);
@@ -419,11 +419,11 @@ public class Robot extends TimedRobot {
 			//m_drivetrain.m_firstCall = true;
 		// }
 		// System.out.println("Current Heading \t" + m_gyro.getYaw() + "\t Target Heading \t" + m_drivetrain.m_rotController.getSetpoint());
-
-		/*
-		innerRingLight.set(true);
-		outerRingLight.set(true);
-		*/
+		System.out.println("Pitch: \t" + m_gyro.getRoll());
+		
+		// innerRingLight.set(true);
+		// outerRingLight.set(true);
+		
 		if ((telemetryCounter % RobotMap.SAMPLE_RATE) == 0) {
 			if (RobotMap.ULTRASONIC_TELEMETRY) {
 				System.out.print("Left Ultrasonics: \t" + m_drivetrain.getLeftUltra().getRangeInches());
@@ -431,10 +431,10 @@ public class Robot extends TimedRobot {
 			}
 			
 			if (RobotMap.DRIVETRAIN_TELEMETRY) {
-				//System.out.print("Gyro Yaw: \t" + m_gyro.getYaw());
-				//System.out.print(" Drivetrain Enc Velocity: \t" + m_drivetrain.getLeftDriveEncoderVelocity() + "\t\t"  + m_drivetrain.getRightDriveEncoderVelocity());
-				//System.out.println(" Drivetrain = Pos: \t"+ (6*RobotMap.PI) * (m_drivetrain.m_masterLeftMotor.getSelectedSensorPosition() / 4096) + "\t\t" + m_drivetrain.getRightDriveEncoderPosition());	
-				System.out.println(" Enc Pos: \t\t" + m_drivetrain.getLeftDriveEncoderPosition() + "\t\t" +m_drivetrain.getRightDriveEncoderPosition());
+				System.out.print("Gyro Yaw: \t" + m_gyro.getYaw());
+				System.out.print(" Drivetrain Enc Velocity: \t" + m_drivetrain.getLeftDriveEncoderVelocity() + "\t\t"  + m_drivetrain.getRightDriveEncoderVelocity());
+				// System.out.println(" Drivetrain Pos: \t"+ (6*RobotMap.PI) * (m_drivetrain.m_masterLeftMotor.getSelectedSensorPosition() / 4096) + "\t\t" + m_drivetrain.getRightDriveEncoderPosition());	
+				System.out.println(" Enc Pos: \t\t" + m_drivetrain.m_masterLeftMotor.getSelectedSensorPosition() + "\t\t" +m_drivetrain.m_masterRightMotor.getSelectedSensorPosition());
 			}
 
 			if (RobotMap.ELEVATOR_TELEMETRY) {

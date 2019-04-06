@@ -19,16 +19,22 @@ import com.ctre.phoenix.motorcontrol.DemandType;
  */
 public class ClimberPIDControl {
     Climber m_frontClimber;
-    DriveClimber m_driveClimber;
+	DriveClimber m_driveClimber;
+	
+	// Drivetrain needed exclusivley for its gyro
+	NavX m_gyro;
+
+	float initRoll;
 
 	/**
 	 * Constructor for the PID Control Configuration class for the climbing motor PIDs
 	 * @param frontClimber The front climber instance
 	 * @param backClimber The back climber instance
 	 */
-    public ClimberPIDControl(Climber frontClimber, DriveClimber backClimber) {
+    public ClimberPIDControl(Climber frontClimber, DriveClimber backClimber, NavX gyro) {
         m_frontClimber = frontClimber;
-        m_driveClimber = backClimber;
+		m_driveClimber = backClimber;
+		m_gyro = gyro;
     }
 
     public void climberPIDConfig() {
@@ -80,7 +86,6 @@ public class ClimberPIDControl {
 		m_driveClimber.m_climberMotor.setStatusFramePeriod(StatusFrame.Status_10_Targets, 20, RobotMap.TIMEOUT_MS);
 		m_frontClimber.m_climberMotor.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 5, RobotMap.TIMEOUT_MS);
 
-
 		// Config neutral deadband
         m_frontClimber.m_climberMotor.configNeutralDeadband(RobotMap.NEUTRAL_DEADBAND, RobotMap.TIMEOUT_MS);
         m_driveClimber.m_climberMotor.configNeutralDeadband(RobotMap.NEUTRAL_DEADBAND, RobotMap.TIMEOUT_MS);
@@ -122,7 +127,9 @@ public class ClimberPIDControl {
 
 		// Sets profile slot for PID
         m_driveClimber.m_climberMotor.selectProfileSlot(0, RobotMap.PID_PRIMARY);
-        m_driveClimber.m_climberMotor.selectProfileSlot(1, RobotMap.PID_TURN);
+		m_driveClimber.m_climberMotor.selectProfileSlot(1, RobotMap.PID_TURN);
+		
+		initRoll = m_gyro.getRoll();
     }
 
 	/**
@@ -134,5 +141,43 @@ public class ClimberPIDControl {
         m_frontClimber.m_climberMotor.follow(m_driveClimber.m_climberMotor, FollowerType.AuxOutput1);
 	}
 
+	/**
+	 * A bang bang drive method for lowering the climber to keep the climb even
+	 * It defaults to the constants for speed down and then adjust based on difference from init yaw
+	 */
+	public void climberBangBang() {
+		// A local variable for grabbing and storing roll temporarily
+		float roll = m_gyro.getRoll();
+
+		// Checks to see whether the difference is outside of the large threshold, and adjusts accordingly
+		if (Math.abs(roll - initRoll) > RobotMap.BANG_BANG_DEADBAND_BIG) {
+			// Checks which way the robot is tipping, where positive is tipping backwards
+			if (roll > 0) {
+				m_driveClimber.m_climberMotor.set(RobotMap.BACK_CLIMBER_SPEED_DOWN - RobotMap.BANG_BANG_ADJUST_LARGE);
+				m_frontClimber.m_climberMotor.set(RobotMap.FRONT_CLIMBER_SPEED_DOWN + RobotMap.BANG_BANG_ADJUST_LARGE);
+			}
+			else {
+				m_driveClimber.m_climberMotor.set(RobotMap.BACK_CLIMBER_SPEED_DOWN + RobotMap.BANG_BANG_ADJUST_LARGE);
+				m_frontClimber.m_climberMotor.set(RobotMap.FRONT_CLIMBER_SPEED_DOWN - RobotMap.BANG_BANG_ADJUST_LARGE);
+			}
+		}
+		// Checks to see whether the difference is outside of the small threshold, and adjusts accordingly
+		else if (Math.abs(roll - initRoll) > RobotMap.BANG_BANG_DEADBAND_SMALL) {
+			// Checks which way the robot is tipping, where positive is tipping backwards
+			if (roll > 0) {
+				m_driveClimber.m_climberMotor.set(RobotMap.BACK_CLIMBER_SPEED_DOWN - RobotMap.BANG_BANG_ADJUST_SMALL);
+				m_frontClimber.m_climberMotor.set(RobotMap.FRONT_CLIMBER_SPEED_DOWN + RobotMap.BANG_BANG_ADJUST_SMALL);
+			}
+			else {
+				m_driveClimber.m_climberMotor.set(RobotMap.BACK_CLIMBER_SPEED_DOWN + RobotMap.BANG_BANG_ADJUST_SMALL);
+				m_frontClimber.m_climberMotor.set(RobotMap.FRONT_CLIMBER_SPEED_DOWN - RobotMap.BANG_BANG_ADJUST_SMALL);
+			}
+		}
+		// Runs with the default values if within both thresholds
+		else {
+			m_driveClimber.m_climberMotor.set(RobotMap.BACK_CLIMBER_SPEED_DOWN);
+			m_frontClimber.m_climberMotor.set(RobotMap.FRONT_CLIMBER_SPEED_DOWN);
+		}
+	}
 
 }

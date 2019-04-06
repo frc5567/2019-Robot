@@ -22,7 +22,7 @@ public class Elevator {
 		state in String form.
 		*/
 		LEVEL_ZERO(0.0, 1.0, 1.0 , "Initial State"),
-		HATCH_PICKUP(8.0, 0.90, 0.50, "Hatch Pickup"), // TODO: Increase through testing, seemed to be too low
+		HATCH_PICKUP(8.0, 0.90, 0.50, "Hatch Pickup"),
 		//	CARGO_L1(16.75, 0.80, 0.50 , "Cargo level 1"),
 		//	CARGO_L2(44.75, 0.60, 0.30 , "Cargo Level 2"),
 		//	CARGO_L3(72.75, 0.40, 0.20 , "Cargo Level 3"),

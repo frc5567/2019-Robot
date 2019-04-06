@@ -216,7 +216,7 @@ public class TeleopCommands {
     public void controlClimbers() {
         // PID climber controls bound to pilot controller
 		if (m_controller.getAButton()) {
-            m_climberPID.climberPIDDrive(RobotMap.CLIMBER_TARGET);
+            m_climberPID.climberBangBang();
             m_drivetrain.talonArcadeDrive(0, 0, false);
             m_driveClimberDeployed = true;
 		}
