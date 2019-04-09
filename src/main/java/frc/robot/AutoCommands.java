@@ -56,6 +56,9 @@ public class AutoCommands {
 
     }
 
+    /**
+     * Method to autonomously pick up a hatch from the loading station.
+     */
     public void pickupAssist() {
         if (!partOneAssist) {
 		    outerRingLight.set(true);
@@ -83,6 +86,10 @@ public class AutoCommands {
         }
     }
 
+    /**
+     * Method to reset all auton flags, effectively resetting auton to ensure
+     * we can execute commands from step one.
+     */
     public void resetFlags() {
         stage1 = false;
         stage2 = false;

@@ -119,6 +119,9 @@ public class Elevator {
 		m_targetAngle = 0;
 	}
 
+	/**
+	 * Configures the elevator's PID controller.
+	 */
 	public void configPID() {
 		// Stops motor controllers
 		m_motor.set(ControlMode.PercentOutput, 0);
@@ -163,6 +166,11 @@ public class Elevator {
 		m_motor.selectProfileSlot(0, RobotMap.PID_PRIMARY);
 	}
 
+	/**
+	 * Moves the elevator to a specified position based on which State is passed in.
+	 * @param state The desired state of the elevator (see State enum)
+	 * @return False if the encoder velocity remains below 100 ticks per millisecond.
+	 */
 	public boolean drivePID(State state) {
 		double target = (state.deltaInches) * (RobotMap.TICKS_PER_REVOLUTION / RobotMap.DRUM_CIRCUMFERENCE);
 		m_motor.set(ControlMode.MotionMagic, target);

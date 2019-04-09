@@ -24,14 +24,24 @@ public class DriveClimber extends Climber {
         m_driveMotor.setNeutralMode(NeutralMode.Coast);
     }
 
+    /**
+     * Sets the climber to move up at a constant, preset speed.
+     */
     public void driveForward() {
         m_driveMotor.set(RobotMap.CLIMBER_DRIVE_SPEED_FOREWARD);
     }
 
+    /**
+     * Sets the climber to move backwards at a constant, preset speed.
+     */
     public void driveBackward() {
         m_driveMotor.set(RobotMap.CLIMBER_DRIVE_SPEED_BACKWARD);
     }
 
+    /**
+     * Allows for manual control of the climber motor.
+     * @param input Analog input to be used for moving the motor.
+     */
     public void driveRaw(double input) {
         m_driveMotor.set(input);
     }
