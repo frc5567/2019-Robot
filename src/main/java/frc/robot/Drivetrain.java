@@ -434,7 +434,8 @@ public class Drivetrain implements PIDOutput {
         m_masterLeftMotor.setInverted(false);
         m_masterLeftMotor.setSensorPhase(true);
         m_masterRightMotor.setInverted(false);
-        m_masterRightMotor.setSensorPhase(true);
+        // Inverted this because prints were reading backward on the test bot
+        m_masterRightMotor.setSensorPhase(false);
 
 
         // Set status frame periods to ensure we don't have stale data. 20 and 5 are time in ms
@@ -723,6 +724,8 @@ public class Drivetrain implements PIDOutput {
     public Ultrasonic getRightUltra() {
         return ultraRight;
     }
+
+    // TODO: Update this so it calls selected sensor position/velocity (i.e. motor.getSelectedSensorPosition())
 
     /**
      * Returns the encoder position of the drivetrain left side encoder

@@ -14,7 +14,7 @@ public class RobotMap {
 
     // Debug telmetry enable / disable constants
     public static final boolean ULTRASONIC_TELEMETRY = true;
-    public static final boolean DRIVETRAIN_TELEMETRY = false;
+    public static final boolean DRIVETRAIN_TELEMETRY = true;
     public static final boolean ELEVATOR_TELEMETRY = false;
     public static final boolean CLIMBER_TELEMETRY = false;
     public static final int SAMPLE_RATE = 50;
@@ -115,11 +115,11 @@ public class RobotMap {
     public static final double HATCH_MECH_STOP_MOTOR_SPEED = 0.0;
     // Climber motor speeds
     public static final double FRONT_CLIMBER_SPEED_UP = 0.75; 
-    public static final double FRONT_CLIMBER_SPEED_DOWN = -0.93;
+    public static final double FRONT_CLIMBER_SPEED_DOWN = -0.85;
     
     public static final double BACK_CLIMBER_SPEED_UP = 0.35;
     public static final double BACK_CLIMBER_SPEED_UP_FAST = 0.75;
-    public static final double BACK_CLIMBER_SPEED_DOWN = -0.73;
+    public static final double BACK_CLIMBER_SPEED_DOWN = -0.65;
 
     // Climber encoder target in tics
     public static final int CLIMBER_TARGET = -550000;
@@ -135,7 +135,7 @@ public class RobotMap {
     // Rotate Controller
     // End of comp values : P: 0.05 I: 0.001 D: 0.0725
     public static final double P_ROTATE_CONTROLLER = 0.02;
-    public static final double I_ROTATE_CONTROLLER = 0.0;
+    public static final double I_ROTATE_CONTROLLER = 0.0001;
     public static final double D_ROTATE_CONTROLLER = 0.082;
     public static final double F_ROTATE_CONTROLLER = 0.00;
     public static final double TOLERANCE_ROTATE_CONTROLLER = .5;
@@ -159,6 +159,25 @@ public class RobotMap {
 
     // Constants for climber targets
     public static final int RAISED_CLIMBER_POS = 0;
+
+    // Constants for threshold for bang-bang control on the climber
+    public static final float BANG_BANG_DEADBAND_SMALL = 5.0f;
+    public static final float BANG_BANG_DEADBAND_BIG = 10.0f;
+
+    // Constants for adjustment based on error with bang-bang
+    // These numbers are arbitrary. This is a huge adjustment as is
+    public static final double BANG_BANG_ADJUST_SMALL = 0.08;
+    public static final double BANG_BANG_ADJUST_LARGE = 0.15;
+
+    // The CAN address for the PCM
+    public static final int PCM_PORT = 20;
+
+    // The ports for the ringlight
+    public static final int INNER_RINGLIGHT_PORT = 0;
+    public static final int OUTER_RINGLIGHT_PORT = 1;
+
+    // This port should be used on the test bot because the PCM doesn't have a functioning port 0
+    public static final int INNER_RINGLIGHT_PORT_TEST = 2;
 
     // Stolen constants for sample code
 
