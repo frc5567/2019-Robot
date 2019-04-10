@@ -267,6 +267,12 @@ public class Drivetrain implements PIDOutput {
         return isFinished;
     }
 
+    /**
+     * Method allowing the robot to rotate to a set angle and then drive to a set distance.
+     * @param targetAngle The desired angle for the robot to rotate to.
+     * @param target The desired stopping distance, as read by the ultrasonics.
+     * @return True if the operation is successful.
+     */
     public boolean rotateDriveAngle(double targetAngle, double target) {
         // Flag for checking if the method is finished
         boolean isFinished = false;

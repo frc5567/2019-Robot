@@ -49,7 +49,7 @@ public class HatchMech{
 
     /**
      * Creates method for closing servo and sets relative position.
-     *  */
+     */
     public void closeServo(){
         m_servo.setPosition(RobotMap.HATCH_MECH_CLOSE_SERVO_POSITION);
     }
