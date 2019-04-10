@@ -8,12 +8,21 @@ package frc.robot;
  */
 public class RobotMap {
 
+    // How far off course the robot can go while moving
+    // straight before running its rotate method again
+    public static final int STRAIGHT_ANGLE_THRESHOLD = 1;
+
     // Debug telmetry enable / disable constants
-    public static final boolean ULTRASONIC_TELEMETRY = false;
-    public static final boolean DRIVETRAIN_TELEMETRY = false;
+    public static final boolean ULTRASONIC_TELEMETRY = true;
+    public static final boolean DRIVETRAIN_TELEMETRY = true;
     public static final boolean ELEVATOR_TELEMETRY = false;
     public static final boolean CLIMBER_TELEMETRY = false;
     public static final int SAMPLE_RATE = 50;
+
+    //Auton SendableChooser constants
+    public static final String LEFT_AUTO = "Left Auton";
+    public static final String RIGHT_AUTO = "Right Auton";
+    public static final String TELEOP = "Teleop / Manual";
 
     // Climber gains
     public static final Gains CLIMBER_GAINS = new Gains(0.3, 0.0, 0.0, 0.0, 100, 1.0);
@@ -22,7 +31,7 @@ public class RobotMap {
     public static final Gains DRIVETRAIN_GAINS = new Gains(0.3, 0.0, 0.0, 0.0, 100, 1.0);
 
     // Elevator gains
-    public static final Gains ELEVATOR_GAINS = new Gains(0.3, 0.0, 0.0, 0.0, 100, 1.0);
+    public static final Gains ELEVATOR_GAINS = new Gains(0.7, 0.001, 0.0, 0.0, 2, 1.0);
 
 	// NavX angle offset
     public static final int ANGLE_OFFSET = 180;
@@ -31,7 +40,7 @@ public class RobotMap {
     // Encoder ticks / revolution
     public static final int TICKS_PER_REVOLUTION = 4096;
     // Controller deadbands
-    public static final double CONTROLLER_STICK_DEADBAND = 0.1;
+    public static final double CONTROLLER_STICK_DEADBAND = 0.15;
     public static final double CONTROLLER_TRIGGER_DEADBAND = 0.1;
     // Elevator drum measurements
     public static final double DRUM_CIRCUMFERENCE = 8.1875;
@@ -106,11 +115,11 @@ public class RobotMap {
     public static final double HATCH_MECH_STOP_MOTOR_SPEED = 0.0;
     // Climber motor speeds
     public static final double FRONT_CLIMBER_SPEED_UP = 0.75; 
-    public static final double FRONT_CLIMBER_SPEED_DOWN = -0.9;
+    public static final double FRONT_CLIMBER_SPEED_DOWN = -0.85;
     
     public static final double BACK_CLIMBER_SPEED_UP = 0.35;
     public static final double BACK_CLIMBER_SPEED_UP_FAST = 0.75;
-    public static final double BACK_CLIMBER_SPEED_DOWN = -0.8;
+    public static final double BACK_CLIMBER_SPEED_DOWN = -0.65;
 
     // Climber encoder target in tics
     public static final int CLIMBER_TARGET = -550000;
@@ -124,12 +133,20 @@ public class RobotMap {
 
     // PID Controller
     // Rotate Controller
-    public static final double P_ROTATE_CONTROLLER = 0.035;
-    public static final double I_ROTATE_CONTROLLER = 0.00;
-    public static final double D_ROTATE_CONTROLLER = 0.00;
+    // End of comp values : P: 0.05 I: 0.001 D: 0.0725
+    public static final double P_ROTATE_CONTROLLER = 0.02;
+    public static final double I_ROTATE_CONTROLLER = 0.0001;
+    public static final double D_ROTATE_CONTROLLER = 0.082;
     public static final double F_ROTATE_CONTROLLER = 0.00;
-    public static final double TOLERANCE_ROTATE_CONTROLLER = 2;
-    public static final double FINISHED_PID_THRESHOLD = 0.15;
+    public static final double TOLERANCE_ROTATE_CONTROLLER = .5;
+
+    public static final double P_ROTATE_DRIVE_CONTROLLER = 0.04;
+    public static final double I_ROTATE_DRIVE_CONTROLLER = 0.001;
+    public static final double D_ROTATE_DRIVE_CONTROLLER = 0.12;
+    public static final double F_ROTATE_DRIVE_CONTROLLER = 0.00;
+    public static final double TOLERANCE_ROTATE_DRIVE_CONTROLLER = 2;
+
+    public static final double FINISHED_PID_THRESHOLD = 0.1;
     public static final double PID_LOOP_TIME_S = 0.02;
     public static final double PID_INPUT_RANGE = 180.00;
     public static final double PID_OUTPUT_RANGE = 0.5;
@@ -138,10 +155,29 @@ public class RobotMap {
     public static final double DRIVE_TICS_PER_INCH = (4096 / (6*RobotMap.PI));
 
     // Speed of robot drive in autonomous functions
-    public static final double AUTO_SPEED = 0.2;
+    public static final double AUTO_SPEED = 0.35;
 
     // Constants for climber targets
     public static final int RAISED_CLIMBER_POS = 0;
+
+    // Constants for threshold for bang-bang control on the climber
+    public static final float BANG_BANG_DEADBAND_SMALL = 5.0f;
+    public static final float BANG_BANG_DEADBAND_BIG = 10.0f;
+
+    // Constants for adjustment based on error with bang-bang
+    // These numbers are arbitrary. This is a huge adjustment as is
+    public static final double BANG_BANG_ADJUST_SMALL = 0.08;
+    public static final double BANG_BANG_ADJUST_LARGE = 0.15;
+
+    // The CAN address for the PCM
+    public static final int PCM_PORT = 20;
+
+    // The ports for the ringlight
+    public static final int INNER_RINGLIGHT_PORT = 0;
+    public static final int OUTER_RINGLIGHT_PORT = 1;
+
+    // This port should be used on the test bot because the PCM doesn't have a functioning port 0
+    public static final int INNER_RINGLIGHT_PORT_TEST = 2;
 
     // Stolen constants for sample code
 

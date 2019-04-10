@@ -1,5 +1,3 @@
-/*Defines Mechanism that allows hatches to be placed on cargo ships and rockets.
-*/
 package frc.robot;
 
 //Imports servo, motor controller, and digital input (true or false) for later use.
@@ -10,6 +8,9 @@ import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Counter;
 
+/**
+ * Defines Mechanism that allows hatches to be placed on cargo ships and rockets.
+ */
 public class HatchMech{
 
     //Initializes the servo so it can be used for position of the linear actuator.
@@ -48,7 +49,7 @@ public class HatchMech{
 
     /**
      * Creates method for closing servo and sets relative position.
-     *  */
+     */
     public void closeServo(){
         m_servo.setPosition(RobotMap.HATCH_MECH_CLOSE_SERVO_POSITION);
     }

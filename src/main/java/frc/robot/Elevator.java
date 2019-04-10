@@ -22,11 +22,11 @@ public class Elevator {
 		state in String form.
 		*/
 		LEVEL_ZERO(0.0, 1.0, 1.0 , "Initial State"),
-		HATCH_PICKUP(5.87, 0.90, 0.50, "Hatch Pickup"), // TODO: Increase through testing, seemed to be too low
+		HATCH_PICKUP(8.0, 0.90, 0.50, "Hatch Pickup"),
 		//	CARGO_L1(16.75, 0.80, 0.50 , "Cargo level 1"),
 		//	CARGO_L2(44.75, 0.60, 0.30 , "Cargo Level 2"),
 		//	CARGO_L3(72.75, 0.40, 0.20 , "Cargo Level 3"),
-		HATCH_L1(7.87, 0.90, 0.50 , "Hatch Level 1"),
+		HATCH_L1(9.0, 0.90, 0.50 , "Hatch Level 1"),
 		HATCH_L2(40.65, 0.65, 0.30 , "Hatch Level 2"),
 		HATCH_L3(66.125, 0.45, 0.20 , "Hatch Level 3"),
 		HATCH_PICKUP_2(11.87, 0.90, 0.50, "Hatch Pickup 2");
@@ -119,6 +119,9 @@ public class Elevator {
 		m_targetAngle = 0;
 	}
 
+	/**
+	 * Configures the elevator's PID controller.
+	 */
 	public void configPID() {
 		// Stops motor controllers
 		m_motor.set(ControlMode.PercentOutput, 0);
@@ -163,6 +166,11 @@ public class Elevator {
 		m_motor.selectProfileSlot(0, RobotMap.PID_PRIMARY);
 	}
 
+	/**
+	 * Moves the elevator to a specified position based on which State is passed in.
+	 * @param state The desired state of the elevator (see State enum)
+	 * @return False if the encoder velocity remains below 100 ticks per millisecond.
+	 */
 	public boolean drivePID(State state) {
 		double target = (state.deltaInches) * (RobotMap.TICKS_PER_REVOLUTION / RobotMap.DRUM_CIRCUMFERENCE);
 		m_motor.set(ControlMode.MotionMagic, target);
@@ -207,7 +215,7 @@ public class Elevator {
 	 * @return The elevator's current height
 	 */
 	public double getPosition(){
-		double positionInches = (m_encoder.getQuadraturePosition() * (RobotMap.DRUM_CIRCUMFERENCE / RobotMap.TICKS_PER_REVOLUTION));
+		double positionInches = (m_motor.getSelectedSensorPosition() * (RobotMap.DRUM_CIRCUMFERENCE / RobotMap.TICKS_PER_REVOLUTION));
 		//position = RobotMap.DRUM_CIRCUMFERENCE * numRevolutions;
 		currentState = getState(positionInches);
 		return positionInches;

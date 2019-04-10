@@ -20,34 +20,6 @@ public class DuinoToRioComms {
         m_duinoPort = new SerialPort(9600, SerialPort.Port.kUSB);
         m_duinoPort.enableTermination();
     }
-    
-    /**
-     * Finds the degrees to target based on the high camera
-     * @return  Degrees to target. Will return Double.NaN if it fails to read properly.
-     */
-    public double getDegToTarget() {
-        //  Declares and instantiates a value for storing the return from pixyRead
-        Double degToTarget = Double.NaN;
-
-        //  Calls pixyRead with the command 2 to get deg to target and assign it to return variable
-        degToTarget = pixyRead(RobotMap.GET_DEG_TO_TARGET);
-
-        return degToTarget;
-    }
-
-    /**
-     * Finds the distance to target (in) based on the high camera
-     * @return  Distance to target (in). Will return Double.NaN if it fails to read properly.
-     */
-    public double getDistToTarget() {
-        //  Declares and instantiates a value for storing the return from pixyRead
-        Double distToTarget = Double.NaN;
-
-        //  Calls pixyRead with the command 1 to get dist to target and assign it to return variable
-        distToTarget = pixyRead(RobotMap.GET_DIST_TO_TARGET);
-
-        return distToTarget;
-    }
 
     /**
      * Finds the angle to target based on the low camera
@@ -74,14 +46,6 @@ public class DuinoToRioComms {
         lowPosition = pixyRead(RobotMap.GET_LOW_POSITION);
 
         return lowPosition;
-    }
-
-    public double getAverageArea() {
-        Double averageArea = Double.NaN;
-
-        averageArea = pixyRead(RobotMap.GET_AVG_AREA);
-
-        return averageArea;
     }
 
     /**
