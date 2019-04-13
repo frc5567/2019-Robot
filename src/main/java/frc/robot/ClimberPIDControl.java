@@ -46,6 +46,7 @@ public class ClimberPIDControl {
         m_frontClimber.m_climberMotor.setNeutralMode(NeutralMode.Brake);
         m_driveClimber.m_climberMotor.setNeutralMode(NeutralMode.Brake);
 
+		/*
 		// Configures sensor as quadrature encoder
 		m_frontClimber.m_climberMotor.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, RobotMap.PID_PRIMARY, RobotMap.TIMEOUT_MS);
 		
@@ -70,22 +71,24 @@ public class ClimberPIDControl {
 		m_driveClimber.m_climberMotor.setSelectedSensorPosition(0, 0, RobotMap.TIMEOUT_MS);
 		m_driveClimber.m_climberMotor.setSelectedSensorPosition(0, 1, RobotMap.TIMEOUT_MS);
 		m_frontClimber.m_climberMotor.setSelectedSensorPosition(0);
-		
+		*/
+
 		// Config sensor and motor direction for the back climber motor
 		m_driveClimber.m_climberMotor.setInverted(true);
-		m_driveClimber.m_climberMotor.setSensorPhase(true);
+		// m_driveClimber.m_climberMotor.setSensorPhase(true);
 
 		// Config sensor and motor direction for the front climber motor
         m_frontClimber.m_climberMotor.setInverted(true);
-		m_frontClimber.m_climberMotor.setSensorPhase(true);
+		// m_frontClimber.m_climberMotor.setSensorPhase(true);
 
+		/*
 		// Set status frame period for data collection where 20 and 5 are length of period in ms
 		m_driveClimber.m_climberMotor.setStatusFramePeriod(StatusFrame.Status_12_Feedback1, 20, RobotMap.TIMEOUT_MS);
 		m_driveClimber.m_climberMotor.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20, RobotMap.TIMEOUT_MS);
 		m_driveClimber.m_climberMotor.setStatusFramePeriod(StatusFrame.Status_14_Turn_PIDF1, 20, RobotMap.TIMEOUT_MS);
 		m_driveClimber.m_climberMotor.setStatusFramePeriod(StatusFrame.Status_10_Targets, 20, RobotMap.TIMEOUT_MS);
 		m_frontClimber.m_climberMotor.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 5, RobotMap.TIMEOUT_MS);
-
+		*/
 		// Config neutral deadband
         m_frontClimber.m_climberMotor.configNeutralDeadband(RobotMap.NEUTRAL_DEADBAND, RobotMap.TIMEOUT_MS);
         m_driveClimber.m_climberMotor.configNeutralDeadband(RobotMap.NEUTRAL_DEADBAND, RobotMap.TIMEOUT_MS);
@@ -96,6 +99,7 @@ public class ClimberPIDControl {
         m_frontClimber.m_climberMotor.configPeakOutputForward(+1.0, RobotMap.TIMEOUT_MS);
 		m_frontClimber.m_climberMotor.configPeakOutputReverse(-1.0, RobotMap.TIMEOUT_MS);
 
+		/*
 		// Motion Magic Config
 		m_driveClimber.m_climberMotor.configMotionAcceleration(RobotMap.CLIMB_ACCELERATION, RobotMap.TIMEOUT_MS);
 		m_driveClimber.m_climberMotor.configMotionCruiseVelocity(RobotMap.CLIMB_CRUISE_VELOCITY, RobotMap.TIMEOUT_MS);
@@ -128,11 +132,13 @@ public class ClimberPIDControl {
 		// Sets profile slot for PID
         m_driveClimber.m_climberMotor.selectProfileSlot(0, RobotMap.PID_PRIMARY);
 		m_driveClimber.m_climberMotor.selectProfileSlot(1, RobotMap.PID_TURN);
-		
+		*/
+
 		initRoll = m_gyro.getRoll();
     }
 
 	/**
+	 * DO NOT USE UNTIL ENCODERS AND PID CONFIG IS RESTORED
 	 * Sets the climbers to a set target for the PID to guide the climbers to go to
 	 * @param target The target distance the PID goes to (in ticks)
 	 */

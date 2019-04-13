@@ -29,7 +29,7 @@ public class Elevator {
 		HATCH_L1(9.0, 0.90, 0.50 , "Hatch Level 1"),
 		HATCH_L2(40.65, 0.65, 0.30 , "Hatch Level 2"),
 		HATCH_L3(66.125, 0.45, 0.20 , "Hatch Level 3"),
-		HATCH_PICKUP_2(11.87, 0.90, 0.50, "Hatch Pickup 2");
+		HATCH_PICKUP_2(12.37, 0.90, 0.50, "Hatch Pickup 2");
 
 		private double deltaInches;
 		private double maxSpeedPercent;

@@ -645,6 +645,7 @@ public class Drivetrain implements PIDOutput {
                 }
             }
             else {
+                
                 // Drives straight if we have not reached our target
                 if (m_leftTargetTics > getLeftDriveEncoderPosition()/* && m_rightTargetTics > getLeftDriveEncoderPosition() */) {
                     talonArcadeDrive(-absSpeed, returnedRotate, false);

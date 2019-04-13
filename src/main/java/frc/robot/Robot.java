@@ -104,6 +104,8 @@ public class Robot extends TimedRobot {
 	boolean forwardFlag4 = false;
 	boolean hatchApproach = false;
 
+	int m_forwardCounter = 0;
+
 	boolean sandstormControl = false;
 
 	Robot() {
@@ -263,7 +265,7 @@ public class Robot extends TimedRobot {
 						backFlag = m_drivetrain.driveToPositionAngle(-48, 0, .5);
 					}
 					else if (!backFlagTwo) {
-						backFlagTwo = m_drivetrain.driveToPositionAngle(-140, 25, .9);
+						backFlagTwo = m_drivetrain.driveToPositionAngle(-130, 25, .9);
 						m_elevator.drivePID(State.HATCH_PICKUP);
 						m_hatchMech.armDown();
 						m_hatchMech.closeServo();
@@ -276,33 +278,40 @@ public class Robot extends TimedRobot {
 						innerRingLight.set(true);
 					}
 					else if (!forwardFlag) {
-						m_hatchMech.openServo();
+						m_hatchMech.openServo(); 
 						m_hatchMech.setArm(0);
-						forwardFlag = m_pather.driveToTarget(7);
+						forwardFlag = m_pather.driveToTarget(9);
+					}
+					else if (m_forwardCounter < 20) {
+						m_drivetrain.talonArcadeDrive(.15, 0, false);
+						m_forwardCounter++;
+						outerRingLight.set(false);
+						innerRingLight.set(false);
 					}
 					else if (!leaveRocket) {
 						leaveRocket = m_drivetrain.driveToPositionAngle(-36, -29, .3);
-						System.out.println("Trying to leave");
-						outerRingLight.set(false);
-						innerRingLight.set(false);
 					}
 					else if (!forwardFlag2) {
 						forwardFlag2 = m_drivetrain.driveToPositionAngle(130, 0, .9);
 					}
 					else if (!forwardFlag3) {
-						forwardFlag3 = m_drivetrain.driveToPositionAngle(48, -45, .5);
+						forwardFlag3 = m_drivetrain.driveToPositionAngle(24, -20, .5);
+						// This sysout is for testing what stage in auton we are in, commented out for bandwidth when not testing
+						// System.out.println("Currently in ForwardFlag3 - angled");
 					}
 					else if (!forwardFlag4) {
-						forwardFlag4 = m_drivetrain.driveToPositionAngle(60, 0, .75);
+						// This sysout is for testing what stage in auton we are in, commented out for bandwidth when not testing
+						// System.out.println("Currently in ForwardFlag4 - straight");
+						forwardFlag4 = m_drivetrain.driveToPositionAngle(30, 0, .75);
 						m_elevator.drivePID(State.HATCH_PICKUP);
-						m_pather.resetFlags();
+						m_autoCommands.resetFlags();
 					}
 					else if (!hatchApproach) {
-						outerRingLight.set(true);
-						innerRingLight.set(true);
-						hatchApproach = m_pather.driveToTarget(12);
+						hatchApproach = m_autoCommands.autoPickupAssist();
 					}
 					else {
+						m_pather.resetFlags();
+						m_autoCommands.resetFlags();
 						outerRingLight.set(false);
 						innerRingLight.set(false);
 						m_teleopCommands.teleopModeCommands();
@@ -329,31 +338,34 @@ public class Robot extends TimedRobot {
 					else if (!forwardFlag) {
 						m_hatchMech.setArm(0);
 						m_hatchMech.openServo();
-						forwardFlag = m_pather.driveToTarget(7);
+						forwardFlag = m_pather.driveToTarget(9);
+					}
+					else if (m_forwardCounter < 20) {
+						m_drivetrain.talonArcadeDrive(.15, 0, false);
+						m_forwardCounter++;
+						outerRingLight.set(false);
+						innerRingLight.set(false);
 					}
 					else if (!leaveRocket) {
 						leaveRocket = m_drivetrain.driveToPositionAngle(-36, 29, .3);
-						System.out.println("Trying to leave");
-						outerRingLight.set(false);
-						innerRingLight.set(false);
+						
 					}
 					else if (!forwardFlag2) {
 						forwardFlag2 = m_drivetrain.driveToPositionAngle(130, 0, .9);
 					}
 					else if (!forwardFlag3) {
-						forwardFlag3 = m_drivetrain.driveToPositionAngle(48, 45, .5);
+						forwardFlag3 = m_drivetrain.driveToPositionAngle(24, 20, .5);
 					}
 					else if (!forwardFlag4) {
-						forwardFlag4 = m_drivetrain.driveToPositionAngle(60, 0, .75);
+						forwardFlag4 = m_drivetrain.driveToPositionAngle(30, 0, .75);
 						m_elevator.drivePID(State.HATCH_PICKUP);
-						m_pather.resetFlags();
+						m_autoCommands.resetFlags();
 					}
 					else if (!hatchApproach) {
-						outerRingLight.set(true);
-						innerRingLight.set(true);
-						hatchApproach = m_pather.driveToTarget(12);
+						hatchApproach = m_autoCommands.autoPickupAssist();
 					}
 					else {
+						m_autoCommands.resetFlags();
 						outerRingLight.set(false);
 						innerRingLight.set(false);
 						m_teleopCommands.teleopModeCommands();
@@ -419,12 +431,14 @@ public class Robot extends TimedRobot {
 			//m_drivetrain.m_firstCall = true;
 		// }
 		// System.out.println("Current Heading \t" + m_gyro.getYaw() + "\t Target Heading \t" + m_drivetrain.m_rotController.getSetpoint());
-		System.out.println("Pitch: \t" + m_gyro.getRoll());
 		
 		// innerRingLight.set(true);
 		// outerRingLight.set(true);
 		
 		if ((telemetryCounter % RobotMap.SAMPLE_RATE) == 0) {
+
+			// System.out.println("Pitch: \t" + m_gyro.getRoll());
+
 			if (RobotMap.ULTRASONIC_TELEMETRY) {
 				System.out.print("Left Ultrasonics: \t" + m_drivetrain.getLeftUltra().getRangeInches());
 				System.out.println(" Right Ultrasonics: \t" + m_drivetrain.getRightUltra().getRangeInches());
