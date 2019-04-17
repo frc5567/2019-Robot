@@ -14,12 +14,12 @@ public class RobotMap {
 
     // Debug telmetry enable / disable constants
     public static final boolean ULTRASONIC_TELEMETRY = true;
-    public static final boolean DRIVETRAIN_TELEMETRY = true;
+    public static final boolean DRIVETRAIN_TELEMETRY = false;
     public static final boolean ELEVATOR_TELEMETRY = false;
     public static final boolean CLIMBER_TELEMETRY = false;
-    public static final int SAMPLE_RATE = 50;
+    public static final int SAMPLE_RATE = 30;
 
-    //Auton SendableChooser constants
+    //Auton SendableChooser constantsb
     public static final String LEFT_AUTO = "Left Auton";
     public static final String RIGHT_AUTO = "Right Auton";
     public static final String TELEOP = "Teleop / Manual";
@@ -119,7 +119,7 @@ public class RobotMap {
     
     public static final double BACK_CLIMBER_SPEED_UP = 0.35;
     public static final double BACK_CLIMBER_SPEED_UP_FAST = 0.75;
-    public static final double BACK_CLIMBER_SPEED_DOWN = -0.65;
+    public static final double BACK_CLIMBER_SPEED_DOWN = -0.75;
 
     // Climber encoder target in tics
     public static final int CLIMBER_TARGET = -550000;
@@ -161,8 +161,8 @@ public class RobotMap {
     public static final int RAISED_CLIMBER_POS = 0;
 
     // Constants for threshold for bang-bang control on the climber
-    public static final float BANG_BANG_DEADBAND_SMALL = 5.0f;
-    public static final float BANG_BANG_DEADBAND_BIG = 10.0f;
+    public static final float BANG_BANG_DEADBAND_SMALL = 2.0f;
+    public static final float BANG_BANG_DEADBAND_BIG = 7.0f;
 
     // Constants for adjustment based on error with bang-bang
     // These numbers are arbitrary. This is a huge adjustment as is

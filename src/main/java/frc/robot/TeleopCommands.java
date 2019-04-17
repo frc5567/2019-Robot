@@ -90,6 +90,14 @@ public class TeleopCommands {
         if (m_controller.getBackButton()) {
             m_autoCommands.pickupAssist();
         }
+        else if (m_gamepad.getLevelZero()) {
+            m_pather.driveToTarget(0);
+        }
+        else if (m_gamepad.getLevelZeroReleased()) {
+            m_pather.resetFlags();
+            m_autoCommands.outerRingLight.set(false);
+            m_autoCommands.innerRingLight.set(false);
+        }
         else if (m_controller.getBackButtonReleased()) {
             m_autoCommands.outerRingLight.set(false);
             m_autoCommands.innerRingLight.set(false);
@@ -128,9 +136,10 @@ public class TeleopCommands {
                 if (m_gamepad.getPickup1Button()) {
                     m_elevator.drivePID(State.HATCH_PICKUP);
                 }
-                else if (m_gamepad.getLevelZero()) {
-                    m_elevator.drivePID(State.LEVEL_ZERO);    
-                }
+                // Button used for automatic dropoff
+                // else if (m_gamepad.getLevelZero()) {
+                //     m_elevator.drivePID(State.LEVEL_ZERO);    
+                // }
                 else if (m_gamepad.getPickupHatchCargo()) {
                     m_elevator.drivePID(State.HATCH_PICKUP_2);
                     m_hatchMech.m_servo.setPosition(RobotMap.HATCH_MECH_DIAGONAL_SERVO_POSITION);
@@ -171,9 +180,10 @@ public class TeleopCommands {
             else if (m_gamepad.getPickup1Button()) {
                 m_elevator.drivePID(State.HATCH_PICKUP);
             }
-            else if (m_gamepad.getLevelZero()) {
-                m_elevator.drivePID(State.LEVEL_ZERO);    
-            }
+            // Button used for automatic dropoff
+            // else if (m_gamepad.getLevelZero()) {
+            //     m_elevator.drivePID(State.LEVEL_ZERO);    
+            // }
             else if (m_gamepad.getPickupHatchCargo()) {
                 m_elevator.drivePID(State.HATCH_PICKUP_2);
                 m_hatchMech.m_servo.setPosition(RobotMap.HATCH_MECH_DIAGONAL_SERVO_POSITION);

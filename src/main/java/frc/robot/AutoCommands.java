@@ -65,12 +65,13 @@ public class AutoCommands {
 		    innerRingLight.set(true);
             m_hatchMech.openServo();
             m_elevator.drivePID(State.HATCH_PICKUP);
-            partOneAssist = m_pathing.driveToTarget(12);
+            partOneAssist = m_pathing.driveToTarget(14);
         }
         else if (!partTwoAssist) {
+            m_drivetrain.talonArcadeDrive(0.15, 0, false);
             m_hatchMech.closeServo();
             m_elevator.drivePID(State.HATCH_PICKUP_2);
-            partTwoAssist = ((m_elevator.m_motor.getSelectedSensorVelocity() < 10) && (m_elevator.getPosition() > (State.HATCH_L1.getDeltaHeight() + 1)));
+            partTwoAssist = ((m_elevator.m_motor.getSelectedSensorVelocity() < 10) && (m_elevator.getPosition() > (State.HATCH_L1.getDeltaHeight())));
             outerRingLight.set(false);
             innerRingLight.set(false);
         }
@@ -84,6 +85,38 @@ public class AutoCommands {
             // m_hatchMech.setArm(0);
             m_drivetrain.talonArcadeDrive(0, 0, false);
         }
+    }
+
+    public boolean autoPickupAssist() {
+        boolean isFinished = false;
+        if (!partOneAssist) {
+		    outerRingLight.set(true);
+		    innerRingLight.set(true);
+            m_hatchMech.openServo();
+            m_elevator.drivePID(State.HATCH_PICKUP);
+            partOneAssist = m_pathing.driveToTarget(14);
+        }
+        else if (!partTwoAssist) {
+            m_drivetrain.talonArcadeDrive(0.15, 0, false);
+            m_hatchMech.closeServo();
+            m_elevator.drivePID(State.HATCH_PICKUP_2);
+            partTwoAssist = ((m_elevator.m_motor.getSelectedSensorVelocity() < 10) && (m_elevator.getPosition() > (State.HATCH_L1.getDeltaHeight())));
+            outerRingLight.set(false);
+            innerRingLight.set(false);
+        }
+        else if (!partThreeAssist) {
+            System.out.println("Pickup complete");
+            m_elevator.moveRaw(0);
+            // m_hatchMech.armUp();
+            partThreeAssist = m_drivetrain.driveToPositionAngle(-20, 0, 0.2);
+        }
+        else {
+            // m_hatchMech.setArm(0);
+            m_drivetrain.talonArcadeDrive(0, 0, false);
+            isFinished = true;
+        }
+
+        return isFinished;
     }
 
     /**

@@ -93,6 +93,10 @@ public class GamePad extends GenericHID {
 		return getGamePadButton(GamePadControls.ZERO_HATCH);
 	}
 
+	public boolean getLevelZeroReleased() {
+		return getGamePadButtonReleased(GamePadControls.ZERO_HATCH);
+	}
+
 	/**
 	 * Gets the status of the low pickup button
 	 * @return If the low pickup button is being pressed
