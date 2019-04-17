@@ -9,11 +9,20 @@ import edu.wpi.first.wpilibj.GenericHID.Hand;
  */
 public class Pathing {
     // Doubles for storing the return from the arduino
+    // Stores the returned angle off of center from the arduino used to rotate to center
     private Double m_angleToCenter = Double.NaN;
+
+    // Stores the returned angle off of center from the arduino used to check if we are one target
     private Double m_compareAngleToCenter = Double.NaN;
 
+    // Stores the position of the target to check to see if we have one where -1 is no target and 1,2,3 are left, centered and right respectively
+    private Double m_lowPosition = Double.NaN;
+
     // Doubles for storing calcs using the arduino
+    // Stores the degrees when we begin pathing
     private double m_startingDegrees = Double.NaN;
+
+    // Stores the absolute degrees to target for use with the NavX and our PIDs
     private double m_absoluteDegToTarget = Double.NaN;
     
     // Flags for running through the code
@@ -25,7 +34,6 @@ public class Pathing {
 
 	// Declare our duino communication port
 	DuinoToRioComms m_duinoToRio;
-    private DuinoCommStorage m_pkt;
 
     // Declare NavX
     NavX m_gyro;
@@ -36,20 +44,15 @@ public class Pathing {
     // Counter so we sample data from the duino rather than constantly grab data
     private int m_angleToCenterCompareCounter = 0;
 
-    Controller m_pilotControl;
-
-    private boolean m_onTargetTest = false;
+    private boolean m_onTarget = false;
     
     /**
      * Constructor for our pathing sequence, passing in the drivetrain we want to use
      * @param drivetrain The drivetrain for using with the pathing sequence
      */
-    public Pathing(Drivetrain drivetrain, NavX ahrs, Controller controller) {
+    public Pathing(Drivetrain drivetrain, NavX ahrs) {
         // Instantiates the duino comms system to get data from the pixys
         m_duinoToRio = new DuinoToRioComms();
-
-        // Instantiates the controller for checking input
-        m_pilotControl = controller;
 
         // Instantiates the drivetrain with the drivetrain passed in
         m_drivetrain = drivetrain;
@@ -69,33 +72,35 @@ public class Pathing {
      */
     public boolean driveToTarget(int lastUltraDist) {
         
-        //  Read angle to center with sampling rate
+        //  Read angle to center with sampling rate if we have already rotated
         if (m_rotLowTargetFinished && (m_angleToCenterCompareCounter >= 25)) {
+            // Grabs current degrees off of target from the duino
             m_compareAngleToCenter = m_duinoToRio.getAngleToCenter();
+
+            // Reset the counter so we can check again
             m_angleToCenterCompareCounter = 0;
         }
         else {
             m_angleToCenterCompareCounter++;
         }
 
-        if ((Math.abs(m_compareAngleToCenter) < RobotMap.STRAIGHT_ANGLE_THRESHOLD) && !m_onTargetTest) {
-            System.out.println("On target");
-            m_onTargetTest = true;
+        // Toggles whether or not we are on target based on how far off we currently are
+        if ((Math.abs(m_compareAngleToCenter) < RobotMap.STRAIGHT_ANGLE_THRESHOLD) && !m_onTarget) {
+            m_onTarget = true;
         }
-        else if ((Math.abs(m_compareAngleToCenter) > RobotMap.STRAIGHT_ANGLE_THRESHOLD) && m_onTargetTest) {
-            System.out.println("Off target");
-            m_onTargetTest = false;
-        }
-
-        if((Math.abs(m_compareAngleToCenter) > RobotMap.STRAIGHT_ANGLE_THRESHOLD) && !m_compareAngleToCenter.isNaN() && m_rotLowTargetFinished) {
-            if (!lastCorrectionFlag) {
-                m_rotLowTargetFinished = false;
-                foundFlag = false;
-                m_drivetrain.m_firstCallTest = true;
-                m_compareAngleToCenter = Double.NaN;
-            }
+        else if ((Math.abs(m_compareAngleToCenter) > RobotMap.STRAIGHT_ANGLE_THRESHOLD) && m_onTarget) {
+            m_onTarget = false;
         }
 
+        // Resets to rotate if we are off target, have rotated, and have not corrected for the final time
+        if(!m_onTarget && !m_compareAngleToCenter.isNaN() && m_rotLowTargetFinished && !lastCorrectionFlag) {
+            m_rotLowTargetFinished = false;
+            foundFlag = false;
+            m_drivetrain.m_firstCallTest = true;
+            m_compareAngleToCenter = Double.NaN;
+        }
+
+        // Checks to see if we have found the target
         if (!m_lowTargetFound) {
             m_lowTargetFound = checkForLowTarget();
             return false;
@@ -130,11 +135,14 @@ public class Pathing {
      * @return Returns whether the method is finished (True if it is)
      */  
     private boolean checkForLowTarget() {
-        if(m_duinoToRio.getLowPosition() == -1) {
+        // Grabs the low position value from the arduino
+        m_lowPosition = m_duinoToRio.getLowPosition();
+
+        if(m_lowPosition == -1) {
             // Returns false if the value returned is the known "No Target" value
             return false;
         }
-        else if (m_duinoToRio.getLowPosition() >= 1 && m_duinoToRio.getLowPosition() <= 3) {
+        else if (m_lowPosition >= 1 && m_lowPosition <= 3) {
             // Returns true if the value returned is expected and seen
             return true;
         }
@@ -163,7 +171,7 @@ public class Pathing {
             else {
                 System.out.println("Looking for target");
             }
-            m_onTargetTest = false;
+            m_onTarget = false;
         }
 
         // Rotates until the method says that its done

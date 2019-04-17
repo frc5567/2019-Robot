@@ -140,7 +140,7 @@ public class Robot extends TimedRobot {
 
 		// This requires the arduino to be plugged in, otherwise, it will fail
 		try {
-			m_pather = new Pathing(m_drivetrain, m_gyro, m_controller);
+			m_pather = new Pathing(m_drivetrain, m_gyro);
 		} catch (Exception e) {
 			System.out.println("Pather failed to instantiate");
 		}
