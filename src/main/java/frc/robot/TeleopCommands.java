@@ -88,13 +88,12 @@ public class TeleopCommands {
      */
     public void teleopModeCommands() {
         if (m_controller.getBackButton()) {
-            m_autoCommands.pickupAssist();
+            // m_autoCommands.pickupAssist();
         }
         else if (m_gamepad.getLevelZero()) {
             m_pather.driveToTarget(0);
         }
         else if (m_gamepad.getLevelZeroReleased()) {
-            m_pather.resetFlags();
             m_autoCommands.outerRingLight.set(false);
             m_autoCommands.innerRingLight.set(false);
         }
@@ -105,9 +104,7 @@ public class TeleopCommands {
         else {
             m_autoCommands.resetFlags();
             m_pather.resetFlags();
-            if (m_gamepad.isManual()) {
-                controlDrivetrain();
-            }
+            controlDrivetrain();
             controlElevator();
             controlHatchMech();
             controlClimbers();

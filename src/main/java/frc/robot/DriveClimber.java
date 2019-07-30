@@ -17,8 +17,8 @@ public class DriveClimber extends Climber {
      * @param bottomLimitSwitch The port of the lower limit switch on the climber
      * @param driveMotorPort The ID of the motor controller used to move the wheel on the bottom of the climber
      */
-    public DriveClimber(int motorPort, int topLimitSwitch, int bottomLimitSwitch, int driveMotorPort) {
-        super(motorPort, topLimitSwitch, bottomLimitSwitch);
+    public DriveClimber(int motorPort, int driveMotorPort) {
+        super(motorPort);
 
         m_driveMotor = new WPI_VictorSPX(driveMotorPort);
         m_driveMotor.setNeutralMode(NeutralMode.Coast);

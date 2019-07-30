@@ -94,7 +94,7 @@ public class GamePad extends GenericHID {
 	}
 
 	public boolean getLevelZeroReleased() {
-		return getGamePadButtonReleased(GamePadControls.ZERO_HATCH);
+		return getGamePadButtonReleased(GamePadControls.ZERO_HATCH);   
 	}
 
 	/**

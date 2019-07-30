@@ -13,10 +13,9 @@ public class RobotMap {
     public static final int STRAIGHT_ANGLE_THRESHOLD = 1;
 
     // Debug telmetry enable / disable constants
-    public static final boolean ULTRASONIC_TELEMETRY = true;
+    public static final boolean ULTRASONIC_TELEMETRY = false;
     public static final boolean DRIVETRAIN_TELEMETRY = false;
     public static final boolean ELEVATOR_TELEMETRY = false;
-    public static final boolean CLIMBER_TELEMETRY = false;
     public static final int SAMPLE_RATE = 30;
 
     //Auton SendableChooser constantsb
@@ -45,7 +44,7 @@ public class RobotMap {
     // Elevator drum measurements
     public static final double DRUM_CIRCUMFERENCE = 8.1875;
     // PID timout constant
-    public static final int TIMEOUT_MS = 30;
+    public static final int TIMEOUT_MS = 50;
     // PID Index, 0 is primary, 1 is aux
     public static final int PID_PRIMARY = 0;
     // PID deadband
@@ -119,7 +118,7 @@ public class RobotMap {
     
     public static final double BACK_CLIMBER_SPEED_UP = 0.35;
     public static final double BACK_CLIMBER_SPEED_UP_FAST = 0.75;
-    public static final double BACK_CLIMBER_SPEED_DOWN = -0.75;
+    public static final double BACK_CLIMBER_SPEED_DOWN = -0.65;
 
     // Climber encoder target in tics
     public static final int CLIMBER_TARGET = -550000;
@@ -147,7 +146,7 @@ public class RobotMap {
     public static final double TOLERANCE_ROTATE_DRIVE_CONTROLLER = 2;
 
     public static final double FINISHED_PID_THRESHOLD = 0.1;
-    public static final double PID_LOOP_TIME_S = 0.02;
+    public static final double PID_LOOP_TIME_S = 0.05;
     public static final double PID_INPUT_RANGE = 180.00;
     public static final double PID_OUTPUT_RANGE = 0.5;
 
@@ -192,7 +191,7 @@ public class RobotMap {
     public final static double TURN_TRAVEL_UNITS_PER_ROTATION = 3600;
 
     // Closed loop time of PID systems in milliseconds
-    public final static int CLOSED_LOOP_TIME = 10;
+    public final static int CLOSED_LOOP_TIME = 50;
 
     // Cruise and acceleration values for motion magic
     // TODO: Update with testing

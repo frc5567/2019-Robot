@@ -8,7 +8,9 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Watchdog;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
+import edu.wpi.first.wpilibj.IterativeRobotBase;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.cscore.UsbCamera;
@@ -120,8 +122,8 @@ public class Robot extends TimedRobot {
 		m_gamepad = new GamePad(RobotMap.COPILOT_CONTROLLER_PORT);
 
 		// Instantiates the front and back climbers with their respective motor and break beam ports
-		m_frontClimber = new Climber(RobotMap.FRONT_CLIMBER_MOTOR_PORT, RobotMap.FRONT_CLIMBER_LIMIT_TOP_PORT, RobotMap.FRONT_CLIMBER_LIMIT_BOTTOM_PORT);
-		m_backClimber = new DriveClimber(RobotMap.BACK_CLIMBER_MOTOR_PORT, RobotMap.BACK_CLIMBER_LIMIT_TOP_PORT, RobotMap.BACK_CLIMBER_LIMIT_BOTTOM_PORT, RobotMap.CLIMBER_DRIVE_MOTOR_PORT);
+		m_frontClimber = new Climber(RobotMap.FRONT_CLIMBER_MOTOR_PORT);
+		m_backClimber = new DriveClimber(RobotMap.BACK_CLIMBER_MOTOR_PORT, RobotMap.CLIMBER_DRIVE_MOTOR_PORT);
 		
 		// Instantiates elevator
 		m_elevator = new Elevator();
@@ -426,41 +428,34 @@ public class Robot extends TimedRobot {
 		// 	m_drivetrain.driveToPositionAngle(100, 20, 1);
 		// } 
 		// else {
-			 m_teleopCommands.teleopModeCommands();
+			  m_teleopCommands.teleopModeCommands();
 			//m_drivetrain.talonArcadeDrive(0, 0, false);
 			//m_drivetrain.m_firstCall = true;
 		// }
 		// System.out.println("Current Heading \t" + m_gyro.getYaw() + "\t Target Heading \t" + m_drivetrain.m_rotController.getSetpoint());
 		
-		// innerRingLight.set(true);
-		// outerRingLight.set(true);
+		innerRingLight.set(true);
+		outerRingLight.set(true);
 		
 		if ((telemetryCounter % RobotMap.SAMPLE_RATE) == 0) {
 
 			// System.out.println("Pitch: \t" + m_gyro.getRoll());
 
 			if (RobotMap.ULTRASONIC_TELEMETRY) {
-				System.out.print("Left Ultrasonics: \t" + m_drivetrain.getLeftUltra().getRangeInches());
-				System.out.println(" Right Ultrasonics: \t" + m_drivetrain.getRightUltra().getRangeInches());
+				System.out.print("Left Ultra: " + m_drivetrain.getLeftUltra().getRangeInches());
+				System.out.println("\tRight Ultra: " + m_drivetrain.getRightUltra().getRangeInches());
 			}
 			
 			if (RobotMap.DRIVETRAIN_TELEMETRY) {
-				System.out.print("Gyro Yaw: \t" + m_gyro.getYaw());
-				System.out.print(" Drivetrain Enc Velocity: \t" + m_drivetrain.getLeftDriveEncoderVelocity() + "\t\t"  + m_drivetrain.getRightDriveEncoderVelocity());
+				System.out.print("Gyro Yaw: " + m_gyro.getRoll());
+				System.out.print(" Drivetrain Enc Velocity: " + m_drivetrain.getLeftDriveEncoderVelocity() + "\t\t"  + m_drivetrain.getRightDriveEncoderVelocity());
 				// System.out.println(" Drivetrain Pos: \t"+ (6*RobotMap.PI) * (m_drivetrain.m_masterLeftMotor.getSelectedSensorPosition() / 4096) + "\t\t" + m_drivetrain.getRightDriveEncoderPosition());	
-				System.out.println(" Enc Pos: \t\t" + m_drivetrain.m_masterLeftMotor.getSelectedSensorPosition() + "\t\t" +m_drivetrain.m_masterRightMotor.getSelectedSensorPosition());
+				System.out.println("\tEnc Pos: " + m_drivetrain.m_masterLeftMotor.getSelectedSensorPosition() + "\t\t" +m_drivetrain.m_masterRightMotor.getSelectedSensorPosition());
 			}
 
 			if (RobotMap.ELEVATOR_TELEMETRY) {
-				System.out.print("Elevator Enc Velocity: \t" + m_elevator.m_motor.getSelectedSensorVelocity());
-				System.out.println(" Elevator Enc Pos: \t"+ m_elevator.m_motor.getSelectedSensorPosition());
-			}
-
-			if (RobotMap.CLIMBER_TELEMETRY) {
-				System.out.print(" Front Climber Enc Velocity: \t" + m_frontClimber.m_climberMotor.getSelectedSensorVelocity()); //getSelectedSensorVelocity());
-				System.out.print(" Front Climber Enc Pos: \t"+ m_frontClimber.m_climberMotor.getSelectedSensorPosition());
-				System.out.print(" Back Climber Enc Velocity: \t" + m_backClimber.m_climberMotor.getSelectedSensorVelocity()); //getSelectedSensorVelocity());
-				System.out.println(" Back Climber Enc Pos: \t"+ m_backClimber.m_climberMotor.getSelectedSensorPosition());
+				System.out.print("Elevator Enc Velocity: " + m_elevator.m_motor.getSelectedSensorVelocity());
+				System.out.println("\tElevator Enc Pos: "+ m_elevator.m_motor.getSelectedSensorPosition());
 			}
 		}
 		telemetryCounter++;

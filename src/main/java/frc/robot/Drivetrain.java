@@ -104,6 +104,7 @@ public class Drivetrain implements PIDOutput {
         
         // Initializes the drivetrain with the TalonSRX  as the Motors (VictorSPX follows TalonSRX output)
         m_drivetrain = new DifferentialDrive(m_masterLeftMotor, m_masterRightMotor);
+        m_drivetrain.setExpiration(0.05);
         m_drivetrain.setSafetyEnabled(false);
         // Initializes feedback variables for speed setter and rotate setter
         // Setters use variables as feedback in order to "ramp" the output gradually
